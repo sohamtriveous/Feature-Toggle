@@ -4,9 +4,10 @@ import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.callbacks.ErrorCallback;
 
 /**
- * Created by sohammondal on 14/01/16.
+ * Represents a feature check request
+ * Called as a challenge to the config for the given feature name
  */
-public class Request {
+public class FeatureCheckRequest {
     // Required parameters
     private final Toggle toggle;
     private final String featureName;
@@ -24,7 +25,7 @@ public class Request {
         private Callback callback;
 
         // Optional parameters
-        Toggle.State defaultState;
+        Toggle.State defaultState = Toggle.State.ENABLED;
         boolean getLatest;
         ErrorCallback errorCallback;
 
@@ -48,20 +49,20 @@ public class Request {
             return this;
         }
 
-        public Request launch(Callback callback) {
+        public FeatureCheckRequest launch(Callback callback) {
             this.callback = callback;
-            return new Request(this);
+            return new FeatureCheckRequest(this);
         }
     }
 
-    private Request(Builder builder) {
+    private FeatureCheckRequest(Builder builder) {
         this.toggle = builder.toggle;
         this.featureName = builder.featureName;
         this.callback = builder.callback;
         this.defaultState = builder.defaultState;
         this.getLatest = builder.getLatest;
         this.errorCallback = builder.errorCallback;
-        toggle.handleRequest(this);
+        toggle.handleFeatureCheckRequest(this);
     }
 
     public String getFeatureName() {
@@ -76,7 +77,7 @@ public class Request {
         return defaultState;
     }
 
-    public boolean isGetLatest() {
+    public boolean shouldGetLatest() {
         return getLatest;
     }
 

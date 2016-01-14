@@ -10,9 +10,9 @@ public class Feature {
     @SerializedName("name")
     @Expose
     private String name;
-    @SerializedName("enabled")
+    @SerializedName("state")
     @Expose
-    private Boolean enabled;
+    private String state;
     @SerializedName("default")
     @Expose
     private String _default;
@@ -41,19 +41,19 @@ public class Feature {
     /**
      * 
      * @return
-     *     The enabled
+     *     The state
      */
-    public Boolean getEnabled() {
-        return enabled;
+    public String getState() {
+        return state;
     }
 
     /**
      * 
-     * @param enabled
-     *     The enabled
+     * @param state
+     *     The state
      */
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**
