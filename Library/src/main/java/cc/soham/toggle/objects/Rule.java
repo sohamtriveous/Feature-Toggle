@@ -5,9 +5,12 @@ import com.google.gson.annotations.SerializedName;
 
 public class Rule {
 
-    @SerializedName("state")
+    @SerializedName("enabled")
     @Expose
-    private String state;
+    private Boolean enabled;
+    @SerializedName("metadata")
+    @Expose
+    private String metadata;
     @SerializedName("value")
     @Expose
     private Value value;
@@ -15,19 +18,37 @@ public class Rule {
     /**
      * 
      * @return
-     *     The state
+     *     The enabled
      */
-    public String getState() {
-        return state;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
     /**
      * 
-     * @param state
-     *     The state
+     * @param enabled
+     *     The enabled
      */
-    public void setState(String state) {
-        this.state = state;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    /**
+     * 
+     * @return
+     *     The metadata
+     */
+    public String getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * 
+     * @param metadata
+     *     The metadata
+     */
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 
     /**

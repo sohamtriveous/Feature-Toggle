@@ -1,33 +1,143 @@
 package cc.soham.toggle.objects;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Value {
 
-    @SerializedName("appversion")
+    @SerializedName("apilevel_min")
     @Expose
-    private Integer appversion;
+    private Integer apilevelMin;
+    @SerializedName("apilevel_max")
+    @Expose
+    private Integer apilevelMax;
+    @SerializedName("appversion_min")
+    @Expose
+    private Integer appversionMin;
+    @SerializedName("appversion_max")
+    @Expose
+    private Integer appversionMax;
+    @SerializedName("date_min")
+    @Expose
+    private Integer dateMin;
+    @SerializedName("date_max")
+    @Expose
+    private Integer dateMax;
     @SerializedName("buildtype")
     @Expose
     private String buildtype;
+    @SerializedName("device")
+    @Expose
+    private List<Device> device = new ArrayList<>();
 
     /**
      * 
      * @return
-     *     The appversion
+     *     The apilevelMin
      */
-    public Integer getAppversion() {
-        return appversion;
+    public Integer getApilevelMin() {
+        return apilevelMin;
     }
 
     /**
      * 
-     * @param appversion
-     *     The appversion
+     * @param apilevelMin
+     *     The apilevel_min
      */
-    public void setAppversion(Integer appversion) {
-        this.appversion = appversion;
+    public void setApilevelMin(Integer apilevelMin) {
+        this.apilevelMin = apilevelMin;
+    }
+
+    /**
+     * 
+     * @return
+     *     The apilevelMax
+     */
+    public Integer getApilevelMax() {
+        return apilevelMax;
+    }
+
+    /**
+     * 
+     * @param apilevelMax
+     *     The apilevel_max
+     */
+    public void setApilevelMax(Integer apilevelMax) {
+        this.apilevelMax = apilevelMax;
+    }
+
+    /**
+     * 
+     * @return
+     *     The appversionMin
+     */
+    public Integer getAppversionMin() {
+        return appversionMin;
+    }
+
+    /**
+     * 
+     * @param appversionMin
+     *     The appversion_min
+     */
+    public void setAppversionMin(Integer appversionMin) {
+        this.appversionMin = appversionMin;
+    }
+
+    /**
+     * 
+     * @return
+     *     The appversionMax
+     */
+    public Integer getAppversionMax() {
+        return appversionMax;
+    }
+
+    /**
+     * 
+     * @param appversionMax
+     *     The appversion_max
+     */
+    public void setAppversionMax(Integer appversionMax) {
+        this.appversionMax = appversionMax;
+    }
+
+    /**
+     * 
+     * @return
+     *     The dateMin
+     */
+    public Integer getDateMin() {
+        return dateMin;
+    }
+
+    /**
+     * 
+     * @param dateMin
+     *     The date_min
+     */
+    public void setDateMin(Integer dateMin) {
+        this.dateMin = dateMin;
+    }
+
+    /**
+     * 
+     * @return
+     *     The dateMax
+     */
+    public Integer getDateMax() {
+        return dateMax;
+    }
+
+    /**
+     * 
+     * @param dateMax
+     *     The date_max
+     */
+    public void setDateMax(Integer dateMax) {
+        this.dateMax = dateMax;
     }
 
     /**
@@ -46,6 +156,24 @@ public class Value {
      */
     public void setBuildtype(String buildtype) {
         this.buildtype = buildtype;
+    }
+
+    /**
+     * 
+     * @return
+     *     The device
+     */
+    public List<Device> getDevice() {
+        return device;
+    }
+
+    /**
+     * 
+     * @param device
+     *     The device
+     */
+    public void setDevice(List<Device> device) {
+        this.device = device;
     }
 
 }
