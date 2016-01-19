@@ -48,4 +48,8 @@ public class Device {
         this.model = model;
     }
 
+    public Device(String manufacturer, String model) {
+        this.manufacturer = manufacturer;
+        this.model = model;
+    }
 }
