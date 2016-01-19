@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONObject;
 
@@ -53,7 +56,7 @@ public class Toggle {
         getConfig(context, product);
     }
 
-    public static void init(final Context context, JSONObject product) throws Exception {
+    public static void init(final Context context, JsonElement product) throws Exception {
         init(context);
         getConfig(context, product);
     }
@@ -78,7 +81,7 @@ public class Toggle {
         storeProduct(product);
     }
 
-    public static void getConfig(final Context context,JSONObject productInJson) {
+    public static void getConfig(final Context context,JsonElement productInJson) {
         singleton.setSourceType(SourceType.JSONOBJECT);
         // store source
         storeSourceType(context, SourceType.JSONOBJECT);
@@ -115,23 +118,23 @@ public class Toggle {
     }
 
     /**
-     * TODO: Converts String to Product
+     * Converts String to Product
      *
      * @param productInString
      * @return
      */
-    private static Product convertStringToProduct(String productInString) {
-        return null;
+    private static Product convertStringToProduct(String productInString) throws JsonSyntaxException {
+        return new Gson().fromJson(productInString, Product.class);
     }
 
     /**
-     * TODO: Converts JSON to Product
+     * Converts JSON to Product
      *
      * @param productInJson
      * @return
      */
-    private static Product convertJSONObjectToProduct(JSONObject productInJson) {
-        return null;
+    private static Product convertJSONObjectToProduct(JsonElement productInJson) {
+        return new Gson().fromJson(productInJson, Product.class);
     }
 
     /**
