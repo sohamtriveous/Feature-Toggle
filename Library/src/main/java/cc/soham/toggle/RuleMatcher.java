@@ -22,15 +22,35 @@ public class RuleMatcher {
         Value value = rule.getValue();
         // match all the rule values
         if (matchApilevelMin(value.getApilevelMin()) &&
-                matchAppversionMax(value.getApilevelMax()) &&
-                matchAppversionMax(value.getAppversionMax()) &&
+                matchApilevelMax(value.getApilevelMax()) &&
                 matchAppversionMin(value.getAppversionMin()) &&
+                matchAppversionMax(value.getAppversionMax()) &&
                 matchDateMin(value.getDateMin()) &&
                 matchDateMax(value.getDateMax()) &&
                 matchBuildType(value.getBuildtype()) &&
                 matchDevice(value.getDevice()))
             return true;
         else return false;
+    }
+
+    public static int getBuildVersion() {
+        return android.os.Build.VERSION.SDK_INT;
+    }
+
+    public static int getVersionCode() {
+        return BuildConfig.VERSION_CODE;
+    }
+
+    public static String getBuildType() {
+        return BuildConfig.BUILD_TYPE;
+    }
+
+    public static String getManufacturer() {
+        return Build.MANUFACTURER;
+    }
+
+    public static String getModel() {
+        return Build.MODEL;
     }
 
     /**
@@ -42,7 +62,7 @@ public class RuleMatcher {
     public static boolean matchApilevelMin(int apilevelMin) {
         if (apilevelMin == -1)
             return true;
-        if (android.os.Build.VERSION.SDK_INT >= apilevelMin) return true;
+        if (getBuildVersion() >= apilevelMin) return true;
         else return false;
     }
 
@@ -55,32 +75,32 @@ public class RuleMatcher {
     public static boolean matchApilevelMax(int apilevelMax) {
         if (apilevelMax == -1)
             return true;
-        if (Build.VERSION.SDK_INT <= apilevelMax) return true;
+        if (getBuildVersion() <= apilevelMax) return true;
         else return false;
     }
 
     public static boolean matchAppversionMin(int appversionMin) {
         if (appversionMin == -1)
             return true;
-        if (BuildConfig.VERSION_CODE >= appversionMin) return true;
+        if (getVersionCode() >= appversionMin) return true;
         else return false;
     }
 
     public static boolean matchAppversionMax(int appversionMax) {
         if (appversionMax == -1)
             return true;
-        if (BuildConfig.VERSION_CODE <= appversionMax) return true;
+        if (getVersionCode() <= appversionMax) return true;
         else return false;
     }
 
-    public static boolean matchDateMin(int dateMin) {
+    public static boolean matchDateMin(long dateMin) {
         if (dateMin == -1)
             return true;
         if (System.currentTimeMillis() >= dateMin) return true;
         else return false;
     }
 
-    public static boolean matchDateMax(int dateMax) {
+    public static boolean matchDateMax(long dateMax) {
         if (dateMax == -1)
             return true;
         if (System.currentTimeMillis() <= dateMax) return true;
@@ -90,7 +110,7 @@ public class RuleMatcher {
     public static boolean matchBuildType(String buildType) {
         if (buildType == null)
             return true;
-        if (BuildConfig.BUILD_TYPE == buildType) return true;
+        if (getBuildType() == buildType) return true;
         else return false;
     }
 
@@ -111,13 +131,13 @@ public class RuleMatcher {
             }
             if (device.getManufacturer() != null) {
                 // if the manufacturer does not match, continue
-                if (!device.getManufacturer().equals(Build.MANUFACTURER)) {
+                if (!device.getManufacturer().equalsIgnoreCase(getManufacturer())) {
                     continue;
                 }
             }
             if (device.getModel() != null) {
                 // if the model does not match, continue
-                if (!device.getModel().equals(DeviceModelUtils.getModel())) {
+                if (!device.getModel().equalsIgnoreCase(DeviceModelUtils.getModel(getManufacturer(), getModel()))) {
                     continue;
                 }
             }
