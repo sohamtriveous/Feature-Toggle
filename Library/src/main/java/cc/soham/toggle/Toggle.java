@@ -1,6 +1,7 @@
 package cc.soham.toggle;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.anupcowkur.reservoir.Reservoir;
@@ -35,7 +36,8 @@ public class Toggle {
 
     static volatile Toggle singleton;
 
-    private static final String PRODUCT_KEY = "productKey";
+    private static final String PRODUCT_KEY = "toggle_productKey";
+    private static final String KEY_SOURCE_TYPE = "toggle_source_type";
 
     public static void init(final Context context) throws Exception {
         Reservoir.init(context, 10000);
@@ -48,56 +50,56 @@ public class Toggle {
 
     public static void init(final Context context, String product) throws Exception {
         init(context);
-        getConfig(product);
+        getConfig(context, product);
     }
 
     public static void init(final Context context, JSONObject product) throws Exception {
         init(context);
-        getConfig(product);
+        getConfig(context, product);
     }
 
     public static void init(final Context context, Product product) throws Exception {
         init(context);
-        getConfig(product);
+        getConfig(context, product);
     }
 
     public static void init(final Context context, URL productUrl) throws Exception {
         init(context);
-        getConfig(productUrl);
+        getConfig(context, productUrl);
     }
 
-    public static void getConfig(String productInString) {
+    public static void getConfig(final Context context,String productInString) {
         singleton.setSourceType(SourceType.STRING);
         // store source
-        storeSourceType(SourceType.STRING);
+        storeSourceType(context, SourceType.STRING);
         // convert from string to product
         Product product = convertStringToProduct(productInString);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(JSONObject productInJson) {
+    public static void getConfig(final Context context,JSONObject productInJson) {
         singleton.setSourceType(SourceType.JSONOBJECT);
         // store source
-        storeSourceType(SourceType.JSONOBJECT);
+        storeSourceType(context, SourceType.JSONOBJECT);
         // convert from json to product
         Product product = convertJSONObjectToProduct(productInJson);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(Product product) {
+    public static void getConfig(final Context context, Product product) {
         singleton.setSourceType(SourceType.PRODUCT);
         // store source
-        storeSourceType(SourceType.PRODUCT);
+        storeSourceType(context, SourceType.PRODUCT);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(URL productUrl) {
+    public static void getConfig(final Context context, URL productUrl) {
         singleton.setSourceType(SourceType.URL);
         // store source
-        storeSourceType(SourceType.URL);
+        storeSourceType(context, SourceType.URL);
     }
 
     public static FeatureCheckRequest.Builder check(String featureName) {
@@ -105,12 +107,11 @@ public class Toggle {
     }
 
     /**
-     * TODO: Stores the source type in disk
      *
      * @param sourceType
      */
-    private static void storeSourceType(SourceType sourceType) {
-
+    private static void storeSourceType(final Context context, SourceType sourceType) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_TYPE, sourceType.name()).apply();
     }
 
     /**
