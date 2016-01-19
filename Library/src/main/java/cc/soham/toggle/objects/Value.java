@@ -145,4 +145,14 @@ public class Value {
         this.device = device;
     }
 
+    public Value(Integer apilevelMin, Integer apilevelMax, Integer appversionMin, Integer appversionMax, Long dateMin, Long dateMax, String buildtype, List<Device> device) {
+        this.apilevelMin = apilevelMin;
+        this.apilevelMax = apilevelMax;
+        this.appversionMin = appversionMin;
+        this.appversionMax = appversionMax;
+        this.dateMin = dateMin;
+        this.dateMax = dateMax;
+        this.buildtype = buildtype;
+        this.device = device;
+    }
 }

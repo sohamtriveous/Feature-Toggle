@@ -69,4 +69,9 @@ public class Rule {
         this.value = value;
     }
 
+    public Rule(Boolean enabled, String metadata, Value value) {
+        this.enabled = enabled;
+        this.metadata = metadata;
+        this.value = value;
+    }
 }

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.soham.toggle.objects.Device;
+import cc.soham.toggle.objects.Rule;
+import cc.soham.toggle.objects.Value;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -319,7 +321,6 @@ public class RuleMatcherTests {
         Device device = new Device("xiaomi", "mi3");
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.mockStatic(TextUtils.class);
-//        PowerMockito.spy(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
         Mockito.when(RuleMatcher.getManufacturer()).thenReturn("xiaomi");
         Mockito.when(RuleMatcher.getModel()).thenReturn("mi3");
@@ -334,7 +335,6 @@ public class RuleMatcherTests {
         Device device = new Device("xiaomi", "mi3");
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.mockStatic(TextUtils.class);
-//        PowerMockito.spy(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
         Mockito.when(RuleMatcher.getManufacturer()).thenReturn("samsung");
         Mockito.when(RuleMatcher.getModel()).thenReturn("mi3");
@@ -349,7 +349,6 @@ public class RuleMatcherTests {
         Device device = new Device("xiaomi", "mi3");
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.mockStatic(TextUtils.class);
-//        PowerMockito.spy(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
         Mockito.when(RuleMatcher.getManufacturer()).thenReturn("xiaomi");
         Mockito.when(RuleMatcher.getModel()).thenReturn("mi4");
@@ -364,13 +363,141 @@ public class RuleMatcherTests {
         Device device = new Device("xiaomi", "mi3");
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.mockStatic(TextUtils.class);
-//        PowerMockito.spy(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
         Mockito.when(RuleMatcher.getManufacturer()).thenReturn("samsung");
         Mockito.when(RuleMatcher.getModel()).thenReturn("galaxys4");
         List<Device> deviceList = new ArrayList<>();
         deviceList.add(device);
         boolean result = RuleMatcher.matchDevice(new ArrayList<Device>(deviceList));
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void matchRule_apiLevelCheck_correct_returnsTrue() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
+        Rule rule = new Rule(false, null, new Value(14, -1, -1, -1, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void matchRule_apiLevelCheck_incorrect_returnsFalse() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
+        Rule rule = new Rule(false, null, new Value(23, -1, -1, -1, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_correct_returnsTrue() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Rule rule = new Rule(false, null, new Value(14, 22, -1, -1, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_incorrect_returnsFalse() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Rule rule = new Rule(false, null, new Value(14, 16, -1, -1, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_correct_returnsTrue() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_incorrect_returnsFalse() {
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        Rule rule = new Rule(false, null, new Value(14, 22, 110, 120, -1L, -1L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_dateMixMaxCheck_correct_returnsTrue() {
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.spy(System.class);
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_dateMixMaxCheck_incorrect_returnsFalse() {
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.spy(System.class);
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1453199990000L, 1453199999999L, null, null));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void matchRule_allCheck_correct_returnsTrue() {
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.spy(System.class);
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+
+        PowerMockito.mockStatic(TextUtils.class);
+        Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
+        Mockito.when(RuleMatcher.getManufacturer()).thenReturn("xiaomi");
+        Mockito.when(RuleMatcher.getModel()).thenReturn("mi3");
+
+        // just for xiaomi devices
+        Device device = new Device("xiaomi", null);
+        List<Device> deviceList = new ArrayList<>();
+        deviceList.add(device);
+
+        Mockito.when(RuleMatcher.getBuildType()).thenReturn("release");
+
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
+        boolean result = RuleMatcher.matchRule(rule);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void matchRule_allCheck_incorrect_returnsFalse() {
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.spy(System.class);
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+
+        PowerMockito.mockStatic(TextUtils.class);
+        Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
+        Mockito.when(RuleMatcher.getManufacturer()).thenReturn("samsung");
+        Mockito.when(RuleMatcher.getModel()).thenReturn("galaxys4");
+
+        Device device = new Device("xiaomi", "mi3");
+        List<Device> deviceList = new ArrayList<>();
+        deviceList.add(device);
+
+        Mockito.when(RuleMatcher.getBuildType()).thenReturn("release");
+
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
+        boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
 }
