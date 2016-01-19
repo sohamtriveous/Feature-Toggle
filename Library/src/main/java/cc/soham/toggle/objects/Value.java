@@ -22,10 +22,10 @@ public class Value {
     private Integer appversionMax = -1;
     @SerializedName("date_min")
     @Expose
-    private Integer dateMin = -1;
+    private Long dateMin = -1L;
     @SerializedName("date_max")
     @Expose
-    private Integer dateMax = -1;
+    private Long dateMax = -1L;
     @SerializedName("buildtype")
     @Expose
     private String buildtype = null;
@@ -92,28 +92,28 @@ public class Value {
     /**
      * @return The dateMin
      */
-    public Integer getDateMin() {
+    public Long getDateMin() {
         return dateMin;
     }
 
     /**
      * @param dateMin The date_min
      */
-    public void setDateMin(Integer dateMin) {
+    public void setDateMin(Long dateMin) {
         this.dateMin = dateMin;
     }
 
     /**
      * @return The dateMax
      */
-    public Integer getDateMax() {
+    public Long getDateMax() {
         return dateMax;
     }
 
     /**
      * @param dateMax The date_max
      */
-    public void setDateMax(Integer dateMax) {
+    public void setDateMax(Long dateMax) {
         this.dateMax = dateMax;
     }
 
