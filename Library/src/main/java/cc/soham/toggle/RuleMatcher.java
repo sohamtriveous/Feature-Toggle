@@ -117,7 +117,7 @@ public class RuleMatcher {
             }
             if (device.getModel() != null) {
                 // if the model does not match, continue
-                if (!device.getModel().equals(DeviceNameGenerator.getModel())) {
+                if (!device.getModel().equals(DeviceModelUtils.getModel())) {
                     continue;
                 }
             }

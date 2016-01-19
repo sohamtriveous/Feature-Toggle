@@ -105,7 +105,7 @@ public class Toggle {
     }
 
     /**
-     * Stores the source type in disk
+     * TODO: Stores the source type in disk
      *
      * @param sourceType
      */
@@ -113,10 +113,22 @@ public class Toggle {
 
     }
 
+    /**
+     * TODO: Converts String to Product
+     *
+     * @param productInString
+     * @return
+     */
     private static Product convertStringToProduct(String productInString) {
         return null;
     }
 
+    /**
+     * TODO: Converts JSON to Product
+     *
+     * @param productInJson
+     * @return
+     */
     private static Product convertJSONObjectToProduct(JSONObject productInJson) {
         return null;
     }
@@ -128,6 +140,15 @@ public class Toggle {
      */
     private static void storeProduct(Product product) {
         Reservoir.putAsync(PRODUCT_KEY, product);
+    }
+
+    /**
+     * Retrieves the product from disk
+     *
+     * @param productReservoirGetCallback
+     */
+    private static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
+        Reservoir.getAsync(PRODUCT_KEY, Product.class, productReservoirGetCallback);
     }
 
     // non singleton methods
@@ -157,6 +178,7 @@ public class Toggle {
     /**
      * Handles a featureCheckRequest
      * Called once a check is initiated for a given feature (name)
+     *
      * @param featureCheckRequest
      */
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
@@ -190,6 +212,7 @@ public class Toggle {
     /**
      * Get the result of handling a given feature
      * (when a match between a requested feature and the store feature is found)
+     *
      * @param featureCheckRequest
      * @param feature
      * @return
@@ -198,7 +221,7 @@ public class Toggle {
         if (feature.getState() == null) {
             // state is null, so we can check the rules
             for (Rule rule : feature.getRules()) {
-                if (matchRule(featureCheckRequest, rule)) {
+                if (RuleMatcher.matchRule(rule)) {
                     // if a rule is matched
                     // return an enum which contains
                     // a) whether we should enable/disable the feature
@@ -244,15 +267,4 @@ public class Toggle {
         }
     }
 
-    /**
-     * TODO: Checks if the given featureCheckRequest (with feature) matches the given rule
-     * This is after the feature name has been matched between the FeatureCheckRequest and a stored product Feature
-     *
-     * @param featureCheckRequest
-     * @param rule
-     * @return
-     */
-    private boolean matchRule(final FeatureCheckRequest featureCheckRequest, Rule rule) {
-        return true;
-    }
 }
