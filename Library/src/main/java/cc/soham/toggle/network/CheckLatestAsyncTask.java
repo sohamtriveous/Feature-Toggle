@@ -6,9 +6,10 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
+import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.PersistUtils;
-import cc.soham.toggle.Toggle;
+import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Product;
 
 /**
@@ -52,7 +53,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             if (featureCheckResponse != null) {
                 featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), false);
             } else {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == Toggle.State.ENABLED, PersistUtils.METADATA_DEFAULT, true);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, PersistUtils.METADATA_DEFAULT, true);
             }
         }
     }
@@ -69,7 +70,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             // make network request to receive response
             String response = NetworkOperations.downloadUrl(url);
             // convert string to product
-            Product product = Toggle.convertStringToProduct(response);
+            Product product = ConversionUtils.convertStringToProduct(response);
             // store product
             PersistUtils.storeProduct(product);
             // process the resultant product

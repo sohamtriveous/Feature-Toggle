@@ -2,6 +2,7 @@ package cc.soham.toggle;
 
 import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.callbacks.ErrorCallback;
+import cc.soham.toggle.enums.State;
 
 /**
  * Represents a feature check request
@@ -14,7 +15,7 @@ public class FeatureCheckRequest {
     private final Callback callback;
 
     // Optional parameters
-    private final Toggle.State defaultState;
+    private final State defaultState;
     private final boolean getLatest;
     private final ErrorCallback errorCallback;
 
@@ -25,7 +26,7 @@ public class FeatureCheckRequest {
         private Callback callback;
 
         // Optional parameters
-        Toggle.State defaultState = Toggle.State.ENABLED;
+        State defaultState = State.ENABLED;
         boolean getLatest;
         ErrorCallback errorCallback;
 
@@ -34,7 +35,7 @@ public class FeatureCheckRequest {
             this.featureName = featureName;
         }
 
-        public Builder defaultState(Toggle.State defaultState) {
+        public Builder defaultState(State defaultState) {
             this.defaultState = defaultState;
             return this;
         }
@@ -49,7 +50,7 @@ public class FeatureCheckRequest {
             return this;
         }
 
-        public FeatureCheckRequest launch(Callback callback) {
+        public FeatureCheckRequest start(Callback callback) {
             this.callback = callback;
             return new FeatureCheckRequest(this);
         }
@@ -73,7 +74,7 @@ public class FeatureCheckRequest {
         return callback;
     }
 
-    public Toggle.State getDefaultState() {
+    public State getDefaultState() {
         return defaultState;
     }
 

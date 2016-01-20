@@ -5,13 +5,14 @@ import android.support.annotation.NonNull;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonSyntaxException;
 
 import java.net.URL;
 
 import cc.soham.toggle.callbacks.GetConfigCallback;
+import cc.soham.toggle.enums.ResponseDecision;
+import cc.soham.toggle.enums.SourceType;
+import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
 import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.network.GetConfigAsyncTask;
@@ -31,19 +32,27 @@ public class Toggle {
     // TODO: improve documentation
     // TODO: check and improve all API calls
 
-    public enum State {
-        ENABLED,
-        DISABLED
-    }
+    public static final String ENABLED = "enabled";
+    public static final String DISABLED = "disabled";
 
-    public enum SourceType {
-        STRING,
-        JSONOBJECT,
-        PRODUCT,
-        URL
+    private static volatile Toggle singleton;
+
+    public static Toggle with(final Context context) {
+        if (singleton == null) {
+            try {
+                Reservoir.init(context.getApplicationContext(), 20000);
+                synchronized (Toggle.class) {
+                    singleton = new Toggle(context);
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+        return singleton;
     }
 
     private Context context;
+    private SourceType sourceType;
 
     public Toggle(Context context) {
         if (context == null) {
@@ -52,134 +61,53 @@ public class Toggle {
         this.context = context.getApplicationContext();
     }
 
-    public static final String ENABLED = "enabled";
-    public static final String DISABLED = "disabled";
-
-    static volatile Toggle singleton;
-
-    public static final String PRODUCT_KEY = "toggle_productKey";
-
-    public static void init(final Context context) throws Exception {
-        if (singleton == null) {
-            Reservoir.init(context.getApplicationContext(), 20000);
-            synchronized (Toggle.class) {
-                singleton = new Toggle(context);
-            }
-        }
-    }
-
-    public static void init(final Context context, String product) throws Exception {
-        init(context);
-        getConfig(product);
-    }
-
-    public static void init(final Context context, JsonElement product) throws Exception {
-        init(context);
-        getConfig(product);
-    }
-
-    public static void init(final Context context, Product product) throws Exception {
-        init(context);
-        getConfig(product);
-    }
-
-    public static void init(final Context context, URL productUrl) throws Exception {
-        init(context);
-        getConfig(productUrl);
-    }
-
-    public static void init(final Context context, URL productUrl, GetConfigCallback getConfigCallback) throws Exception {
-        init(context);
-        getConfig(productUrl, getConfigCallback);
-    }
-
-    public static void getConfig(String productInString) {
-        singleton.setSourceType(SourceType.STRING);
-        // store source
-        PersistUtils.storeSourceType(singleton.getContext(), SourceType.STRING);
-        // convert from string to product
-        Product product = convertStringToProduct(productInString);
-        // store product
-        PersistUtils.storeProduct(product);
-    }
-
-    public static void getConfig(JsonElement productInJson) {
-        singleton.setSourceType(SourceType.JSONOBJECT);
-        // store source
-        PersistUtils.storeSourceType(singleton.getContext(), SourceType.JSONOBJECT);
-        // convert from json to product
-        Product product = convertJSONObjectToProduct(productInJson);
-        // store product
-        PersistUtils.storeProduct(product);
-    }
-
-    public static void getConfig(Product product) {
-        singleton.setSourceType(SourceType.PRODUCT);
-        // store source
-        PersistUtils.storeSourceType(singleton.getContext(), SourceType.PRODUCT);
-        // store product
-        PersistUtils.storeProduct(product);
-    }
-
-    public static void getConfig(URL productUrl) {
-        getConfig(productUrl, null);
-    }
-
-    public static void getConfig(URL productUrl, GetConfigCallback getConfigCallback) {
-        singleton.setSourceType(SourceType.URL);
-        // store source
-        PersistUtils.storeSourceType(singleton.getContext(), SourceType.URL);
-        PersistUtils.storeSourceURL(singleton.getContext(), productUrl);
-        // make the network request and store the results
-        GetConfigAsyncTask.start(productUrl.toExternalForm(), getConfigCallback);
-    }
-
-    public static FeatureCheckRequest.Builder check(String featureName) {
-        return new FeatureCheckRequest.Builder(singleton, featureName);
-    }
-
-    /**
-     * Converts String to Product
-     *
-     * @param productInString
-     * @return
-     */
-    public static Product convertStringToProduct(String productInString) throws JsonSyntaxException {
-        return new Gson().fromJson(productInString, Product.class);
-    }
-
-    /**
-     * Converts JSON to Product
-     *
-     * @param productInJson
-     * @return
-     */
-    public static Product convertJSONObjectToProduct(JsonElement productInJson) {
-        return new Gson().fromJson(productInJson, Product.class);
-    }
-
-    // non singleton methods
-
-    private SourceType sourceType;
-
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
     }
 
-    private enum ResponseDecision {
-        RESPONSE_UNDECIDED,
-        RESPONSE_ENABLED,
-        RESPONSE_DISABLED;
+    public void getConfig(String productInString) {
+        setSourceType(SourceType.STRING);
+        // store source
+        PersistUtils.storeSourceType(getContext(), SourceType.STRING);
+        // convert from string to product
+        Product product = ConversionUtils.convertStringToProduct(productInString);
+        // store product
+        PersistUtils.storeProduct(product);
+    }
 
-        private String metadata;
+    public void getConfig(JsonElement productInJson) {
+        setSourceType(SourceType.JSONOBJECT);
+        // store source
+        PersistUtils.storeSourceType(getContext(), SourceType.JSONOBJECT);
+        // convert from json to product
+        Product product = ConversionUtils.convertJSONObjectToProduct(productInJson);
+        // store product
+        PersistUtils.storeProduct(product);
+    }
 
-        public void setMetadata(String metadata) {
-            this.metadata = metadata;
-        }
+    public void getConfig(Product product) {
+        setSourceType(SourceType.PRODUCT);
+        // store source
+        PersistUtils.storeSourceType(getContext(), SourceType.PRODUCT);
+        // store product
+        PersistUtils.storeProduct(product);
+    }
 
-        public String getMetadata() {
-            return metadata;
-        }
+    public void getConfig(URL productUrl) {
+        getConfig(productUrl, null);
+    }
+
+    public void getConfig(URL productUrl, GetConfigCallback getConfigCallback) {
+        setSourceType(SourceType.URL);
+        // store source
+        PersistUtils.storeSourceType(getContext(), SourceType.URL);
+        PersistUtils.storeSourceURL(getContext(), productUrl);
+        // make the network request and store the results
+        GetConfigAsyncTask.start(productUrl.toExternalForm(), getConfigCallback);
+    }
+
+    public FeatureCheckRequest.Builder check(String featureName) {
+        return new FeatureCheckRequest.Builder(singleton, featureName);
     }
 
     /**
@@ -189,6 +117,9 @@ public class Toggle {
      * @param featureCheckRequest
      */
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
+        if (sourceType == null) {
+            sourceType = PersistUtils.getSourceType(getContext());
+        }
         if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.shouldGetLatest()) {
             getAndProcessCachedProduct(featureCheckRequest);
         } else {
@@ -302,7 +233,7 @@ public class Toggle {
 
     @NonNull
     private ResponseDecision getDefaultResponseDecision(Feature feature) {
-        if(feature.getDefault() == null) {
+        if (feature.getDefault() == null) {
             return ResponseDecision.RESPONSE_ENABLED;
         }
         if (feature.getDefault().equals(ENABLED)) {

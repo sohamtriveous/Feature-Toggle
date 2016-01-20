@@ -7,8 +7,8 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
+import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.PersistUtils;
-import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.GetConfigCallback;
 import cc.soham.toggle.objects.Product;
 
@@ -68,7 +68,7 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
             // make network request to receive response
             String response = NetworkOperations.downloadUrl(url);
             // convert string to product
-            Product product = Toggle.convertStringToProduct(response);
+            Product product = ConversionUtils.convertStringToProduct(response);
             // store product
             PersistUtils.storeProduct(product);
             return new GetConfigResponse(product);
