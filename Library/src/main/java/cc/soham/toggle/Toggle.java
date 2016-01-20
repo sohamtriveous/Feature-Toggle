@@ -29,7 +29,7 @@ public class Toggle {
     // TODO: explore the Toggle.with(context).getConfig(url) API STYLE
     // TODO: explore the Toggle.with(context).check("video").getLatest().defaultState(State.ENABLED).start(new Callback...)
     // TODO: expand the samples to cover different styles of Toggling
-    // TODO: improve asynctask initialisation
+    // TODO: improve asynctask2 initialisation
     // TODO: improve documentation
     // TODO: check and improve all API calls
 
