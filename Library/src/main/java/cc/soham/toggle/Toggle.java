@@ -10,10 +10,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 
-import org.json.JSONObject;
-
 import java.net.URL;
 
+import cc.soham.toggle.callbacks.GetConfigCallback;
+import cc.soham.toggle.network.CheckLatestAsyncTask;
+import cc.soham.toggle.network.FeatureCheckResponse;
+import cc.soham.toggle.network.GetConfigAsyncTask;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.Product;
 import cc.soham.toggle.objects.Rule;
@@ -34,6 +36,15 @@ public class Toggle {
         URL
     }
 
+    private Context context;
+
+    public Toggle(Context context) {
+        if (context == null) {
+            throw new IllegalArgumentException("Context must not be null.");
+        }
+        this.context = context.getApplicationContext();
+    }
+
     private static final String ENABLED = "enabled";
     private static final String DISABLED = "disabled";
 
@@ -41,68 +52,83 @@ public class Toggle {
 
     private static final String PRODUCT_KEY = "toggle_productKey";
     private static final String KEY_SOURCE_TYPE = "toggle_source_type";
+    private static final String KEY_SOURCE_URL = "toggle_source_url";
+
+    private static final String METADATA_DEFAULT = "toggle_metadata_default";
 
     public static void init(final Context context) throws Exception {
-        Reservoir.init(context, 10000);
         if (singleton == null) {
+            Reservoir.init(context.getApplicationContext(), 10000);
             synchronized (Toggle.class) {
-                singleton = new Toggle();
+                singleton = new Toggle(context);
             }
         }
     }
 
     public static void init(final Context context, String product) throws Exception {
         init(context);
-        getConfig(context, product);
+        getConfig(product);
     }
 
     public static void init(final Context context, JsonElement product) throws Exception {
         init(context);
-        getConfig(context, product);
+        getConfig(product);
     }
 
     public static void init(final Context context, Product product) throws Exception {
         init(context);
-        getConfig(context, product);
+        getConfig(product);
     }
 
     public static void init(final Context context, URL productUrl) throws Exception {
         init(context);
-        getConfig(context, productUrl);
+        getConfig(productUrl);
     }
 
-    public static void getConfig(final Context context,String productInString) {
+    public static void init(final Context context, URL productUrl, GetConfigCallback getConfigCallback) throws Exception {
+        init(context);
+        getConfig(productUrl, getConfigCallback);
+    }
+
+    public static void getConfig(String productInString) {
         singleton.setSourceType(SourceType.STRING);
         // store source
-        storeSourceType(context, SourceType.STRING);
+        storeSourceType(singleton.getContext(), SourceType.STRING);
         // convert from string to product
         Product product = convertStringToProduct(productInString);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(final Context context,JsonElement productInJson) {
+    public static void getConfig(JsonElement productInJson) {
         singleton.setSourceType(SourceType.JSONOBJECT);
         // store source
-        storeSourceType(context, SourceType.JSONOBJECT);
+        storeSourceType(singleton.getContext(), SourceType.JSONOBJECT);
         // convert from json to product
         Product product = convertJSONObjectToProduct(productInJson);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(final Context context, Product product) {
+    public static void getConfig(Product product) {
         singleton.setSourceType(SourceType.PRODUCT);
         // store source
-        storeSourceType(context, SourceType.PRODUCT);
+        storeSourceType(singleton.getContext(), SourceType.PRODUCT);
         // store product
         storeProduct(product);
     }
 
-    public static void getConfig(final Context context, URL productUrl) {
+    public static void getConfig(URL productUrl) {
+        getConfig(productUrl, null);
+    }
+
+    public static void getConfig(URL productUrl, GetConfigCallback getConfigCallback) {
         singleton.setSourceType(SourceType.URL);
         // store source
-        storeSourceType(context, SourceType.URL);
+        storeSourceType(singleton.getContext(), SourceType.URL);
+        storeSourceURL(singleton.getContext(), productUrl);
+        // make the network request and store the results
+        GetConfigAsyncTask.start(productUrl.getPath(), getConfigCallback);
     }
 
     public static FeatureCheckRequest.Builder check(String featureName) {
@@ -110,6 +136,7 @@ public class Toggle {
     }
 
     /**
+     * Store the source type
      *
      * @param sourceType
      */
@@ -118,12 +145,25 @@ public class Toggle {
     }
 
     /**
+     * Store the source url
+     *
+     * @param url
+     */
+    private static void storeSourceURL(final Context context, URL url) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_URL, url.getPath()).apply();
+    }
+
+    public static String getSourceUrl(final Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_SOURCE_URL, null);
+    }
+
+    /**
      * Converts String to Product
      *
      * @param productInString
      * @return
      */
-    private static Product convertStringToProduct(String productInString) throws JsonSyntaxException {
+    public static Product convertStringToProduct(String productInString) throws JsonSyntaxException {
         return new Gson().fromJson(productInString, Product.class);
     }
 
@@ -133,7 +173,7 @@ public class Toggle {
      * @param productInJson
      * @return
      */
-    private static Product convertJSONObjectToProduct(JsonElement productInJson) {
+    public static Product convertJSONObjectToProduct(JsonElement productInJson) {
         return new Gson().fromJson(productInJson, Product.class);
     }
 
@@ -142,7 +182,7 @@ public class Toggle {
      *
      * @param product
      */
-    private static void storeProduct(Product product) {
+    public static void storeProduct(Product product) {
         Reservoir.putAsync(PRODUCT_KEY, product);
     }
 
@@ -151,7 +191,7 @@ public class Toggle {
      *
      * @param productReservoirGetCallback
      */
-    private static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
+    public static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
         Reservoir.getAsync(PRODUCT_KEY, Product.class, productReservoirGetCallback);
     }
 
@@ -186,20 +226,15 @@ public class Toggle {
      * @param featureCheckRequest
      */
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
-        if (!featureCheckRequest.shouldGetLatest() || !sourceType.equals(SourceType.URL)) {
+        if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.shouldGetLatest()) {
             // get cached or get default
-            Reservoir.getAsync(PRODUCT_KEY, Product.class, new ReservoirGetCallback<Product>() {
+            getProduct(new ReservoirGetCallback<Product>() {
 
                 @Override
-                public void onSuccess(Product object) {
-                    for (Feature feature : object.getFeatures()) {
-                        if (feature.getName().equals(featureCheckRequest.getFeatureName())) {
-                            ResponseDecision responseDecision = handleFeature(featureCheckRequest, feature);
-                            if (responseDecision.equals(ResponseDecision.RESPONSE_ENABLED) || responseDecision.equals(ResponseDecision.RESPONSE_DISABLED)) {
-                                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), responseDecision.equals(ResponseDecision.RESPONSE_ENABLED), responseDecision.getMetadata());
-                            }
-                        }
-                    }
+                public void onSuccess(Product product) {
+                    // process the product
+                    FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+                    featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata());
                 }
 
                 @Override
@@ -210,18 +245,39 @@ public class Toggle {
             });
         } else {
             // make network featureCheckRequest
+            makeNetworkFeatureCheckRequest(featureCheckRequest);
         }
+    }
+
+    public FeatureCheckResponse processProduct(Product product, FeatureCheckRequest featureCheckRequest) {
+        for (Feature feature : product.getFeatures()) {
+            // find the given feature in the received Product
+            if (feature.getName().equals(featureCheckRequest.getFeatureName())) {
+                ResponseDecision responseDecision = handleFeature(feature);
+                // if there is a decisive decision (either enabled or disabled) initiate the callback and break
+                if (responseDecision.equals(ResponseDecision.RESPONSE_ENABLED) || responseDecision.equals(ResponseDecision.RESPONSE_DISABLED)) {
+                    return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), responseDecision.equals(ResponseDecision.RESPONSE_ENABLED), responseDecision.getMetadata());
+                }
+            }
+        }
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT);
+    }
+
+    /**
+     * makes a network request for the given params
+     */
+    public void makeNetworkFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
+        CheckLatestAsyncTask.start(featureCheckRequest);
     }
 
     /**
      * Get the result of handling a given feature
      * (when a match between a requested feature and the store feature is found)
      *
-     * @param featureCheckRequest
      * @param feature
      * @return
      */
-    private ResponseDecision handleFeature(final FeatureCheckRequest featureCheckRequest, final Feature feature) {
+    private ResponseDecision handleFeature(final Feature feature) {
         if (feature.getState() == null) {
             // state is null, so we can check the rules
             for (Rule rule : feature.getRules()) {
@@ -271,4 +327,7 @@ public class Toggle {
         }
     }
 
+    public Context getContext() {
+        return context;
+    }
 }

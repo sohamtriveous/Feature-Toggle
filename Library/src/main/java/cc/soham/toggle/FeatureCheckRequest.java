@@ -11,7 +11,7 @@ public class FeatureCheckRequest {
     // Required parameters
     private final Toggle toggle;
     private final String featureName;
-    private final  Callback callback;
+    private final Callback callback;
 
     // Optional parameters
     private final Toggle.State defaultState;
@@ -83,5 +83,9 @@ public class FeatureCheckRequest {
 
     public ErrorCallback getErrorCallback() {
         return errorCallback;
+    }
+
+    public Toggle getToggle() {
+        return toggle;
     }
 }
