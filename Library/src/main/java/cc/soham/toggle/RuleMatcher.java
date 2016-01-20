@@ -59,8 +59,8 @@ public class RuleMatcher {
      * @param apilevelMin
      * @return
      */
-    public static boolean matchApilevelMin(int apilevelMin) {
-        if (apilevelMin == -1)
+    public static boolean matchApilevelMin(Integer apilevelMin) {
+        if (apilevelMin == null)
             return true;
         if (getBuildVersion() >= apilevelMin) return true;
         else return false;
@@ -72,36 +72,36 @@ public class RuleMatcher {
      * @param apilevelMax
      * @return
      */
-    public static boolean matchApilevelMax(int apilevelMax) {
-        if (apilevelMax == -1)
+    public static boolean matchApilevelMax(Integer apilevelMax) {
+        if (apilevelMax == null)
             return true;
         if (getBuildVersion() <= apilevelMax) return true;
         else return false;
     }
 
-    public static boolean matchAppversionMin(int appversionMin) {
-        if (appversionMin == -1)
+    public static boolean matchAppversionMin(Integer appversionMin) {
+        if (appversionMin == null)
             return true;
         if (getVersionCode() >= appversionMin) return true;
         else return false;
     }
 
-    public static boolean matchAppversionMax(int appversionMax) {
-        if (appversionMax == -1)
+    public static boolean matchAppversionMax(Integer appversionMax) {
+        if (appversionMax == null)
             return true;
         if (getVersionCode() <= appversionMax) return true;
         else return false;
     }
 
-    public static boolean matchDateMin(long dateMin) {
-        if (dateMin == -1)
+    public static boolean matchDateMin(Long dateMin) {
+        if (dateMin == null)
             return true;
         if (System.currentTimeMillis() >= dateMin) return true;
         else return false;
     }
 
-    public static boolean matchDateMax(long dateMax) {
-        if (dateMax == -1)
+    public static boolean matchDateMax(Long dateMax) {
+        if (dateMax == null)
             return true;
         if (System.currentTimeMillis() <= dateMax) return true;
         else return false;

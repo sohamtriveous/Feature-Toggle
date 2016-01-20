@@ -10,25 +10,25 @@ public class Value {
 
     @SerializedName("apilevel_min")
     @Expose
-    private Integer apilevelMin = -1;
+    private Integer apilevelMin;
     @SerializedName("apilevel_max")
     @Expose
-    private Integer apilevelMax = -1;
+    private Integer apilevelMax;
     @SerializedName("appversion_min")
     @Expose
-    private Integer appversionMin = -1;
+    private Integer appversionMin;
     @SerializedName("appversion_max")
     @Expose
-    private Integer appversionMax = -1;
+    private Integer appversionMax;
     @SerializedName("date_min")
     @Expose
-    private Long dateMin = -1L;
+    private Long dateMin;
     @SerializedName("date_max")
     @Expose
-    private Long dateMax = -1L;
+    private Long dateMax;
     @SerializedName("buildtype")
     @Expose
-    private String buildtype = null;
+    private String buildtype;
     @SerializedName("device")
     @Expose
     private List<Device> device = new ArrayList<>();

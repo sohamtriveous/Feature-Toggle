@@ -15,6 +15,7 @@ import cc.soham.toggle.objects.Product;
  */
 public class GetConfigAsyncTask extends AsyncTask<GetConfigParams, Void, Product> {
     private GetConfigParams getConfigParams;
+    boolean cached = false;
 
     @Override
     protected Product doInBackground(GetConfigParams... params) {
@@ -34,6 +35,17 @@ public class GetConfigAsyncTask extends AsyncTask<GetConfigParams, Void, Product
             e.printStackTrace();
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (product == null) {
+            try {
+                product = Toggle.getProductSync();
+                cached = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return product;
@@ -42,8 +54,8 @@ public class GetConfigAsyncTask extends AsyncTask<GetConfigParams, Void, Product
     @Override
     protected void onPostExecute(Product product) {
         // make the callback if configured
-        if (getConfigParams != null && getConfigParams.getConfigCallback != null) {
-            getConfigParams.getConfigCallback().onConfigReceived(product);
+        if (getConfigParams != null && getConfigParams.getConfigCallback != null && product != null) {
+            getConfigParams.getConfigCallback().onConfigReceived(product, cached);
         }
     }
 

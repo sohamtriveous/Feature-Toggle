@@ -45,20 +45,20 @@ public class Toggle {
         this.context = context.getApplicationContext();
     }
 
-    private static final String ENABLED = "enabled";
-    private static final String DISABLED = "disabled";
+    public static final String ENABLED = "enabled";
+    public static final String DISABLED = "disabled";
 
     static volatile Toggle singleton;
 
-    private static final String PRODUCT_KEY = "toggle_productKey";
+    public static final String PRODUCT_KEY = "toggle_productKey";
     private static final String KEY_SOURCE_TYPE = "toggle_source_type";
     private static final String KEY_SOURCE_URL = "toggle_source_url";
 
-    private static final String METADATA_DEFAULT = "toggle_metadata_default";
+    public static final String METADATA_DEFAULT = "toggle_metadata_default";
 
     public static void init(final Context context) throws Exception {
         if (singleton == null) {
-            Reservoir.init(context.getApplicationContext(), 10000);
+            Reservoir.init(context.getApplicationContext(), 20000);
             synchronized (Toggle.class) {
                 singleton = new Toggle(context);
             }
@@ -183,7 +183,7 @@ public class Toggle {
      * @param product
      */
     public static void storeProduct(Product product) {
-        Reservoir.putAsync(PRODUCT_KEY, product);
+        Reservoir.putAsync(PRODUCT_KEY, product, null);
     }
 
     /**
@@ -193,6 +193,10 @@ public class Toggle {
      */
     public static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
         Reservoir.getAsync(PRODUCT_KEY, Product.class, productReservoirGetCallback);
+    }
+
+    public static Product getProductSync() throws Exception {
+        return Reservoir.get(PRODUCT_KEY, Product.class);
     }
 
     // non singleton methods
@@ -227,25 +231,44 @@ public class Toggle {
      */
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
         if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.shouldGetLatest()) {
-            // get cached or get default
-            getProduct(new ReservoirGetCallback<Product>() {
-
-                @Override
-                public void onSuccess(Product product) {
-                    // process the product
-                    FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
-                    featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata());
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    // couldnt retrieve a stored product, send back the default response
-                    featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null);
-                }
-            });
+            getAndProcessCachedProduct(featureCheckRequest);
         } else {
             // make network featureCheckRequest
             makeNetworkFeatureCheckRequest(featureCheckRequest);
+        }
+    }
+
+    public void getAndProcessCachedProduct(final FeatureCheckRequest featureCheckRequest) {
+        // get cached or get default
+        getProduct(new ReservoirGetCallback<Product>() {
+            @Override
+            public void onSuccess(Product product) {
+                // process the product
+                FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+                // make the callback
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // couldnt retrieve a stored product, send back the default response
+                e.printStackTrace();
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT, true);
+            }
+        });
+    }
+
+    public FeatureCheckResponse getAndProcessCachedProductSync(final FeatureCheckRequest featureCheckRequest) {
+        try {
+            Product product = getProductSync();
+            // process the product
+            FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+            // make the callback
+            featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
+            return featureCheckResponse;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT, true);
         }
     }
 
@@ -311,7 +334,7 @@ public class Toggle {
 
     @NonNull
     private ResponseDecision getStatePoweredResponseDecision(Feature feature) {
-        if (feature.getState() == ENABLED) {
+        if (feature.getState().equalsIgnoreCase(ENABLED)) {
             return ResponseDecision.RESPONSE_ENABLED;
         } else {
             return ResponseDecision.RESPONSE_DISABLED;
@@ -320,6 +343,9 @@ public class Toggle {
 
     @NonNull
     private ResponseDecision getDefaultResponseDecision(Feature feature) {
+        if(feature.getDefault() == null) {
+            return ResponseDecision.RESPONSE_ENABLED;
+        }
         if (feature.getDefault().equals(ENABLED)) {
             return ResponseDecision.RESPONSE_ENABLED;
         } else {

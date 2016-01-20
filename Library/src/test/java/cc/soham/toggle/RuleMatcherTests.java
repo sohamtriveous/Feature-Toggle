@@ -70,7 +70,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchApilevelMax_default_returnsTrue() {
-        boolean result = RuleMatcher.matchApilevelMax(-1);
+        boolean result = RuleMatcher.matchApilevelMax(null);
         assertThat(result).isTrue();
     }
 
@@ -106,7 +106,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchApilevelMin_default_returnsTrue() {
-        boolean result = RuleMatcher.matchApilevelMin(-1);
+        boolean result = RuleMatcher.matchApilevelMin(null);
         assertThat(result).isTrue();
     }
 
@@ -142,7 +142,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchAppVersion_default_returnsTrue() {
-        boolean result = RuleMatcher.matchAppversionMax(-1);
+        boolean result = RuleMatcher.matchAppversionMax(null);
         assertThat(result).isTrue();
     }
 
@@ -178,7 +178,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchAppVersionMin_default_returnsTrue() {
-        boolean result = RuleMatcher.matchAppversionMin(-1);
+        boolean result = RuleMatcher.matchAppversionMin(null);
         assertThat(result).isTrue();
     }
 
@@ -230,7 +230,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchDateMax_default_returnsTrue() {
-        boolean result = RuleMatcher.matchDateMax(-1);
+        boolean result = RuleMatcher.matchDateMax(null);
         assertThat(result).isTrue();
     }
 
@@ -266,7 +266,7 @@ public class RuleMatcherTests {
      */
     @Test
     public void matchDateMin_default_returnsTrue() {
-        boolean result = RuleMatcher.matchDateMin(-1);
+        boolean result = RuleMatcher.matchDateMin(null);
         assertThat(result).isTrue();
     }
 
@@ -376,7 +376,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
-        Rule rule = new Rule(false, null, new Value(14, -1, -1, -1, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(14, null, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -385,7 +385,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
-        Rule rule = new Rule(false, null, new Value(23, -1, -1, -1, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(23, null, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -394,7 +394,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelMixMaxCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Rule rule = new Rule(false, null, new Value(14, 22, -1, -1, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(14, 22, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -403,7 +403,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelMixMaxCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Rule rule = new Rule(false, null, new Value(14, 16, -1, -1, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(14, 16, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -413,7 +413,7 @@ public class RuleMatcherTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -423,7 +423,7 @@ public class RuleMatcherTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 110, 120, -1L, -1L, null, null));
+        Rule rule = new Rule(false, null, new Value(14, 22, 110, 120, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }

@@ -11,4 +11,8 @@ public class CheckLatestParams {
     public CheckLatestParams(FeatureCheckRequest featureCheckRequest) {
         this.featureCheckRequest = featureCheckRequest;
     }
+
+    public FeatureCheckRequest getFeatureCheckRequest() {
+        return featureCheckRequest;
+    }
 }

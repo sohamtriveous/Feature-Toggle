@@ -19,6 +19,8 @@ public class CheckLatestAsyncTask extends AsyncTask<CheckLatestParams, Void, Fea
     @Override
     protected FeatureCheckResponse doInBackground(CheckLatestParams... params) {
         this.checkLatestParams = params[0];
+        if(checkLatestParams == null)
+            return null;
         String url = Toggle.getSourceUrl(checkLatestParams.featureCheckRequest.getToggle().getContext());
         String response = null;
         Product product = null;
@@ -26,26 +28,35 @@ public class CheckLatestAsyncTask extends AsyncTask<CheckLatestParams, Void, Fea
         try {
             // make network request to receive response
             response = NetworkOperations.downloadUrl(url);
+            if (response == null)
+                return checkLatestParams.getFeatureCheckRequest().getToggle().getAndProcessCachedProductSync(checkLatestParams.getFeatureCheckRequest());
             // convert string to product
             product = Toggle.convertStringToProduct(response);
             // store product
             Toggle.storeProduct(product);
             // process the resultant product
             result = checkLatestParams.featureCheckRequest.getToggle().processProduct(product, checkLatestParams.featureCheckRequest);
+            result.setCached(false);
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
 
-        return result;
+        return checkLatestParams.getFeatureCheckRequest().getToggle().getAndProcessCachedProductSync(checkLatestParams.getFeatureCheckRequest());
     }
 
+
     @Override
-    protected void onPostExecute(FeatureCheckResponse featureCheckResponse) {
+    protected void onPostExecute(final FeatureCheckResponse featureCheckResponse) {
         // make the callback if configured
-        if (checkLatestParams != null && featureCheckResponse != null && checkLatestParams.featureCheckRequest.getCallback() != null) {
-            checkLatestParams.featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata());
+        if (checkLatestParams != null && checkLatestParams.featureCheckRequest.getCallback() != null) {
+            if(featureCheckResponse != null) {
+                checkLatestParams.featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), false);
+            } else {
+                checkLatestParams.featureCheckRequest.getCallback().onStatusChecked(checkLatestParams.featureCheckRequest.getFeatureName(), checkLatestParams.featureCheckRequest.getDefaultState() == Toggle.State.ENABLED, Toggle.METADATA_DEFAULT, true);
+            }
         }
     }
 

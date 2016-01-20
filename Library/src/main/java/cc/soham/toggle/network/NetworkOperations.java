@@ -17,7 +17,7 @@ public class NetworkOperations {
     // a string.
     public static String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
-
+        String contentAsString;
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -31,8 +31,7 @@ public class NetworkOperations {
             is = conn.getInputStream();
 
             // Convert the InputStream into a string
-            String contentAsString = readIt(is);
-            return contentAsString;
+            contentAsString = readIt(is);
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
@@ -40,19 +39,23 @@ public class NetworkOperations {
             if (is != null) {
                 is.close();
             }
-            return null;
         }
+        return contentAsString;
     }
 
     // Reads an InputStream and converts it to a String.
     private static String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line);
+        try {
+            BufferedReader r = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            StringBuilder total = new StringBuilder();
+            String line;
+            while ((line = r.readLine()) != null) {
+                total.append(line);
+            }
+            return total.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-
-        return total.toString();
     }
 }

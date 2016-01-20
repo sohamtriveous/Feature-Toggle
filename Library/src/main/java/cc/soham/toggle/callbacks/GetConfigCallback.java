@@ -9,5 +9,5 @@ import cc.soham.toggle.objects.Product;
  * is made
  */
 public interface GetConfigCallback {
-    void onConfigReceived(Product product);
+    void onConfigReceived(Product product, boolean cached);
 }
