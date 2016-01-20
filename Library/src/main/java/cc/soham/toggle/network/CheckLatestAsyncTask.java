@@ -22,7 +22,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
 
     /**
      * Attempt to download the config file and process the feature (wrt the config) here
-     * Also return cached responses wherever the network is not applicable
+     * Also return cached responses wherever the network is not available
      * @param params
      * @return
      */
@@ -76,7 +76,6 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
         }
         return featureCheckRequest.getToggle().getAndProcessCachedProductSync(featureCheckRequest);
     }
-
 
     /**
      * A static helper method to initiate a {@link CheckLatestAsyncTask} call

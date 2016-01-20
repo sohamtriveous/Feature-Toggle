@@ -1,6 +1,7 @@
 package cc.soham.toggle.network;
 
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -11,26 +12,56 @@ import cc.soham.toggle.callbacks.GetConfigCallback;
 import cc.soham.toggle.objects.Product;
 
 /**
- * Created by sohammondal on 19/01/16.
+ * An {@link AsyncTask} that gets the latest config from the network
+ * TODO: use OkHTTP (provided) in the future
  */
-public class GetConfigAsyncTask extends AsyncTask<GetConfigParams, Void, Product> {
-    private GetConfigParams getConfigParams;
-    boolean cached = false;
+public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse> {
+    final String url;
+    final GetConfigCallback getConfigCallback;
 
+    public GetConfigAsyncTask(String url, GetConfigCallback getConfigCallback) {
+        this.url = url;
+        this.getConfigCallback = getConfigCallback;
+    }
+
+    /**
+     * Attept to download and parse the latest config file
+     * Also returns cached response wherever the network is not available
+     * @param params
+     * @return
+     */
     @Override
-    protected Product doInBackground(GetConfigParams... params) {
-        this.getConfigParams = params[0];
-        // get the url
-        String url = getConfigParams.getUrl();
-        String response = null;
-        Product product = null;
+    protected GetConfigResponse doInBackground(Void... params) {
+        return getGetConfigResponse(url);
+    }
+
+    /**
+     * Iniate a {@link GetConfigCallback} for the given config {@link GetConfigResponse} received from the server
+     * @param getConfigResponse
+     */
+    @Override
+    protected void onPostExecute(GetConfigResponse getConfigResponse) {
+        // make the callback if configured
+        if (getConfigCallback != null && getConfigResponse != null) {
+            getConfigCallback.onConfigReceived(getConfigResponse.product, getConfigResponse.cached);
+        }
+    }
+
+    /**
+     * Generates a {@link GetConfigResponse} by downloading and parsing a config file
+     * @param url The url for the config file
+     * @return the {@link GetConfigResponse} for the given url
+     */
+    @Nullable
+    private static GetConfigResponse getGetConfigResponse(String url) {
         try {
             // make network request to receive response
-            response = NetworkOperations.downloadUrl(url);
+            String response = NetworkOperations.downloadUrl(url);
             // convert string to product
-            product = Toggle.convertStringToProduct(response);
+            Product product = Toggle.convertStringToProduct(response);
             // store product
             Toggle.storeProduct(product);
+            return new GetConfigResponse(product);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonSyntaxException e) {
@@ -39,27 +70,26 @@ public class GetConfigAsyncTask extends AsyncTask<GetConfigParams, Void, Product
             e.printStackTrace();
         }
 
-        if (product == null) {
-            try {
-                product = Toggle.getProductSync();
-                cached = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        GetConfigResponse getConfigResponse = null;
+        // in case of any error, get the Product locally if possible
+        try {
+            return new GetConfigResponse(Toggle.getProductSync(), true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        return product;
+        return getConfigResponse;
     }
 
-    @Override
-    protected void onPostExecute(Product product) {
-        // make the callback if configured
-        if (getConfigParams != null && getConfigParams.getConfigCallback != null && product != null) {
-            getConfigParams.getConfigCallback().onConfigReceived(product, cached);
-        }
-    }
-
+    /**
+     * A static helper method to initiate a {@link GetConfigAsyncTask} call
+     * Gets the latest config and initiates a callback (optional)
+     * @param url
+     * @param getConfigCallback
+     */
     public static void start(String url, GetConfigCallback getConfigCallback) {
-        new GetConfigAsyncTask().execute(new GetConfigParams(url, getConfigCallback));
+        if (url == null) {
+            throw new IllegalStateException("Please pass a valid url");
+        }
+        new GetConfigAsyncTask(url, getConfigCallback).execute();
     }
 }
