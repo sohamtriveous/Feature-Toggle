@@ -1,7 +1,6 @@
 package cc.soham.toggle;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.anupcowkur.reservoir.Reservoir;
@@ -24,12 +23,11 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
     // TODO: write unit tests for all cases in Toggle (all scenarios that were just tested in sample)
+    // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
     // TODO: explore the Toggle.with(context).getConfig(url) API STYLE
     // TODO: explore the Toggle.with(context).check("video").getLatest().defaultState(State.ENABLED).start(new Callback...)
     // TODO: expand the samples to cover different styles of Toggling
-    // TODO: improve asynctask2 initialisation
     // TODO: improve documentation
     // TODO: check and improve all API calls
 
@@ -60,10 +58,6 @@ public class Toggle {
     static volatile Toggle singleton;
 
     public static final String PRODUCT_KEY = "toggle_productKey";
-    private static final String KEY_SOURCE_TYPE = "toggle_source_type";
-    private static final String KEY_SOURCE_URL = "toggle_source_url";
-
-    public static final String METADATA_DEFAULT = "toggle_metadata_default";
 
     public static void init(final Context context) throws Exception {
         if (singleton == null) {
@@ -102,29 +96,29 @@ public class Toggle {
     public static void getConfig(String productInString) {
         singleton.setSourceType(SourceType.STRING);
         // store source
-        storeSourceType(singleton.getContext(), SourceType.STRING);
+        PersistUtils.storeSourceType(singleton.getContext(), SourceType.STRING);
         // convert from string to product
         Product product = convertStringToProduct(productInString);
         // store product
-        storeProduct(product);
+        PersistUtils.storeProduct(product);
     }
 
     public static void getConfig(JsonElement productInJson) {
         singleton.setSourceType(SourceType.JSONOBJECT);
         // store source
-        storeSourceType(singleton.getContext(), SourceType.JSONOBJECT);
+        PersistUtils.storeSourceType(singleton.getContext(), SourceType.JSONOBJECT);
         // convert from json to product
         Product product = convertJSONObjectToProduct(productInJson);
         // store product
-        storeProduct(product);
+        PersistUtils.storeProduct(product);
     }
 
     public static void getConfig(Product product) {
         singleton.setSourceType(SourceType.PRODUCT);
         // store source
-        storeSourceType(singleton.getContext(), SourceType.PRODUCT);
+        PersistUtils.storeSourceType(singleton.getContext(), SourceType.PRODUCT);
         // store product
-        storeProduct(product);
+        PersistUtils.storeProduct(product);
     }
 
     public static void getConfig(URL productUrl) {
@@ -134,36 +128,14 @@ public class Toggle {
     public static void getConfig(URL productUrl, GetConfigCallback getConfigCallback) {
         singleton.setSourceType(SourceType.URL);
         // store source
-        storeSourceType(singleton.getContext(), SourceType.URL);
-        storeSourceURL(singleton.getContext(), productUrl);
+        PersistUtils.storeSourceType(singleton.getContext(), SourceType.URL);
+        PersistUtils.storeSourceURL(singleton.getContext(), productUrl);
         // make the network request and store the results
         GetConfigAsyncTask.start(productUrl.toExternalForm(), getConfigCallback);
     }
 
     public static FeatureCheckRequest.Builder check(String featureName) {
         return new FeatureCheckRequest.Builder(singleton, featureName);
-    }
-
-    /**
-     * Store the source type
-     *
-     * @param sourceType
-     */
-    private static void storeSourceType(final Context context, SourceType sourceType) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_TYPE, sourceType.name()).apply();
-    }
-
-    /**
-     * Store the source url
-     *
-     * @param url
-     */
-    private static void storeSourceURL(final Context context, URL url) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_URL, url.toExternalForm()).apply();
-    }
-
-    public static String getSourceUrl(final Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_SOURCE_URL, null);
     }
 
     /**
@@ -184,28 +156,6 @@ public class Toggle {
      */
     public static Product convertJSONObjectToProduct(JsonElement productInJson) {
         return new Gson().fromJson(productInJson, Product.class);
-    }
-
-    /**
-     * Stores the product in disk
-     *
-     * @param product
-     */
-    public static void storeProduct(Product product) {
-        Reservoir.putAsync(PRODUCT_KEY, product, null);
-    }
-
-    /**
-     * Retrieves the product from disk
-     *
-     * @param productReservoirGetCallback
-     */
-    public static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
-        Reservoir.getAsync(PRODUCT_KEY, Product.class, productReservoirGetCallback);
-    }
-
-    public static Product getProductSync() throws Exception {
-        return Reservoir.get(PRODUCT_KEY, Product.class);
     }
 
     // non singleton methods
@@ -249,7 +199,7 @@ public class Toggle {
 
     public void getAndProcessCachedProduct(final FeatureCheckRequest featureCheckRequest) {
         // get cached or get default
-        getProduct(new ReservoirGetCallback<Product>() {
+        PersistUtils.getProduct(new ReservoirGetCallback<Product>() {
             @Override
             public void onSuccess(Product product) {
                 // process the product
@@ -262,14 +212,14 @@ public class Toggle {
             public void onFailure(Exception e) {
                 // couldnt retrieve a stored product, send back the default response
                 e.printStackTrace();
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT, true);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, PersistUtils.METADATA_DEFAULT, true);
             }
         });
     }
 
     public FeatureCheckResponse getAndProcessCachedProductSync(final FeatureCheckRequest featureCheckRequest) {
         try {
-            Product product = getProductSync();
+            Product product = PersistUtils.getProductSync();
             // process the product
             FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
             // make the callback
@@ -277,7 +227,7 @@ public class Toggle {
             return featureCheckResponse;
         } catch (Exception exception) {
             exception.printStackTrace();
-            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT, true);
+            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, PersistUtils.METADATA_DEFAULT, true);
         }
     }
 
@@ -292,7 +242,7 @@ public class Toggle {
                 }
             }
         }
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, METADATA_DEFAULT);
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, PersistUtils.METADATA_DEFAULT);
     }
 
     /**

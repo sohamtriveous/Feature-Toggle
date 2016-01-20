@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 
 import cc.soham.toggle.FeatureCheckRequest;
+import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.objects.Product;
 
@@ -37,12 +38,21 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
      */
     @Override
     protected void onPostExecute(final FeatureCheckResponse featureCheckResponse) {
+        initiateCallback(featureCheckResponse, featureCheckRequest);
+    }
+
+    /**
+     * Initate a {@link cc.soham.toggle.callbacks.Callback} if needed
+     * @param featureCheckResponse
+     * @param featureCheckRequest
+     */
+    private static void initiateCallback(FeatureCheckResponse featureCheckResponse, FeatureCheckRequest featureCheckRequest) {
         // make the callback if configured
         if (featureCheckRequest.getCallback() != null) {
             if (featureCheckResponse != null) {
                 featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), false);
             } else {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == Toggle.State.ENABLED, Toggle.METADATA_DEFAULT, true);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == Toggle.State.ENABLED, PersistUtils.METADATA_DEFAULT, true);
             }
         }
     }
@@ -55,13 +65,13 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
     private static FeatureCheckResponse getFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
         try {
             // get the url from preferences
-            String url = Toggle.getSourceUrl(featureCheckRequest.getToggle().getContext());
+            String url = PersistUtils.getSourceUrl(featureCheckRequest.getToggle().getContext());
             // make network request to receive response
             String response = NetworkOperations.downloadUrl(url);
             // convert string to product
             Product product = Toggle.convertStringToProduct(response);
             // store product
-            Toggle.storeProduct(product);
+            PersistUtils.storeProduct(product);
             // process the resultant product
             FeatureCheckResponse result = featureCheckRequest.getToggle().processProduct(product, featureCheckRequest);
             // disable the cache flag since this is a live request

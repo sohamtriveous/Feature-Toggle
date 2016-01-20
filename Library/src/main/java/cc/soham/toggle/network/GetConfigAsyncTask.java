@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
+import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.GetConfigCallback;
 import cc.soham.toggle.objects.Product;
@@ -41,6 +42,15 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
      */
     @Override
     protected void onPostExecute(GetConfigResponse getConfigResponse) {
+        initiateCallback(getConfigResponse, getConfigCallback);
+    }
+
+    /**
+     * Initiate a {@link GetConfigCallback} if needed
+     * @param getConfigResponse
+     * @param getConfigCallback
+     */
+    private static void initiateCallback(GetConfigResponse getConfigResponse, GetConfigCallback getConfigCallback) {
         // make the callback if configured
         if (getConfigCallback != null && getConfigResponse != null) {
             getConfigCallback.onConfigReceived(getConfigResponse.product, getConfigResponse.cached);
@@ -60,7 +70,7 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
             // convert string to product
             Product product = Toggle.convertStringToProduct(response);
             // store product
-            Toggle.storeProduct(product);
+            PersistUtils.storeProduct(product);
             return new GetConfigResponse(product);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +83,7 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
         GetConfigResponse getConfigResponse = null;
         // in case of any error, get the Product locally if possible
         try {
-            return new GetConfigResponse(Toggle.getProductSync(), true);
+            return new GetConfigResponse(PersistUtils.getProductSync(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
