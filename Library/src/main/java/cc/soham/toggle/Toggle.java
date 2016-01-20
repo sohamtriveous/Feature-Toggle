@@ -128,7 +128,7 @@ public class Toggle {
         storeSourceType(singleton.getContext(), SourceType.URL);
         storeSourceURL(singleton.getContext(), productUrl);
         // make the network request and store the results
-        GetConfigAsyncTask.start(productUrl.getPath(), getConfigCallback);
+        GetConfigAsyncTask.start(productUrl.toExternalForm(), getConfigCallback);
     }
 
     public static FeatureCheckRequest.Builder check(String featureName) {
@@ -150,7 +150,7 @@ public class Toggle {
      * @param url
      */
     private static void storeSourceURL(final Context context, URL url) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_URL, url.getPath()).apply();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(KEY_SOURCE_URL, url.toExternalForm()).apply();
     }
 
     public static String getSourceUrl(final Context context) {

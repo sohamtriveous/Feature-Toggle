@@ -1,9 +1,9 @@
 package cc.soham.toggle.network;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,9 +17,6 @@ public class NetworkOperations {
     // a string.
     public static String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
-        int len = 500;
 
         try {
             URL url = new URL(myurl);
@@ -34,7 +31,7 @@ public class NetworkOperations {
             is = conn.getInputStream();
 
             // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
+            String contentAsString = readIt(is);
             return contentAsString;
 
             // Makes sure that the InputStream is closed after the app is
@@ -43,15 +40,19 @@ public class NetworkOperations {
             if (is != null) {
                 is.close();
             }
+            return null;
         }
     }
 
     // Reads an InputStream and converts it to a String.
-    private static String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
-        Reader reader = null;
-        reader = new InputStreamReader(stream, "UTF-8");
-        char[] buffer = new char[len];
-        reader.read(buffer);
-        return new String(buffer);
+    private static String readIt(InputStream stream) throws IOException, UnsupportedEncodingException {
+        BufferedReader r = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line);
+        }
+
+        return total.toString();
     }
 }
