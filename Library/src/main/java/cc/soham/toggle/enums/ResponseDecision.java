@@ -7,15 +7,5 @@ public enum ResponseDecision {
     RESPONSE_UNDECIDED,
     RESPONSE_ENABLED,
     RESPONSE_DISABLED;
-
-    private String metadata;
-
-    public void setMetadata(String metadata) {
-        this.metadata = metadata;
-    }
-
-    public String getMetadata() {
-        return metadata;
-    }
 }
 

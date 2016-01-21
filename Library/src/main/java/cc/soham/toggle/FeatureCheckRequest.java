@@ -1,5 +1,7 @@
 package cc.soham.toggle;
 
+import android.support.annotation.VisibleForTesting;
+
 import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.callbacks.ErrorCallback;
 import cc.soham.toggle.enums.State;
@@ -64,6 +66,25 @@ public class FeatureCheckRequest {
         this.getLatest = builder.getLatest;
         this.errorCallback = builder.errorCallback;
         toggle.handleFeatureCheckRequest(this);
+    }
+
+    /**
+     * This constructor is to be used purely for testing
+     * @param toggle
+     * @param featureName
+     * @param callback
+     * @param defaultState
+     * @param getLatest
+     * @param errorCallback
+     */
+    @VisibleForTesting
+    FeatureCheckRequest(Toggle toggle, String featureName, Callback callback, State defaultState, boolean getLatest, ErrorCallback errorCallback) {
+        this.toggle = toggle;
+        this.featureName = featureName;
+        this.callback = callback;
+        this.defaultState = defaultState;
+        this.getLatest = getLatest;
+        this.errorCallback = errorCallback;
     }
 
     public String getFeatureName() {

@@ -50,4 +50,8 @@ public class Product {
         this.features = features;
     }
 
+    public Product(String product, List<Feature> features) {
+        this.product = product;
+        this.features = features;
+    }
 }

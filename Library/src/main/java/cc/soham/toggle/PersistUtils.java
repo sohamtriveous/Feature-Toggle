@@ -17,7 +17,6 @@ import cc.soham.toggle.objects.Product;
 public class PersistUtils {
     public static final String KEY_SOURCE_TYPE = "toggle_source_type";
     public static final String KEY_SOURCE_URL = "toggle_source_url";
-    public static final String METADATA_DEFAULT = "toggle_metadata_default";
     public static final String PRODUCT_KEY = "toggle_productKey";
 
     /**
