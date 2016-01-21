@@ -26,8 +26,6 @@ import cc.soham.toggle.objects.Rule;
 public class Toggle {
     // TODO: write unit tests for all cases in Toggle (all scenarios that were just tested in sample)
     // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
-    // TODO: explore the Toggle.with(context).getConfig(url) API STYLE
-    // TODO: explore the Toggle.with(context).check("video").getLatest().defaultState(State.ENABLED).start(new Callback...)
     // TODO: expand the samples to cover different styles of Toggling
     // TODO: improve documentation
     // TODO: check and improve all API calls
