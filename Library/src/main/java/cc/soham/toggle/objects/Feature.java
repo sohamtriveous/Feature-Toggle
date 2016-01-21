@@ -92,4 +92,10 @@ public class Feature {
         this.rules = rules;
     }
 
+    public Feature(String name, String state, String _default, List<Rule> rules) {
+        this.name = name;
+        this.state = state;
+        this._default = _default;
+        this.rules = rules;
+    }
 }

@@ -2,6 +2,7 @@ package cc.soham.toggle;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
@@ -33,7 +34,8 @@ public class Toggle {
     public static final String ENABLED = "enabled";
     public static final String DISABLED = "disabled";
 
-    private static volatile Toggle singleton;
+    @VisibleForTesting
+    static volatile Toggle singleton;
 
     public static Toggle with(final Context context) {
         if (singleton == null) {
@@ -209,7 +211,12 @@ public class Toggle {
     }
 
     @NonNull
-    private ResponseDecision getRuleMatchedResponseDecision(Rule rule) {
+    @VisibleForTesting
+    ResponseDecision getRuleMatchedResponseDecision(Rule rule) {
+        // an enabled/disabled state is mandatory for a rule
+        // (else we wouldn't know what to do once a rule is matched)
+        if(rule.getEnabled() == null)
+            throw new IllegalStateException("The state in a Rule cannot be empty");
         ResponseDecision responseDecision;
         if (rule.getEnabled()) {
             responseDecision = ResponseDecision.RESPONSE_ENABLED;
@@ -221,20 +228,26 @@ public class Toggle {
     }
 
     @NonNull
-    private ResponseDecision getStatePoweredResponseDecision(Feature feature) {
-        if (feature.getState().equalsIgnoreCase(ENABLED)) {
-            return ResponseDecision.RESPONSE_ENABLED;
-        } else {
+    @VisibleForTesting
+    ResponseDecision getStatePoweredResponseDecision(Feature feature) {
+        // if state is null, we can't take decision on this
+        if(feature.getState() == null)
+            return ResponseDecision.RESPONSE_UNDECIDED;
+        // if state is not null, use the overriding feature
+        if (feature.getState().equalsIgnoreCase(DISABLED)) {
             return ResponseDecision.RESPONSE_DISABLED;
+        } else {
+            return ResponseDecision.RESPONSE_ENABLED;
         }
     }
 
     @NonNull
-    private ResponseDecision getDefaultResponseDecision(Feature feature) {
+    @VisibleForTesting
+    ResponseDecision getDefaultResponseDecision(Feature feature) {
         if (feature.getDefault() == null) {
             return ResponseDecision.RESPONSE_ENABLED;
         }
-        if (feature.getDefault().equals(ENABLED)) {
+        if (feature.getDefault().equalsIgnoreCase(ENABLED)) {
             return ResponseDecision.RESPONSE_ENABLED;
         } else {
             return ResponseDecision.RESPONSE_DISABLED;
