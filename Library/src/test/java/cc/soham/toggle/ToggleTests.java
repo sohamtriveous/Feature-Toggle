@@ -1,8 +1,8 @@
 package cc.soham.toggle;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.test.suitebuilder.annotation.SmallTest;
-import android.text.TextUtils;
 
 import com.anupcowkur.reservoir.Reservoir;
 
@@ -19,6 +19,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.enums.ResponseDecision;
 import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.FeatureCheckResponse;
@@ -29,13 +30,14 @@ import cc.soham.toggle.objects.Rule;
 import cc.soham.toggle.objects.Value;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by sohammondal on 21/01/16.
  */
 @SmallTest
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Reservoir.class, RuleMatcher.class, System.class})
+@PrepareForTest({Reservoir.class, RuleMatcher.class, System.class, Toggle.class, PersistUtils.class})
 public class ToggleTests {
     final String metadata = "myMetadata";
 
@@ -840,26 +842,10 @@ public class ToggleTests {
     @Test
     public void processProduct_featurePresent_apiLevelDoesNotMatch_dateMinMatches_stateEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
-        List<Rule> rules = new ArrayList<>();
-        Value value1 = new Value(14, 18, null, null, null, null, null, null);
-
         PowerMockito.spy(System.class);
         Mockito.when(System.currentTimeMillis()).thenReturn(1453196889999L);
-        Value value2 = new Value(null, null, null, null, 1453196880000L, null, null, null);
 
-        rules.add(new Rule(false, metadata, value1));
-        rules.add(new Rule(false, metadata, value2));
-
-        Feature featureVideo = new Feature("video", null, Toggle.ENABLED, rules);
-        Feature featureAudio = new Feature("audio", Toggle.ENABLED, null, rules);
-        Feature featureSpeech = new Feature("speech", null, Toggle.DISABLED, rules);
-
-        List<Feature> features = new ArrayList<>();
-        features.add(featureVideo);
-        features.add(featureAudio);
-        features.add(featureSpeech);
-
-        Product product = new Product("myapp", features);
+        Product product = getStandardProduct(metadata);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.ENABLED;
@@ -875,5 +861,111 @@ public class ToggleTests {
         assertThat(featureCheckResponse.isEnabled()).isFalse();
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
         assertThat(featureCheckResponse.isCached()).isTrue();
+    }
+
+    @NonNull
+    private static Product getStandardProduct(String metadata) {
+        List<Rule> rules = new ArrayList<>();
+        Value value1 = new Value(14, 18, null, null, null, null, null, null);
+        Value value2 = new Value(null, null, null, null, 1453196880000L, null, null, null);
+
+        rules.add(new Rule(false, metadata, value1));
+        rules.add(new Rule(false, metadata, value2));
+
+        Feature featureVideo = new Feature("video", null, Toggle.ENABLED, rules);
+        Feature featureAudio = new Feature("audio", Toggle.ENABLED, null, rules);
+        Feature featureSpeech = new Feature("speech", null, Toggle.DISABLED, rules);
+
+        List<Feature> features = new ArrayList<>();
+        features.add(featureVideo);
+        features.add(featureAudio);
+        features.add(featureSpeech);
+
+        return new Product("myapp", features);
+    }
+
+    // getAndProcessCachedProductSync
+    @Test
+    public void getAndProcessCachedProductSync() {
+        Toggle toggle = new Toggle(context);
+        PowerMockito.mockStatic(PersistUtils.class);
+
+        Callback callback = mock(Callback.class);
+
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.ENABLED;
+
+        PowerMockito.spy(RuleMatcher.class);
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+
+        try {
+            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(getStandardProduct(metadata));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedProductSync(featureCheckRequest);
+
+        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
+        assertThat(featureCheckResponse.isEnabled()).isFalse();
+        assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
+        assertThat(featureCheckResponse.isCached()).isTrue();
+    }
+
+    @Test
+    public void getAndProcessCachedProductSync_nullProduct_defaultStateDisabled_returnsDisabled() {
+        Toggle toggle = new Toggle(context);
+        PowerMockito.mockStatic(PersistUtils.class);
+
+        Callback callback = mock(Callback.class);
+
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.DISABLED;
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+
+        try {
+            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedProductSync(featureCheckRequest);
+
+        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
+        assertThat(featureCheckResponse.isEnabled()).isFalse();
+        assertThat(featureCheckResponse.getMetadata()).isNull();
+        assertThat(featureCheckResponse.isCached()).isTrue();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getAndProcessCachedProductSync_nullProduct_defaultStateNull_throwsException() {
+        Toggle toggle = new Toggle(context);
+        PowerMockito.mockStatic(PersistUtils.class);
+
+        Callback callback = mock(Callback.class);
+
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = null;
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+
+        try {
+            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        toggle.getAndProcessCachedProductSync(featureCheckRequest);
     }
 }

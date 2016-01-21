@@ -141,32 +141,57 @@ public class Toggle {
                 // process the product
                 FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
                 // make the callback
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
+                makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
             }
 
             @Override
             public void onFailure(Exception e) {
                 // couldnt retrieve a stored product, send back the default response
                 e.printStackTrace();
+                // send back a default response
                 featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
             }
         });
     }
 
     public FeatureCheckResponse getAndProcessCachedProductSync(final FeatureCheckRequest featureCheckRequest) {
+        Product product = null;
         try {
-            Product product = PersistUtils.getProductSync();
-            // process the product
-            FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
-            // make the callback
-            featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
-            return featureCheckResponse;
+            product = PersistUtils.getProductSync();
         } catch (Exception exception) {
             exception.printStackTrace();
-            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
+            return getExceptionFeatureCheckResponse(featureCheckRequest);
         }
+        // check for null
+        if (product == null) {
+            if (featureCheckRequest.getDefaultState() == null) {
+                throw new IllegalStateException("No configuration found (Product) and no default state configured in the state check");
+            }
+            return getExceptionFeatureCheckResponse(featureCheckRequest);
+        }
+        // process the product
+        FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+        return featureCheckResponse;
+
     }
 
+    @NonNull
+    private FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
+    }
+
+    @VisibleForTesting
+    void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
+        featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
+    }
+
+    /**
+     * Code for enabling/disabling a feature based on a request ({@link FeatureCheckRequest}) and a config ({@link Product})
+     *
+     * @param product
+     * @param featureCheckRequest
+     * @return
+     */
     public FeatureCheckResponse processProduct(Product product, FeatureCheckRequest featureCheckRequest) {
         for (Feature feature : product.getFeatures()) {
             // find the given feature in the received Product
@@ -207,7 +232,7 @@ public class Toggle {
     @VisibleForTesting
     ResponseDecisionMeta handleFeature(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
         if (feature.getState() == null) {
-            if(feature.getRules() == null) {
+            if (feature.getRules() == null) {
                 throw new IllegalStateException("You must have rules in case the feature does not have a base state");
             }
             // state is null, so we can check the rules
