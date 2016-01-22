@@ -121,7 +121,6 @@ public class Toggle {
      *
      * @param featureCheckRequest
      */
-    // TODO: unit test handleFeatureCheckRequest
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
         if (sourceType == null) {
             sourceType = PersistUtils.getSourceType(getContext());
@@ -185,6 +184,7 @@ public class Toggle {
         return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), enabled, null, true);
     }
 
+    // TODO: unit test this
     private static boolean getDefaultEnabledState(FeatureCheckRequest featureCheckRequest) {
         boolean enabled = (DEFAULT_STATE == State.ENABLED);
         if (featureCheckRequest.getDefaultState() != null) {

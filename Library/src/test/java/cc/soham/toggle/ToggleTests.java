@@ -1184,4 +1184,64 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked("video", true, null, true);
     }
+
+    // handleFeatureCheckRequest
+
+    @Test
+    public void handleFeatureCheckRequest_sourceTypeJson_getAndProcessCachedProductIsCalled() {
+        PowerMockito.mockStatic(PersistUtils.class);
+        Toggle toggle = Mockito.mock(Toggle.class);
+
+        try {
+            PowerMockito.when(toggle.getContext()).thenReturn(context);
+            PowerMockito.when(PersistUtils.getSourceType(context)).thenReturn(SourceType.JSONOBJECT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = null;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+
+        Mockito.doCallRealMethod().when(toggle).handleFeatureCheckRequest(featureCheckRequest);
+        Mockito.doCallRealMethod().when(toggle).setSourceType(null);
+
+        toggle.setSourceType(null);
+        toggle.handleFeatureCheckRequest(featureCheckRequest);
+
+        verify(toggle).getAndProcessCachedProduct(featureCheckRequest);
+    }
+
+    @Test
+    public void handleFeatureCheckRequest_sourceTypeJson_videoEnabled_returnsEnabled() {
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.ENABLED;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        toggle.setSourceType(SourceType.JSONOBJECT);
+
+        toggle.handleFeatureCheckRequest(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // call the success callback ourselves
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+
+        verify(callback).onStatusChecked(featureToBeSearched, false, metadata, true);
+    }
 }
