@@ -1,13 +1,10 @@
 package cc.soham.togglesample;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import cc.soham.toggle.Toggle;
@@ -24,9 +21,7 @@ public class SampleNetworkActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_sample_network);
-        response = (TextView) findViewById(R.id.activity_sample_network_response);
-        video = (TextView) findViewById(R.id.activity_sample_network_feature_video);
+        setContentView(R.layout.activity_sample_base);
 
         try {
             Toggle.with(this).getConfig(new URL(Constants.URL_CONFIG));
