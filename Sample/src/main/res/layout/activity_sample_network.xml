@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -8,12 +8,37 @@
         android:id="@+id/activity_sample_network_response"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sample Response"/>
+        android:layout_alignParentTop="true"
+        android:text="Sample Response" />
 
     <TextView
         android:id="@+id/activity_sample_network_feature_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enabled/Disabled"/>
+        android:layout_below="@id/activity_sample_network_response"
+        android:text="Enabled/Disabled" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/activity_sample_network_feature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Feature Name" />
+
+    <TextView
+        android:id="@+id/activity_sample_network_feature_metadata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_sample_network_feature"
+        android:layout_centerInParent="true"
+        android:text="Metadata" />
+
+    <TextView
+        android:id="@+id/activity_sample_network_feature_cached"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_sample_network_feature_metadata"
+        android:layout_centerInParent="true"
+        android:text="Cached?" />
+
+</RelativeLayout>
