@@ -26,7 +26,6 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: write unit tests for all cases in Toggle (all scenarios that were just tested in sample)
     // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
     // TODO: expand the samples to cover different styles of Toggling
     // TODO: improve documentation
