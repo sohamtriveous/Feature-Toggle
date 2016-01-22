@@ -5,11 +5,14 @@ import android.support.annotation.NonNull;
 import android.test.suitebuilder.annotation.SmallTest;
 
 import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -21,6 +24,7 @@ import java.util.List;
 
 import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.enums.ResponseDecision;
+import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.objects.Feature;
@@ -967,5 +971,217 @@ public class ToggleTests {
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
         toggle.getAndProcessCachedProductSync(featureCheckRequest);
+    }
+
+    // handleFeatureCheckRequest
+    // TODO: test this
+    public void handleFeatureCheckRequest_checkCallWithoutGetConfig() {
+        Toggle toggle = new Toggle(context);
+        toggle.setSourceType(null);
+
+        PowerMockito.mockStatic(PersistUtils.class);
+        PowerMockito.when(PersistUtils.getSourceType(context)).thenReturn(SourceType.JSONOBJECT);
+
+        Callback callback = mock(Callback.class);
+
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.DISABLED;
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        Product product = getStandardProduct(metadata);
+
+        toggle.handleFeatureCheckRequest(featureCheckRequest);
+
+
+    }
+
+    // example of using ArgumentCaptor to test callbacks
+
+    @Captor
+    private ArgumentCaptor<ReservoirGetCallback<Product>> reservoirGetCallbackArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> stringCaptor;
+
+    @Captor
+    private ArgumentCaptor<Class> classCaptor;
+
+    /**
+     * The idea here is to invoke {@link Toggle#getAndProcessCachedProduct(FeatureCheckRequest)}
+     * This in turn makes a call to {@link PersistUtils#getProduct(ReservoirGetCallback)} which in turn
+     * calls {@link Reservoir#getAsync(String, Class, ReservoirGetCallback)}
+     *
+     * The challenge here is to unit test this properly, here we face the following challenges:
+     * 1. We need to intercept the {@link ReservoirGetCallback} (among other things) passed to {@link Reservoir#getAsync(String, Class, ReservoirGetCallback)}
+     * 2. Then we need to test success and failure scenarios manually by taking that intercept and then call the success/failure callbacks manually
+     * 3. Then we need to check if the final output, which in this case is a callback (passed in {@link FeatureCheckRequest}
+     * to the callee with the right parameters. So basically, the rule enable/disable needs to be properly passed back to the callee.
+     *
+     * Remember, we are not unit testing {@link Reservoir} here, we just assume that it will work!
+     * Our job is to simulate all the response conditions from {@link Reservoir} and see if we are handling it properly
+     */
+
+    @Test
+    public void getAndProcessCachedProduct_featureCheckMatches_reservoirSuccess_enabled_returnsEnabled() {
+        // prepare
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.DISABLED;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // call the getAndProcessCachedProduct is called
+        toggle.getAndProcessCachedProduct(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
+
+        // call the success callback ourselves
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+
+        // verify that the final customer callback was made with the right parameters
+        verify(callback).onStatusChecked("video", false, metadata, true);
+    }
+
+    @Test
+    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirSuccess_defaultDisabled_returnsDisabled() {
+        // prepare
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.DISABLED;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // call the getAndProcessCachedProduct is called
+        toggle.getAndProcessCachedProduct(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(23);
+
+        // call the success callback ourselves
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+
+        // verify that the final customer callback was made with the right parameters
+        verify(callback).onStatusChecked("video", false, metadata, true);
+    }
+
+    @Test
+    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultDisabled_returnsDisabled() {
+        // prepare
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.DISABLED;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // call the getAndProcessCachedProduct is called
+        toggle.getAndProcessCachedProduct(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(23);
+
+        // simulate a failure to retrieve from Reservoir
+        reservoirGetCallbackArgumentCaptor.getValue().onFailure(new Exception("Dammit Reservoir didn't work"));
+
+        // verify that the final customer callback was made with the right parameters
+        verify(callback).onStatusChecked("video", false, null, true);
+    }
+
+    @Test
+    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultEnabled_returnsEnabled() {
+        // prepare
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = State.ENABLED;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // call the getAndProcessCachedProduct is called
+        toggle.getAndProcessCachedProduct(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(23);
+
+        // simulate a failure to retrieve from Reservoir
+        reservoirGetCallbackArgumentCaptor.getValue().onFailure(new Exception("Dammit Reservoir didn't work"));
+
+        // verify that the final customer callback was made with the right parameters
+        verify(callback).onStatusChecked("video", true, null, true);
+    }
+
+    @Test
+    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultAbsent_returnsEnabled() {
+        // prepare
+        PowerMockito.mockStatic(Reservoir.class);
+
+        Toggle toggle = new Toggle(context);
+        String featureToBeSearched = "video";
+        State defaultStateInRequest = null;
+        Callback callback = mock(Callback.class);
+
+        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        Product product = getStandardProduct(metadata);
+
+        // call the getAndProcessCachedProduct is called
+        toggle.getAndProcessCachedProduct(featureCheckRequest);
+
+        // verify that a) a call to Reservoir.getAsync is made
+        // b) capture the callback argument so that we can call it ourselves
+        PowerMockito.verifyStatic();
+        Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
+
+        // setup the environment to match
+        PowerMockito.spy(RuleMatcher.class);
+        PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(23);
+
+        // simulate a failure to retrieve from Reservoir
+        reservoirGetCallbackArgumentCaptor.getValue().onFailure(new Exception("Dammit Reservoir didn't work"));
+
+        // verify that the final customer callback was made with the right parameters
+        verify(callback).onStatusChecked("video", true, null, true);
     }
 }

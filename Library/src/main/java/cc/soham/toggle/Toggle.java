@@ -121,6 +121,7 @@ public class Toggle {
      *
      * @param featureCheckRequest
      */
+    // TODO: unit test handleFeatureCheckRequest
     public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
         if (sourceType == null) {
             sourceType = PersistUtils.getSourceType(getContext());
@@ -148,8 +149,9 @@ public class Toggle {
             public void onFailure(Exception e) {
                 // couldnt retrieve a stored product, send back the default response
                 e.printStackTrace();
+                boolean enabled = getDefaultEnabledState(featureCheckRequest);
                 // send back a default response
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), enabled, null, true);
             }
         });
     }
@@ -176,11 +178,23 @@ public class Toggle {
     }
 
     @NonNull
-    private FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
+    @VisibleForTesting
+    // TODO: unit test getExceptionFeatureCheckResponse
+    FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
+        boolean enabled = getDefaultEnabledState(featureCheckRequest);
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), enabled, null, true);
+    }
+
+    private static boolean getDefaultEnabledState(FeatureCheckRequest featureCheckRequest) {
+        boolean enabled = (DEFAULT_STATE == State.ENABLED);
+        if (featureCheckRequest.getDefaultState() != null) {
+            enabled = (featureCheckRequest.getDefaultState() == State.ENABLED);
+        }
+        return enabled;
     }
 
     @VisibleForTesting
+    // TODO: unit test makeFeatureCheckCallback
     void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
         featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
     }
