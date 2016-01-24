@@ -1,20 +1,20 @@
 package cc.soham.toggle.network;
 
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * Response of {@link GetConfigAsyncTask}
  */
 public class GetConfigResponse {
-    Product product;
+    Config config;
     boolean cached = false;
 
-    public GetConfigResponse(Product product) {
-        this.product = product;
+    public GetConfigResponse(Config config) {
+        this.config = config;
     }
 
-    public GetConfigResponse(Product product, boolean cached) {
-        this.product = product;
+    public GetConfigResponse(Config config, boolean cached) {
+        this.config = config;
         this.cached = cached;
     }
 }

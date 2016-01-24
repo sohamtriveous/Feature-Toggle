@@ -16,11 +16,11 @@ import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.GetConfigCallback;
 import cc.soham.toggle.enums.State;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * Sample Network Activity, shows how to
- * - Use {@link Toggle#getConfig(Product)} to make a network call and manually retrieve and  astore {@link Product} configuration using {@link }
+ * - Use {@link Toggle#getConfig(Config)} to make a network call and manually retrieve and  astore {@link Config} configuration using {@link }
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link FeatureCheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
@@ -44,8 +44,8 @@ public class SampleNetworkActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows how to use {@link Toggle#getConfig(Product)} to get the config from
-     * Once the {@link Product} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Product)}
+     * Shows how to use {@link Toggle#getConfig(Config)} to get the config from
+     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Config)}
      */
     @OnClick(R.id.activity_sample_get_config)
     public void getConfigButton_onClick() {
@@ -53,7 +53,7 @@ public class SampleNetworkActivity extends AppCompatActivity {
         try {
             Toggle.with(this).getConfig(new URL(Constants.URL_CONFIG), new GetConfigCallback() {
                 @Override
-                public void onConfigReceived(Product product, boolean cached) {
+                public void onConfigReceived(Config config, boolean cached) {
                     Toast.makeText(SampleNetworkActivity.this, "Response received, storing in toggle", Toast.LENGTH_SHORT).show();
                 }
             });

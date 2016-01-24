@@ -10,7 +10,7 @@ import java.io.IOException;
 import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.callbacks.GetConfigCallback;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * An {@link AsyncTask} that gets the latest config from the network
@@ -53,7 +53,7 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
     private static void initiateCallback(GetConfigResponse getConfigResponse, GetConfigCallback getConfigCallback) {
         // make the callback if configured
         if (getConfigCallback != null && getConfigResponse != null) {
-            getConfigCallback.onConfigReceived(getConfigResponse.product, getConfigResponse.cached);
+            getConfigCallback.onConfigReceived(getConfigResponse.config, getConfigResponse.cached);
         }
     }
 
@@ -67,11 +67,11 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
         try {
             // make network request to receive response
             String response = NetworkOperations.downloadUrl(url);
-            // convert string to product
-            Product product = ConversionUtils.convertStringToProduct(response);
-            // store product
-            PersistUtils.storeProduct(product);
-            return new GetConfigResponse(product);
+            // convert string to config
+            Config config = ConversionUtils.convertStringToConfig(response);
+            // store config
+            PersistUtils.storeConfig(config);
+            return new GetConfigResponse(config);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonSyntaxException e) {
@@ -81,9 +81,9 @@ public class GetConfigAsyncTask extends AsyncTask<Void, Void, GetConfigResponse>
         }
 
         GetConfigResponse getConfigResponse = null;
-        // in case of any error, get the Product locally if possible
+        // in case of any error, get the Config locally if possible
         try {
-            return new GetConfigResponse(PersistUtils.getProductSync(), true);
+            return new GetConfigResponse(PersistUtils.getConfigSync(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -13,11 +13,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.enums.State;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * Sample String Activity, shows how to
- * - Input configuration using a {@link String} resource (This should conform to the standard {@link Product}
+ * - Input configuration using a {@link String} resource (This should conform to the standard {@link Config}
  * json schema
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  */
@@ -40,7 +40,7 @@ public class SampleStringActivity extends AppCompatActivity {
 
     /**
      * Shows how to use {@link Toggle#getConfig(String)} to get the config from a {@link String} resource
-     * The string input must follow the standard {@link Product} json structure
+     * The string input must follow the standard {@link Config} json structure
      */
     @OnClick(R.id.activity_sample_get_config)
     public void getConfigButton_onClick() {

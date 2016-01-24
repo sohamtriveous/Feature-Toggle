@@ -9,7 +9,7 @@ import com.anupcowkur.reservoir.ReservoirGetCallback;
 import java.net.URL;
 
 import cc.soham.toggle.enums.SourceType;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * Created by sohammondal on 20/01/16.
@@ -17,28 +17,28 @@ import cc.soham.toggle.objects.Product;
 public class PersistUtils {
     public static final String KEY_SOURCE_TYPE = "toggle_source_type";
     public static final String KEY_SOURCE_URL = "toggle_source_url";
-    public static final String PRODUCT_KEY = "toggle_productKey";
+    public static final String CONFIG_KEY = "toggle_configKey";
 
     /**
-     * Stores the product in disk
+     * Stores the config in disk
      *
-     * @param product
+     * @param config
      */
-    public static void storeProduct(Product product) {
-        Reservoir.putAsync(PRODUCT_KEY, product, null);
+    public static void storeConfig(Config config) {
+        Reservoir.putAsync(CONFIG_KEY, config, null);
     }
 
     /**
-     * Retrieves the product from disk
+     * Retrieves the {@link Config} from disk
      *
-     * @param productReservoirGetCallback
+     * @param configReservoirGetCallback
      */
-    public static void getProduct(ReservoirGetCallback<Product> productReservoirGetCallback) {
-        Reservoir.getAsync(PRODUCT_KEY, Product.class, productReservoirGetCallback);
+    public static void getConfig(ReservoirGetCallback<Config> configReservoirGetCallback) {
+        Reservoir.getAsync(CONFIG_KEY, Config.class, configReservoirGetCallback);
     }
 
-    public static Product getProductSync() throws Exception {
-        return Reservoir.get(PRODUCT_KEY, Product.class);
+    public static Config getConfigSync() throws Exception {
+        return Reservoir.get(CONFIG_KEY, Config.class);
     }
 
     /**

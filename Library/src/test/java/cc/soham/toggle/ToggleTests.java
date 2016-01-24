@@ -27,8 +27,8 @@ import cc.soham.toggle.enums.ResponseDecision;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.FeatureCheckResponse;
+import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.Feature;
-import cc.soham.toggle.objects.Product;
 import cc.soham.toggle.objects.ResponseDecisionMeta;
 import cc.soham.toggle.objects.Rule;
 import cc.soham.toggle.objects.Value;
@@ -412,13 +412,13 @@ public class ToggleTests {
     }
 
     /**
-     * Process product tests
+     * Process config tests
      */
 
     // set 1: feature not present
 
     @Test
-    public void processProduct_featureNotPresent_defaultDisabled_returnsDisabled() {
+    public void processConfig_featureNotPresent_defaultDisabled_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -432,14 +432,14 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "share";
         State defaultStateInRequest = State.DISABLED;
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -448,7 +448,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featureNotPresent_defaultEnabled_returnsEnabled() {
+    public void processConfig_featureNotPresent_defaultEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -462,14 +462,14 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "share";
         State defaultStateInRequest = State.ENABLED;
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -478,7 +478,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featureNotPresent_null_returnsEnabled() {
+    public void processConfig_featureNotPresent_null_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -492,14 +492,14 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "share";
         State defaultStateInRequest = null;
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -510,7 +510,7 @@ public class ToggleTests {
     // feature present but no conclusion could not be made
 
     @Test
-    public void processProduct_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestEnabled_returnsEnabled() {
+    public void processConfig_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -524,7 +524,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.ENABLED;
@@ -534,7 +534,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -543,7 +543,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestDisabled_returnsDisabled() {
+    public void processConfig_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestDisabled_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -557,7 +557,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.DISABLED;
@@ -567,7 +567,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -576,7 +576,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestAbsent_returnsEnabled() {
+    public void processConfig_featurePresent_butNoDefaultOrMatchInConfig_defaultInRequestAbsent_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -590,7 +590,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = null;
@@ -600,7 +600,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -612,7 +612,7 @@ public class ToggleTests {
     // make sure the request has the override
 
     @Test
-    public void processProduct_featurePresent_defaultPresentInConfigDisabled_defaultInRequestEnabled_returnsEnabled() {
+    public void processConfig_featurePresent_defaultPresentInConfigDisabled_defaultInRequestEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -626,7 +626,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.ENABLED;
@@ -636,7 +636,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -645,7 +645,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_defaultPresentMatchInConfigEnabled_defaultInRequestDisabled_returnsDisabled() {
+    public void processConfig_featurePresent_defaultPresentMatchInConfigEnabled_defaultInRequestDisabled_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -659,7 +659,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.DISABLED;
@@ -669,7 +669,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -678,7 +678,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_defaultPresentMatchInConfigDisabled_defaultInRequestAbsent_returnsDisabled() {
+    public void processConfig_featurePresent_defaultPresentMatchInConfigDisabled_defaultInRequestAbsent_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -692,7 +692,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = null;
@@ -702,7 +702,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -711,7 +711,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_defaultPresentMatchInConfigEnabled_defaultInRequestAbsent_returnsEnabled() {
+    public void processConfig_featurePresent_defaultPresentMatchInConfigEnabled_defaultInRequestAbsent_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -725,7 +725,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = null;
@@ -735,7 +735,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
@@ -745,7 +745,7 @@ public class ToggleTests {
 
     // feature present and rules are matched
     @Test
-    public void processProduct_featurePresent_apiLevel_matchEnabled_returnsEnabled() {
+    public void processConfig_featurePresent_apiLevel_matchEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -759,7 +759,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.DISABLED;
@@ -769,7 +769,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
@@ -778,7 +778,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_apiLevel_matchDisabled_returnsDisabled() {
+    public void processConfig_featurePresent_apiLevel_matchDisabled_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -792,7 +792,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.ENABLED;
@@ -802,7 +802,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
@@ -811,7 +811,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_apiLevel_stateEnabled_returnsEnabled() {
+    public void processConfig_featurePresent_apiLevel_stateEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         List<Rule> rules = new ArrayList<>();
         Value value = new Value(14, 18, null, null, null, null, null, null);
@@ -825,7 +825,7 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        Product product = new Product("myapp", features);
+        Config config = new Config("myapp", features);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.DISABLED;
@@ -835,7 +835,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.getMetadata()).isNull();
@@ -844,12 +844,12 @@ public class ToggleTests {
     }
 
     @Test
-    public void processProduct_featurePresent_apiLevelDoesNotMatch_dateMinMatches_stateEnabled_returnsEnabled() {
+    public void processConfig_featurePresent_apiLevelDoesNotMatch_dateMinMatches_stateEnabled_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         PowerMockito.spy(System.class);
         Mockito.when(System.currentTimeMillis()).thenReturn(1453196889999L);
 
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
         String featureToBeSearched = "video";
         State defaultStateInRequest = State.ENABLED;
@@ -859,7 +859,7 @@ public class ToggleTests {
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processProduct(product, featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
         assertThat(featureCheckResponse.isEnabled()).isFalse();
@@ -868,7 +868,7 @@ public class ToggleTests {
     }
 
     @NonNull
-    private static Product getStandardProduct(String metadata) {
+    private static Config getStandardConfig(String metadata) {
         List<Rule> rules = new ArrayList<>();
         Value value1 = new Value(14, 18, null, null, null, null, null, null);
         Value value2 = new Value(null, null, null, null, 1453196880000L, null, null, null);
@@ -885,12 +885,12 @@ public class ToggleTests {
         features.add(featureAudio);
         features.add(featureSpeech);
 
-        return new Product("myapp", features);
+        return new Config("myapp", features);
     }
 
-    // getAndProcessCachedProductSync
+    // getAndProcessCachedConfigSync
     @Test
-    public void getAndProcessCachedProductSync() {
+    public void getAndProcessCachedConfigSync() {
         Toggle toggle = new Toggle(context);
         PowerMockito.mockStatic(PersistUtils.class);
 
@@ -905,14 +905,14 @@ public class ToggleTests {
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
-            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(getStandardProduct(metadata));
+            PowerMockito.when(PersistUtils.getConfigSync()).thenReturn(getStandardConfig(metadata));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedProductSync(featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
         assertThat(featureCheckResponse.isEnabled()).isFalse();
@@ -921,7 +921,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void getAndProcessCachedProductSync_nullProduct_defaultStateDisabled_returnsDisabled() {
+    public void getAndProcessCachedConfigSync_nullConfig_defaultStateDisabled_returnsDisabled() {
         Toggle toggle = new Toggle(context);
         PowerMockito.mockStatic(PersistUtils.class);
 
@@ -933,7 +933,7 @@ public class ToggleTests {
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
-            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(null);
+            PowerMockito.when(PersistUtils.getConfigSync()).thenReturn(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -941,7 +941,7 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedProductSync(featureCheckRequest);
+        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
 
         assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
         assertThat(featureCheckResponse.isEnabled()).isFalse();
@@ -950,7 +950,7 @@ public class ToggleTests {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void getAndProcessCachedProductSync_nullProduct_defaultStateNull_throwsException() {
+    public void getAndProcessCachedConfigSync_nullConfig_defaultStateNull_throwsException() {
         Toggle toggle = new Toggle(context);
         PowerMockito.mockStatic(PersistUtils.class);
 
@@ -962,7 +962,7 @@ public class ToggleTests {
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
-            PowerMockito.when(PersistUtils.getProductSync()).thenReturn(null);
+            PowerMockito.when(PersistUtils.getConfigSync()).thenReturn(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -970,7 +970,7 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        toggle.getAndProcessCachedProductSync(featureCheckRequest);
+        toggle.getAndProcessCachedConfigSync(featureCheckRequest);
     }
 
     // handleFeatureCheckRequest
@@ -992,7 +992,7 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
         toggle.handleFeatureCheckRequest(featureCheckRequest);
 
@@ -1002,7 +1002,7 @@ public class ToggleTests {
     // example of using ArgumentCaptor to test callbacks
 
     @Captor
-    private ArgumentCaptor<ReservoirGetCallback<Product>> reservoirGetCallbackArgumentCaptor;
+    private ArgumentCaptor<ReservoirGetCallback<Config>> reservoirGetCallbackArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<String> stringCaptor;
@@ -1011,8 +1011,8 @@ public class ToggleTests {
     private ArgumentCaptor<Class> classCaptor;
 
     /**
-     * The idea here is to invoke {@link Toggle#getAndProcessCachedProduct(FeatureCheckRequest)}
-     * This in turn makes a call to {@link PersistUtils#getProduct(ReservoirGetCallback)} which in turn
+     * The idea here is to invoke {@link Toggle#getAndProcessCachedConfig(FeatureCheckRequest)}
+     * This in turn makes a call to {@link PersistUtils#getConfig(ReservoirGetCallback)} which in turn
      * calls {@link Reservoir#getAsync(String, Class, ReservoirGetCallback)}
      *
      * The challenge here is to unit test this properly, here we face the following challenges:
@@ -1026,7 +1026,7 @@ public class ToggleTests {
      */
 
     @Test
-    public void getAndProcessCachedProduct_featureCheckMatches_reservoirSuccess_enabled_returnsEnabled() {
+    public void getAndProcessCachedConfig_featureCheckMatches_reservoirSuccess_enabled_returnsEnabled() {
         // prepare
         PowerMockito.mockStatic(Reservoir.class);
 
@@ -1036,10 +1036,10 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
-        // call the getAndProcessCachedProduct is called
-        toggle.getAndProcessCachedProduct(featureCheckRequest);
+        // call the getAndProcessCachedConfig is called
+        toggle.getAndProcessCachedConfig(featureCheckRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1051,14 +1051,14 @@ public class ToggleTests {
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
         // call the success callback ourselves
-        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(config);
 
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked("video", false, metadata, true);
     }
 
     @Test
-    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirSuccess_defaultDisabled_returnsDisabled() {
+    public void getAndProcessCachedConfig_featureCheckDoesNotMatch_reservoirSuccess_defaultDisabled_returnsDisabled() {
         // prepare
         PowerMockito.mockStatic(Reservoir.class);
 
@@ -1068,10 +1068,10 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
-        // call the getAndProcessCachedProduct is called
-        toggle.getAndProcessCachedProduct(featureCheckRequest);
+        // call the getAndProcessCachedConfig is called
+        toggle.getAndProcessCachedConfig(featureCheckRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1083,14 +1083,14 @@ public class ToggleTests {
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(23);
 
         // call the success callback ourselves
-        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(config);
 
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked("video", false, metadata, true);
     }
 
     @Test
-    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultDisabled_returnsDisabled() {
+    public void getAndProcessCachedConfig_featureCheckDoesNotMatch_reservoirFailure_defaultDisabled_returnsDisabled() {
         // prepare
         PowerMockito.mockStatic(Reservoir.class);
 
@@ -1100,10 +1100,10 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
-        // call the getAndProcessCachedProduct is called
-        toggle.getAndProcessCachedProduct(featureCheckRequest);
+        // call the getAndProcessCachedConfig is called
+        toggle.getAndProcessCachedConfig(featureCheckRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1122,7 +1122,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultEnabled_returnsEnabled() {
+    public void getAndProcessCachedConfig_featureCheckDoesNotMatch_reservoirFailure_defaultEnabled_returnsEnabled() {
         // prepare
         PowerMockito.mockStatic(Reservoir.class);
 
@@ -1132,10 +1132,10 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
-        // call the getAndProcessCachedProduct is called
-        toggle.getAndProcessCachedProduct(featureCheckRequest);
+        // call the getAndProcessCachedConfig is called
+        toggle.getAndProcessCachedConfig(featureCheckRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1154,7 +1154,7 @@ public class ToggleTests {
     }
 
     @Test
-    public void getAndProcessCachedProduct_featureCheckDoesNotMatch_reservoirFailure_defaultAbsent_returnsEnabled() {
+    public void getAndProcessCachedConfig_featureCheckDoesNotMatch_reservoirFailure_defaultAbsent_returnsEnabled() {
         // prepare
         PowerMockito.mockStatic(Reservoir.class);
 
@@ -1164,10 +1164,10 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
-        // call the getAndProcessCachedProduct is called
-        toggle.getAndProcessCachedProduct(featureCheckRequest);
+        // call the getAndProcessCachedConfig is called
+        toggle.getAndProcessCachedConfig(featureCheckRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1188,7 +1188,7 @@ public class ToggleTests {
     // handleFeatureCheckRequest
 
     @Test
-    public void handleFeatureCheckRequest_sourceTypeJson_getAndProcessCachedProductIsCalled() {
+    public void handleFeatureCheckRequest_sourceTypeJson_getAndProcessCachedConfigIsCalled() {
         PowerMockito.mockStatic(PersistUtils.class);
         Toggle toggle = Mockito.mock(Toggle.class);
 
@@ -1211,7 +1211,7 @@ public class ToggleTests {
         toggle.setSourceType(null);
         toggle.handleFeatureCheckRequest(featureCheckRequest);
 
-        verify(toggle).getAndProcessCachedProduct(featureCheckRequest);
+        verify(toggle).getAndProcessCachedConfig(featureCheckRequest);
     }
 
     @Test
@@ -1224,7 +1224,7 @@ public class ToggleTests {
         Callback callback = mock(Callback.class);
 
         FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
-        Product product = getStandardProduct(metadata);
+        Config config = getStandardConfig(metadata);
 
         // setup the environment to match
         PowerMockito.spy(RuleMatcher.class);
@@ -1240,7 +1240,7 @@ public class ToggleTests {
         Reservoir.getAsync(stringCaptor.capture(), classCaptor.capture(), reservoirGetCallbackArgumentCaptor.capture());
 
         // call the success callback ourselves
-        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(product);
+        reservoirGetCallbackArgumentCaptor.getValue().onSuccess(config);
 
         verify(callback).onStatusChecked(featureToBeSearched, false, metadata, true);
     }

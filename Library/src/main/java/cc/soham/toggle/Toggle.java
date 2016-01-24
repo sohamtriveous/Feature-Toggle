@@ -18,7 +18,7 @@ import cc.soham.toggle.network.CheckLatestAsyncTask;
 import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.network.GetConfigAsyncTask;
 import cc.soham.toggle.objects.Feature;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.ResponseDecisionMeta;
 import cc.soham.toggle.objects.Rule;
 
@@ -27,6 +27,9 @@ import cc.soham.toggle.objects.Rule;
  */
 public class Toggle {
     // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
+    // TODO: make state non-boolean/string
+    // TODO: add overall metadata
+    // TODO: change 'Product' name to 'name'
     // TODO: expand the samples to cover different styles of Toggling
     // TODO: improve documentation
     // TODO: check and improve all API calls
@@ -67,45 +70,45 @@ public class Toggle {
         this.sourceType = sourceType;
     }
 
-    public void getConfig(String productInString) {
+    public void getConfig(String configInString) {
         setSourceType(SourceType.STRING);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.STRING);
-        // convert from string to product
-        Product product = ConversionUtils.convertStringToProduct(productInString);
-        // store product
-        PersistUtils.storeProduct(product);
+        // convert from string to config
+        Config config = ConversionUtils.convertStringToConfig(configInString);
+        // store config
+        PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(JsonElement productInJson) {
+    public void getConfig(JsonElement configInJson) {
         setSourceType(SourceType.JSONOBJECT);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.JSONOBJECT);
-        // convert from json to product
-        Product product = ConversionUtils.convertJSONObjectToProduct(productInJson);
-        // store product
-        PersistUtils.storeProduct(product);
+        // convert from json to config
+        Config config = ConversionUtils.convertJSONObjectToConfig(configInJson);
+        // store config
+        PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(Product product) {
-        setSourceType(SourceType.PRODUCT);
+    public void getConfig(Config config) {
+        setSourceType(SourceType.CONFIG);
         // store source
-        PersistUtils.storeSourceType(getContext(), SourceType.PRODUCT);
-        // store product
-        PersistUtils.storeProduct(product);
+        PersistUtils.storeSourceType(getContext(), SourceType.CONFIG);
+        // store config
+        PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(URL productUrl) {
-        getConfig(productUrl, null);
+    public void getConfig(URL configUrl) {
+        getConfig(configUrl, null);
     }
 
-    public void getConfig(URL productUrl, GetConfigCallback getConfigCallback) {
+    public void getConfig(URL configUrl, GetConfigCallback getConfigCallback) {
         setSourceType(SourceType.URL);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.URL);
-        PersistUtils.storeSourceURL(getContext(), productUrl);
+        PersistUtils.storeSourceURL(getContext(), configUrl);
         // make the network request and store the results
-        GetConfigAsyncTask.start(productUrl.toExternalForm(), getConfigCallback);
+        GetConfigAsyncTask.start(configUrl.toExternalForm(), getConfigCallback);
     }
 
     public FeatureCheckRequest.Builder check(String featureName) {
@@ -125,27 +128,27 @@ public class Toggle {
             sourceType = PersistUtils.getSourceType(getContext());
         }
         if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.shouldGetLatest()) {
-            getAndProcessCachedProduct(featureCheckRequest);
+            getAndProcessCachedConfig(featureCheckRequest);
         } else {
             // make network featureCheckRequest
             makeNetworkFeatureCheckRequest(featureCheckRequest);
         }
     }
 
-    public void getAndProcessCachedProduct(final FeatureCheckRequest featureCheckRequest) {
+    public void getAndProcessCachedConfig(final FeatureCheckRequest featureCheckRequest) {
         // get cached or get default
-        PersistUtils.getProduct(new ReservoirGetCallback<Product>() {
+        PersistUtils.getConfig(new ReservoirGetCallback<Config>() {
             @Override
-            public void onSuccess(Product product) {
-                // process the product
-                FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+            public void onSuccess(Config config) {
+                // process the config
+                FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
                 // make the callback
                 makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
             }
 
             @Override
             public void onFailure(Exception e) {
-                // couldnt retrieve a stored product, send back the default response
+                // couldnt retrieve a stored config, send back the default response
                 e.printStackTrace();
                 boolean enabled = getDefaultEnabledState(featureCheckRequest);
                 // send back a default response
@@ -154,23 +157,23 @@ public class Toggle {
         });
     }
 
-    public FeatureCheckResponse getAndProcessCachedProductSync(final FeatureCheckRequest featureCheckRequest) {
-        Product product = null;
+    public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
+        Config config = null;
         try {
-            product = PersistUtils.getProductSync();
+            config = PersistUtils.getConfigSync();
         } catch (Exception exception) {
             exception.printStackTrace();
             return getExceptionFeatureCheckResponse(featureCheckRequest);
         }
         // check for null
-        if (product == null) {
+        if (config == null) {
             if (featureCheckRequest.getDefaultState() == null) {
-                throw new IllegalStateException("No configuration found (Product) and no default state configured in the state check");
+                throw new IllegalStateException("No configuration found (Config) and no default state configured in the state check");
             }
             return getExceptionFeatureCheckResponse(featureCheckRequest);
         }
-        // process the product
-        FeatureCheckResponse featureCheckResponse = processProduct(product, featureCheckRequest);
+        // process the config
+        FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
         return featureCheckResponse;
 
     }
@@ -199,15 +202,15 @@ public class Toggle {
     }
 
     /**
-     * Code for enabling/disabling a feature based on a request ({@link FeatureCheckRequest}) and a config ({@link Product})
+     * Code for enabling/disabling a feature based on a request ({@link FeatureCheckRequest}) and a config ({@link Config})
      *
-     * @param product
+     * @param config
      * @param featureCheckRequest
      * @return
      */
-    public FeatureCheckResponse processProduct(Product product, FeatureCheckRequest featureCheckRequest) {
-        for (Feature feature : product.getFeatures()) {
-            // find the given feature in the received Product
+    public FeatureCheckResponse processConfig(Config config, FeatureCheckRequest featureCheckRequest) {
+        for (Feature feature : config.getFeatures()) {
+            // find the given feature in the received Config
             if (feature.getName().equals(featureCheckRequest.getFeatureName())) {
                 ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
                 // if there is a decisive decision (either enabled or disabled) initiate the callback and break

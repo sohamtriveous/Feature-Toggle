@@ -9,7 +9,7 @@ import cc.soham.toggle.FeatureCheckRequest;
 public enum SourceType {
     STRING,
     JSONOBJECT,
-    PRODUCT,
+    CONFIG,
     URL,
     NONE
 }

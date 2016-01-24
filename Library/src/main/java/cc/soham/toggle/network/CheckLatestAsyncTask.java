@@ -10,7 +10,7 @@ import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.enums.State;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * An {@link AsyncTask} that checks the latest config for a given {@link FeatureCheckRequest}
@@ -69,12 +69,12 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             String url = PersistUtils.getSourceUrl(featureCheckRequest.getToggle().getContext());
             // make network request to receive response
             String response = NetworkOperations.downloadUrl(url);
-            // convert string to product
-            Product product = ConversionUtils.convertStringToProduct(response);
-            // store product
-            PersistUtils.storeProduct(product);
-            // process the resultant product
-            FeatureCheckResponse result = featureCheckRequest.getToggle().processProduct(product, featureCheckRequest);
+            // convert string to config
+            Config config = ConversionUtils.convertStringToConfig(response);
+            // store config
+            PersistUtils.storeConfig(config);
+            // process the resultant config
+            FeatureCheckResponse result = featureCheckRequest.getToggle().processConfig(config, featureCheckRequest);
             // disable the cache flag since this is a live request
             result.setCached(false);
             return result;
@@ -85,7 +85,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return featureCheckRequest.getToggle().getAndProcessCachedProductSync(featureCheckRequest);
+        return featureCheckRequest.getToggle().getAndProcessCachedConfigSync(featureCheckRequest);
     }
 
     /**

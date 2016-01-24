@@ -32,7 +32,7 @@
         </activity>
 
         <activity
-            android:name=".SampleProductActivity"
+            android:name=".SampleConfigActivity"
             android:theme="@style/AppTheme">
 
         </activity>

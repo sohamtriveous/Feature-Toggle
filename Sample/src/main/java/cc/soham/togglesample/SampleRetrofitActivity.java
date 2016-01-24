@@ -12,7 +12,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.enums.State;
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 import cc.soham.togglesample.network.MyApi;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -20,11 +20,11 @@ import retrofit2.Response;
 
 /**
  * Sample Retrofit Activity, shows how to
- * - Use {@link retrofit2.Retrofit} to make a network call and manually retrieve a {@link Product} configuration
- * - Once the product is retrieved, use {@link Toggle#getConfig(Product)} to store the config in {@link Toggle}
+ * - Use {@link retrofit2.Retrofit} to make a network call and manually retrieve a {@link Config} configuration
+ * - Once the config is retrieved, use {@link Toggle#getConfig(Config)} to store the config in {@link Toggle}
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  *
- * Note: {@link Toggle#check(String)} can be called before/after {@link Toggle#getConfig(Product)} is called
+ * Note: {@link Toggle#check(String)} can be called before/after {@link Toggle#getConfig(Config)} is called
  * Here {@link Toggle#check(String)} will check for cache and the default value in the Request to check for the feature
  */
 public class SampleRetrofitActivity extends AppCompatActivity {
@@ -44,19 +44,19 @@ public class SampleRetrofitActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows how to manually create a {@link retrofit2.Retrofit} network call to retrieve a {@link Product} config
-     * Once the {@link Product} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Product)}
+     * Shows how to manually create a {@link retrofit2.Retrofit} network call to retrieve a {@link Config} config
+     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Config)}
      */
     @OnClick(R.id.activity_sample_get_config)
     public void getConfigButton_onClick() {
         Toast.makeText(SampleRetrofitActivity.this, "Making a retrofit call to get the config", Toast.LENGTH_SHORT).show();
-        Call<Product> productCall = MyApi.getApi().getConfig();
-        productCall.enqueue(new Callback<Product>() {
+        Call<Config> configCall = MyApi.getApi().getConfig();
+        configCall.enqueue(new Callback<Config>() {
             @Override
-            public void onResponse(final Response<Product> response) {
+            public void onResponse(final Response<Config> response) {
                 Toast.makeText(SampleRetrofitActivity.this, "Retrofit response received, storing in toggle", Toast.LENGTH_SHORT).show();
-                Product product = response.body();
-                Toggle.with(SampleRetrofitActivity.this).getConfig(product);
+                Config config = response.body();
+                Toggle.with(SampleRetrofitActivity.this).getConfig(config);
             }
 
             @Override

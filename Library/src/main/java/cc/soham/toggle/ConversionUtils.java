@@ -4,29 +4,29 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 
 /**
  * Created by sohammondal on 20/01/16.
  */
 public class ConversionUtils {
     /**
-     * Converts String to Product
+     * Converts String to Config
      *
-     * @param productInString
+     * @param configInString
      * @return
      */
-    public static Product convertStringToProduct(String productInString) throws JsonSyntaxException {
-        return new Gson().fromJson(productInString, Product.class);
+    public static Config convertStringToConfig(String configInString) throws JsonSyntaxException {
+        return new Gson().fromJson(configInString, Config.class);
     }
 
     /**
-     * Converts JSON to Product
+     * Converts JSON to Config
      *
-     * @param productInJson
+     * @param configInJson
      * @return
      */
-    public static Product convertJSONObjectToProduct(JsonElement productInJson) {
-        return new Gson().fromJson(productInJson, Product.class);
+    public static Config convertJSONObjectToConfig(JsonElement configInJson) {
+        return new Gson().fromJson(configInJson, Config.class);
     }
 }

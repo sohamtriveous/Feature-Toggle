@@ -1,6 +1,6 @@
 package cc.soham.togglesample.network;
 
-import cc.soham.toggle.objects.Product;
+import cc.soham.toggle.objects.Config;
 import retrofit2.Call;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
@@ -26,6 +26,6 @@ public class MyApi {
 
     public interface MyApiService {
         @GET("938d85011cdd5a914f6e/raw/a9c586b9ce052b17ca1f3c0a62f961f49c768d53/toogle.json")
-        Call<Product> getConfig();
+        Call<Config> getConfig();
     }
 }

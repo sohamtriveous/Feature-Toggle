@@ -5,11 +5,11 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Product {
+public class Config {
 
-    @SerializedName("product")
+    @SerializedName("name")
     @Expose
-    private String product;
+    private String name;
     @SerializedName("features")
     @Expose
     private List<Feature> features = new ArrayList<Feature>();
@@ -17,19 +17,19 @@ public class Product {
     /**
      * 
      * @return
-     *     The product
+     *     The name
      */
-    public String getProduct() {
-        return product;
+    public String getName() {
+        return name;
     }
 
     /**
      * 
-     * @param product
-     *     The product
+     * @param name
+     *     The name
      */
-    public void setProduct(String product) {
-        this.product = product;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -50,8 +50,8 @@ public class Product {
         this.features = features;
     }
 
-    public Product(String product, List<Feature> features) {
-        this.product = product;
+    public Config(String name, List<Feature> features) {
+        this.name = name;
         this.features = features;
     }
 }

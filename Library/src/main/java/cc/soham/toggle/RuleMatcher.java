@@ -13,7 +13,8 @@ import cc.soham.toggle.objects.Value;
  */
 public class RuleMatcher {
     /**
-     * This is after the feature name has been matched between the FeatureCheckRequest and a stored product Feature
+     * This is after the feature name has been matched between the FeatureCheckRequest and a stored
+     * Config Feature
      *
      * @param rule
      * @return
