@@ -24,11 +24,8 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: remove the discrepancies in "state":"disabled" and "enabled": true in the json
-    // TODO: make state non-boolean/string
     // TODO: add overall metadata
-    // TODO: change 'Product' name to 'name'
-    // TODO: expand the samples to cover different styles of Toggling
+    // add okhttp implementation
     // TODO: improve documentation
     // TODO: check and improve all API calls
 
