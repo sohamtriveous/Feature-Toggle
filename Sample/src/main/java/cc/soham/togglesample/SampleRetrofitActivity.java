@@ -49,7 +49,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
      */
     @OnClick(R.id.activity_sample_get_config)
     public void getConfigButton_onClick() {
-        Toast.makeText(SampleRetrofitActivity.this, "Making a retrofit call to get the config", Toast.LENGTH_SHORT).show();
+        showMessage("Making a retrofit call to get the config");
         Call<Config> configCall = MyApi.getApi().getConfig();
         configCall.enqueue(new Callback<Config>() {
             @Override
