@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Feature name/status will appear here" />
+        android:text="Feature name/state will appear here" />
 
     <TextView
         android:id="@+id/activity_sample_feature_metadata"
@@ -52,6 +52,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/activity_sample_feature_metadata"
         android:layout_centerInParent="true"
-        android:text="Cache status will appear here" />
+        android:text="Cache state will appear here" />
 
 </RelativeLayout>

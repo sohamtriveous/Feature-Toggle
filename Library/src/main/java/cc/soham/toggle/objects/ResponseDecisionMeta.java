@@ -1,20 +1,23 @@
 package cc.soham.toggle.objects;
 
-import cc.soham.toggle.enums.ResponseDecision;
-
 /**
  * Created by sohammondal on 21/01/16.
  */
 public class ResponseDecisionMeta {
-    public ResponseDecision responseDecision;
+    public String state;
     public String metadata;
 
-    public ResponseDecisionMeta(ResponseDecision responseDecision) {
-        this.responseDecision = responseDecision;
+    public ResponseDecisionMeta(Rule rule) {
+        this.state = rule.getState();
+        this.metadata = rule.getMetadata();
     }
 
-    public ResponseDecisionMeta(ResponseDecision responseDecision, String metadata) {
-        this.responseDecision = responseDecision;
+    public ResponseDecisionMeta(String state, String metadata) {
+        this.state = state;
         this.metadata = metadata;
+    }
+
+    public ResponseDecisionMeta(String state) {
+        this.state = state;
     }
 }

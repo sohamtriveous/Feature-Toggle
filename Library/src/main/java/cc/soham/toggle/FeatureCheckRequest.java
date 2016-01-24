@@ -4,7 +4,6 @@ import android.support.annotation.VisibleForTesting;
 
 import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.callbacks.ErrorCallback;
-import cc.soham.toggle.enums.State;
 
 /**
  * Represents a feature check request
@@ -17,7 +16,7 @@ public class FeatureCheckRequest {
     private final Callback callback;
 
     // Optional parameters
-    private final State defaultState;
+    private final String defaultState;
     private final boolean getLatest;
     private final ErrorCallback errorCallback;
 
@@ -28,7 +27,7 @@ public class FeatureCheckRequest {
         private Callback callback;
 
         // Optional parameters
-        State defaultState = State.ENABLED;
+        String defaultState = Toggle.DEFAULT_STATE;
         boolean getLatest;
         ErrorCallback errorCallback;
 
@@ -37,7 +36,7 @@ public class FeatureCheckRequest {
             this.featureName = featureName;
         }
 
-        public Builder defaultState(State defaultState) {
+        public Builder defaultState(String defaultState) {
             this.defaultState = defaultState;
             return this;
         }
@@ -78,7 +77,7 @@ public class FeatureCheckRequest {
      * @param errorCallback
      */
     @VisibleForTesting
-    FeatureCheckRequest(Toggle toggle, String featureName, Callback callback, State defaultState, boolean getLatest, ErrorCallback errorCallback) {
+    FeatureCheckRequest(Toggle toggle, String featureName, Callback callback, String defaultState, boolean getLatest, ErrorCallback errorCallback) {
         this.toggle = toggle;
         this.featureName = featureName;
         this.callback = callback;
@@ -95,7 +94,7 @@ public class FeatureCheckRequest {
         return callback;
     }
 
-    public State getDefaultState() {
+    public String getDefaultState() {
         return defaultState;
     }
 

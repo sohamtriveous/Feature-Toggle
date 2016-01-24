@@ -12,7 +12,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -46,7 +45,7 @@ public class SampleStringActivity extends AppCompatActivity {
     public void setConfigButton_onClick() {
         Toast.makeText(SampleStringActivity.this, "Importing config from a local String object", Toast.LENGTH_SHORT).show();
         try {
-            Toggle.with(this).setConfig("{\"product\": \"jsappbasics\", \"features\":[{\"name\":\"video\", \"state\":\"disabled\", \"default\": \"enabled\", \"rules\":[{\"enabled\": false, \"value\": {\"apilevel_min\": 21, \"apilevel_max\": 23, \"appversion_min\": 11, \"appversion_max\": 13, \"date_min\": 1452766668000, \"date_max\": 1455566668000, \"buildtype\":\"debug\", \"device\":[{\"manufacturer\":\"xiaomi\",\"model\":\"mi3\"}, {\"manufacturer\":\"samsung\", \"model\":\"s4\"}]}}, {\"enabled\": false, \"value\": {\"appversion_max\": 13}}]},{\"name\":\"crash_reporting\", \"rules\":[{\"enabled\": false, \"value\": {\"appversion\": 11, \"buildtype\": \"debug\"}}]},{\"name\":\"mixpanel\",\"state\": \"enabled\"}]}");
+            Toggle.with(this).setConfig("{\"name\": \"jsappbasics\", \"features\":[{\"name\":\"video\", \"state\":\"disabled\", \"default\": \"enabled\", \"rules\":[{\"state\": \"disabled\", \"value\": {\"apilevel_min\": 21, \"apilevel_max\": 23, \"appversion_min\": 11, \"appversion_max\": 13, \"date_min\": 1452766668000, \"date_max\": 1455566668000, \"buildtype\":\"debug\", \"device\":[{\"manufacturer\":\"xiaomi\",\"model\":\"mi3\"}, {\"manufacturer\":\"samsung\", \"model\":\"s4\"}]}}, {\"state\": \"disabled\", \"value\": {\"appversion_max\": 13}}]},{\"name\":\"crash_reporting\", \"rules\":[{\"state\": \"disabled\", \"value\": {\"appversion\": 11, \"buildtype\": \"debug\"}}]},{\"name\":\"mixpanel\",\"state\": \"enabled\"}]}");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,11 +58,11 @@ public class SampleStringActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
         showMessage("Checking for the feature");
-        Toggle.with(SampleStringActivity.this).check("mixpanel").defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        Toggle.with(SampleStringActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, enabled, metadata, cached);
+                updateUiAfterResponse(feature, state, metadata, cached);
             }
         });
     }
@@ -72,13 +71,13 @@ public class SampleStringActivity extends AppCompatActivity {
      * Update the UI as per the feature state
      *
      * @param feature  Name of the feature
-     * @param enabled  The feature-toggle state of the feature: enabled/disabled
+     * @param state  The feature-toggle state of the feature: enabled/disabled
      * @param metadata Metadata attached to the feature
      * @param cached   Shows whether this is a cached response or not
      */
-    private void updateUiAfterResponse(String feature, boolean enabled, String metadata, boolean cached) {
-        featureButton.setText(feature + " is " + (enabled ? "enabled" : "disabled"));
-        featureButton.setEnabled(enabled);
+    private void updateUiAfterResponse(String feature, String state, String metadata, boolean cached) {
+        featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
+        featureButton.setEnabled(state == Toggle.ENABLED);
         metadataTextView.setText("Metadata: " + metadata);
         cachedTextView.setText("Cached: " + cached);
     }

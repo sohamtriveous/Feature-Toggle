@@ -25,7 +25,7 @@ public class MyApi {
     }
 
     public interface MyApiService {
-        @GET("938d85011cdd5a914f6e/raw/a9c586b9ce052b17ca1f3c0a62f961f49c768d53/toogle.json")
+        @GET("938d85011cdd5a914f6e/raw/5ce9fd74c8cc955ba282b968f39eed7bdac85411/sample_toggle_config.json")
         Call<Config> getConfig();
     }
 }

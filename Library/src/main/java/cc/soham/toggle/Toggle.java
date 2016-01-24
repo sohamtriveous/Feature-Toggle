@@ -11,9 +11,7 @@ import com.google.gson.JsonElement;
 import java.net.URL;
 
 import cc.soham.toggle.callbacks.SetConfigCallback;
-import cc.soham.toggle.enums.ResponseDecision;
 import cc.soham.toggle.enums.SourceType;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
 import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.network.SetConfigAsyncTask;
@@ -34,8 +32,7 @@ public class Toggle {
     // TODO: improve documentation
     // TODO: check and improve all API calls
 
-    public static final State DEFAULT_STATE = State.ENABLED;
-
+    public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
     public static final String DISABLED = "disabled";
 
@@ -150,9 +147,12 @@ public class Toggle {
             public void onFailure(Exception e) {
                 // couldnt retrieve a stored config, send back the default response
                 e.printStackTrace();
-                boolean enabled = getDefaultEnabledState(featureCheckRequest);
                 // send back a default response
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), enabled, null, true);
+                String state = DEFAULT_STATE;
+                if(featureCheckRequest.getDefaultState() != null) {
+                    state = featureCheckRequest.getDefaultState();
+                }
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
             }
         });
     }
@@ -170,7 +170,7 @@ public class Toggle {
             if (featureCheckRequest.getDefaultState() == null) {
                 throw new IllegalStateException("No configuration found (Config) and no default state configured in the state check");
             }
-            return getExceptionFeatureCheckResponse(featureCheckRequest);
+            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
         }
         // process the config
         FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
@@ -180,25 +180,15 @@ public class Toggle {
 
     @NonNull
     @VisibleForTesting
-    // TODO: unit test getExceptionFeatureCheckResponse
+        // TODO: unit test getExceptionFeatureCheckResponse
     FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
-        boolean enabled = getDefaultEnabledState(featureCheckRequest);
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), enabled, null, true);
-    }
-
-    // TODO: unit test this
-    private static boolean getDefaultEnabledState(FeatureCheckRequest featureCheckRequest) {
-        boolean enabled = (DEFAULT_STATE == State.ENABLED);
-        if (featureCheckRequest.getDefaultState() != null) {
-            enabled = (featureCheckRequest.getDefaultState() == State.ENABLED);
-        }
-        return enabled;
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), DEFAULT_STATE, null, true);
     }
 
     @VisibleForTesting
-    // TODO: unit test makeFeatureCheckCallback
+        // TODO: unit test makeFeatureCheckCallback
     void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
-        featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), true);
+        featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), true);
     }
 
     /**
@@ -213,21 +203,19 @@ public class Toggle {
             // find the given feature in the received Config
             if (feature.getName().equals(featureCheckRequest.getFeatureName())) {
                 ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
-                // if there is a decisive decision (either enabled or disabled) initiate the callback and break
-                if (responseDecisionMeta.responseDecision == ResponseDecision.RESPONSE_ENABLED || responseDecisionMeta.responseDecision == ResponseDecision.RESPONSE_DISABLED) {
-                    return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), responseDecisionMeta.responseDecision == ResponseDecision.RESPONSE_ENABLED, responseDecisionMeta.metadata);
-                }
+                // if there is a decisive state (either enabled or disabled) initiate the callback and break
+                return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), responseDecisionMeta.state, responseDecisionMeta.metadata);
             }
         }
-        // a) feature not found or b) no decision could be made based on the config
+        // a) feature not found or b) no state could be made based on the config
         // check if there was no default state in the request, send enabled (default toggle)
-        boolean enabled;
+        String state;
         if (featureCheckRequest.getDefaultState() == null) {
-            enabled = true;
+            state = DEFAULT_STATE;
         } else {
-            enabled = (featureCheckRequest.getDefaultState() == DEFAULT_STATE);
+            state = featureCheckRequest.getDefaultState();
         }
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), enabled, null, false);
+        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), state, null, false);
     }
 
     /**
@@ -274,53 +262,34 @@ public class Toggle {
     ResponseDecisionMeta getRuleMatchedResponseDecision(Rule rule) {
         // an enabled/disabled state is mandatory for a rule
         // (else we wouldn't know what to do once a rule is matched)
-        if (rule.getEnabled() == null)
+        if (rule.getState() == null)
             throw new IllegalStateException("The state in a Rule cannot be empty");
-        ResponseDecisionMeta responseDecisionMeta;
-        if (rule.getEnabled()) {
-            responseDecisionMeta = new ResponseDecisionMeta(ResponseDecision.RESPONSE_ENABLED);
-        } else {
-            responseDecisionMeta = new ResponseDecisionMeta(ResponseDecision.RESPONSE_DISABLED);
-        }
-        responseDecisionMeta.metadata = rule.getMetadata();
-        return responseDecisionMeta;
+        return new ResponseDecisionMeta(rule);
     }
 
     @NonNull
     @VisibleForTesting
     ResponseDecisionMeta getStatePoweredResponseDecision(Feature feature) {
-        // if state is null, we can't take decision on this
+        // if state is null, we can't take state on this
         if (feature.getState() == null)
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_UNDECIDED);
+            return new ResponseDecisionMeta(DEFAULT_STATE);
         // if state is not null, use the overriding feature
-        if (feature.getState().equalsIgnoreCase(DISABLED)) {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_DISABLED);
-        } else {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_ENABLED);
-        }
+        return new ResponseDecisionMeta(feature.getState());
     }
 
     @NonNull
     @VisibleForTesting
     ResponseDecisionMeta getDefaultResponseDecision(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
         // first preference in defaults is given to the local variable (provided while the Toggle.with().check().setDefault().start() call)
-        if (featureCheckRequest.getDefaultState() == State.ENABLED) {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_ENABLED);
-        } else {
-            if (featureCheckRequest.getDefaultState() == State.DISABLED) {
-                return new ResponseDecisionMeta(ResponseDecision.RESPONSE_DISABLED);
-            }
+        if (featureCheckRequest.getDefaultState() != null) {
+            return new ResponseDecisionMeta(featureCheckRequest.getDefaultState());
         }
         // in case no Default is provided in the feature (in the config), return enabled
         if (feature.getDefault() == null) {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_ENABLED);
+            return new ResponseDecisionMeta(DEFAULT_STATE);
         }
         // so no local defaults but some default is provided in the config
-        if (feature.getDefault().equalsIgnoreCase(ENABLED)) {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_ENABLED);
-        } else {
-            return new ResponseDecisionMeta(ResponseDecision.RESPONSE_DISABLED);
-        }
+        return new ResponseDecisionMeta(feature.getDefault());
     }
 
     public Context getContext() {

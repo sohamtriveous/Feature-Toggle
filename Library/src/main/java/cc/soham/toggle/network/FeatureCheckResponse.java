@@ -5,29 +5,25 @@ package cc.soham.toggle.network;
  */
 public class FeatureCheckResponse {
     String featureName;
-    boolean enabled;
+    String state;
     String metadata;
     boolean cached = true;
 
-    public FeatureCheckResponse(String featureName, boolean enabled, String metadata) {
+    public FeatureCheckResponse(String featureName, String state, String metadata) {
         this.featureName = featureName;
-        this.enabled = enabled;
+        this.state = state;
         this.metadata = metadata;
     }
 
-    public FeatureCheckResponse(String featureName, boolean enabled, String metadata, boolean cached) {
+    public FeatureCheckResponse(String featureName, String state, String metadata, boolean cached) {
         this.featureName = featureName;
-        this.enabled = enabled;
+        this.state = state;
         this.metadata = metadata;
         this.cached = cached;
     }
 
     public String getFeatureName() {
         return featureName;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 
     public String getMetadata() {
@@ -42,15 +38,19 @@ public class FeatureCheckResponse {
         this.featureName = featureName;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public void setMetadata(String metadata) {
         this.metadata = metadata;
     }
 
     public void setCached(boolean cached) {
         this.cached = cached;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

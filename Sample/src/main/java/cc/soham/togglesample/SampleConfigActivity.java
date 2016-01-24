@@ -15,7 +15,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.Rule;
@@ -25,7 +24,6 @@ import cc.soham.toggle.objects.Value;
  * Sample Config Activity, shows how to
  * - Use {@link Toggle#setConfig(Config)} to configure Toggle
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
- *
  */
 public class SampleConfigActivity extends AppCompatActivity {
     @Bind(R.id.activity_sample_feature)
@@ -61,31 +59,33 @@ public class SampleConfigActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
         showMessage("Checking for the feature");
-        Toggle.with(SampleConfigActivity.this).check("mixpanel").defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        Toggle.with(SampleConfigActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, enabled, metadata, cached);
+                updateUiAfterResponse(feature, state, metadata, cached);
             }
         });
     }
 
     /**
      * Update the UI as per the feature state
-     * @param feature Name of the feature
-     * @param enabled The feature-toggle state of the feature: enabled/disabled
+     *
+     * @param feature  Name of the feature
+     * @param state  The feature-toggle state of the feature: enabled/disabled
      * @param metadata Metadata attached to the feature
-     * @param cached Shows whether this is a cached response or not
+     * @param cached   Shows whether this is a cached response or not
      */
-    private void updateUiAfterResponse(String feature, boolean enabled, String metadata, boolean cached) {
-        featureButton.setText(feature + " is " + (enabled ? "enabled" : "disabled"));
-        featureButton.setEnabled(enabled);
+    private void updateUiAfterResponse(String feature, String state, String metadata, boolean cached) {
+        featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
+        featureButton.setEnabled(state == Toggle.ENABLED);
         metadataTextView.setText("Metadata: " + metadata);
         cachedTextView.setText("Cached: " + cached);
     }
 
     /**
      * Simple helper method to show Toasts
+     *
      * @param message
      */
     private void showMessage(String message) {
@@ -94,6 +94,7 @@ public class SampleConfigActivity extends AppCompatActivity {
 
     /**
      * Creates a Sample Config object with two sample rules
+     *
      * @return
      */
     @NonNull
@@ -103,8 +104,8 @@ public class SampleConfigActivity extends AppCompatActivity {
         Value value2 = new Value(null, null, null, null, 1453196880000L, null, null, null);
 
         String metadata = "sample metadata";
-        rules.add(new Rule(false, metadata, value1));
-        rules.add(new Rule(false, metadata, value2));
+        rules.add(new Rule(Toggle.DISABLED, metadata, value1));
+        rules.add(new Rule(Toggle.DISABLED, metadata, value2));
 
         Feature featureVideo = new Feature("video", null, Toggle.ENABLED, rules);
         Feature featureAudio = new Feature("mixpanel", null, Toggle.ENABLED, rules);

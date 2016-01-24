@@ -9,7 +9,6 @@ import java.io.IOException;
 import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.PersistUtils;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -51,9 +50,9 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
         // make the callback if configured
         if (featureCheckRequest.getCallback() != null) {
             if (featureCheckResponse != null) {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.isEnabled(), featureCheckResponse.getMetadata(), false);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), false);
             } else {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState() == State.ENABLED, null, true);
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
             }
         }
     }

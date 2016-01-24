@@ -11,7 +11,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 import cc.soham.togglesample.network.MyApi;
 import retrofit2.Call;
@@ -73,11 +72,11 @@ public class SampleRetrofitActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
         showMessage("Checking for the feature");
-        Toggle.with(SampleRetrofitActivity.this).check("mixpanel").defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        Toggle.with(SampleRetrofitActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, enabled, metadata, cached);
+                updateUiAfterResponse(feature, state, metadata, cached);
             }
         });
     }
@@ -85,13 +84,13 @@ public class SampleRetrofitActivity extends AppCompatActivity {
     /**
      * Update the UI as per the feature state
      * @param feature Name of the feature
-     * @param enabled The feature-toggle state of the feature: enabled/disabled
+     * @param state The feature-toggle state of the feature: enabled/disabled
      * @param metadata Metadata attached to the feature
      * @param cached Shows whether this is a cached response or not
      */
-    private void updateUiAfterResponse(String feature, boolean enabled, String metadata, boolean cached) {
-        featureButton.setText(feature + " is " + (enabled ? "enabled" : "disabled"));
-        featureButton.setEnabled(enabled);
+    private void updateUiAfterResponse(String feature, String state, String metadata, boolean cached) {
+        featureButton.setText(feature + " is " + (state ==  Toggle.ENABLED? "enabled" : "disabled"));
+        featureButton.setEnabled(state ==  Toggle.ENABLED);
         metadataTextView.setText("Metadata: " + metadata);
         cachedTextView.setText("Cached: " + cached);
     }

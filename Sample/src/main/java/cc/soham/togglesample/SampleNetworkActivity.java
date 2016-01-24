@@ -15,7 +15,6 @@ import butterknife.OnClick;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.SetConfigCallback;
-import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -24,7 +23,6 @@ import cc.soham.toggle.objects.Config;
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link FeatureCheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
- *
  */
 public class SampleNetworkActivity extends AppCompatActivity {
     @Bind(R.id.activity_sample_feature)
@@ -69,11 +67,11 @@ public class SampleNetworkActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
         showMessage("Checking for the feature");
-        Toggle.with(SampleNetworkActivity.this).check("mixpanel").defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        Toggle.with(SampleNetworkActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, enabled, metadata, cached);
+                updateUiAfterResponse(feature, state, metadata, cached);
             }
         });
     }
@@ -85,11 +83,11 @@ public class SampleNetworkActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_check_latest)
     public void checkLatestButton_onClick() {
         showMessage("Checking for the latest feature");
-        Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 showMessage("Latest feature checked");
-                updateUiAfterResponse(feature, enabled, metadata, cached);
+                updateUiAfterResponse(feature, state, metadata, cached);
             }
         });
     }
@@ -98,13 +96,13 @@ public class SampleNetworkActivity extends AppCompatActivity {
      * Update the UI as per the feature state
      *
      * @param feature  Name of the feature
-     * @param enabled  The feature-toggle state of the feature: enabled/disabled
+     * @param state    The feature-toggle state of the feature: state/disabled
      * @param metadata Metadata attached to the feature
      * @param cached   Shows whether this is a cached response or not
      */
-    private void updateUiAfterResponse(String feature, boolean enabled, String metadata, boolean cached) {
-        featureButton.setText(feature + " is " + (enabled ? "enabled" : "disabled"));
-        featureButton.setEnabled(enabled);
+    private void updateUiAfterResponse(String feature, String state, String metadata, boolean cached) {
+        featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
+        featureButton.setEnabled(state == Toggle.ENABLED);
         metadataTextView.setText("Metadata: " + metadata);
         cachedTextView.setText("Cached: " + cached);
     }

@@ -376,7 +376,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
-        Rule rule = new Rule(false, null, new Value(14, null, null, null, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, null, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -385,7 +385,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(22);
-        Rule rule = new Rule(false, null, new Value(23, null, null, null, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(23, null, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -394,7 +394,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelMixMaxCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Rule rule = new Rule(false, null, new Value(14, 22, null, null, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -403,7 +403,7 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelMixMaxCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Rule rule = new Rule(false, null, new Value(14, 16, null, null, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 16, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -413,7 +413,7 @@ public class RuleMatcherTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -423,7 +423,7 @@ public class RuleMatcherTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 110, 120, null, null, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 110, 120, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -435,7 +435,7 @@ public class RuleMatcherTests {
         Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -447,7 +447,7 @@ public class RuleMatcherTests {
         Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
         Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1453199990000L, 1453199999999L, null, null));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1453199990000L, 1453199999999L, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }
@@ -472,7 +472,7 @@ public class RuleMatcherTests {
 
         Mockito.when(RuleMatcher.getBuildType()).thenReturn("release");
 
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
     }
@@ -496,7 +496,7 @@ public class RuleMatcherTests {
 
         Mockito.when(RuleMatcher.getBuildType()).thenReturn("release");
 
-        Rule rule = new Rule(false, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
+        Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
     }

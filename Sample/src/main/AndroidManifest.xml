@@ -14,16 +14,22 @@
             android:name=".SampleNetworkActivity"
             android:theme="@style/AppTheme">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
 
         <activity
             android:name=".SampleRetrofitActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+
+        </activity>
 
         <activity
             android:name=".SampleStringActivity"
             android:theme="@style/AppTheme">
-
 
         </activity>
 
@@ -31,10 +37,6 @@
             android:name=".SampleConfigActivity"
             android:theme="@style/AppTheme">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
 
