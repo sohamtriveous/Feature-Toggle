@@ -3,13 +3,92 @@ package cc.soham.togglesample;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cc.soham.toggle.Toggle;
+import cc.soham.toggle.enums.State;
+import cc.soham.toggle.objects.Product;
 
 /**
- * Created by sohammondal on 22/01/16.
+ * Sample String Activity, shows how to
+ * - Input configuration using a {@link String} resource (This should conform to the standard {@link Product}
+ * json schema
+ * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  */
 public class SampleStringActivity extends AppCompatActivity {
+    @Bind(R.id.activity_sample_feature)
+    Button featureButton;
+    @Bind(R.id.activity_sample_feature_metadata)
+    TextView metadataTextView;
+    @Bind(R.id.activity_sample_feature_cached)
+    TextView cachedTextView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_sample_base);
+        ButterKnife.bind(this);
+        getSupportActionBar().setTitle("String Sample");
+    }
+
+    /**
+     * Shows how to use {@link Toggle#getConfig(String)} to get the config from a {@link String} resource
+     * The string input must follow the standard {@link Product} json structure
+     */
+    @OnClick(R.id.activity_sample_get_config)
+    public void getConfigButton_onClick() {
+        Toast.makeText(SampleStringActivity.this, "Importing config from a local String object", Toast.LENGTH_SHORT).show();
+        try {
+            Toggle.with(this).getConfig("{\"product\": \"jsappbasics\", \"features\":[{\"name\":\"video\", \"state\":\"disabled\", \"default\": \"enabled\", \"rules\":[{\"enabled\": false, \"value\": {\"apilevel_min\": 21, \"apilevel_max\": 23, \"appversion_min\": 11, \"appversion_max\": 13, \"date_min\": 1452766668000, \"date_max\": 1455566668000, \"buildtype\":\"debug\", \"device\":[{\"manufacturer\":\"xiaomi\",\"model\":\"mi3\"}, {\"manufacturer\":\"samsung\", \"model\":\"s4\"}]}}, {\"enabled\": false, \"value\": {\"appversion_max\": 13}}]},{\"name\":\"crash_reporting\", \"rules\":[{\"enabled\": false, \"value\": {\"appversion\": 11, \"buildtype\": \"debug\"}}]},{\"name\":\"mixpanel\",\"state\": \"enabled\"}]}");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Shows how to check for a particular feature, here we check for the 'mixpanel' feature in the config
+     * We can pass in additional flags in the {@link Toggle#check(String)} call like default value etc.
+     */
+    @OnClick(R.id.activity_sample_check)
+    public void checkButton_onClick() {
+        showMessage("Checking for the feature");
+        Toggle.with(SampleStringActivity.this).check("mixpanel").defaultState(State.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+            @Override
+            public void onStatusChecked(String feature, boolean enabled, String metadata, boolean cached) {
+                showMessage("Feature checked");
+                updateUiAfterResponse(feature, enabled, metadata, cached);
+            }
+        });
+    }
+
+    /**
+     * Update the UI as per the feature state
+     *
+     * @param feature  Name of the feature
+     * @param enabled  The feature-toggle state of the feature: enabled/disabled
+     * @param metadata Metadata attached to the feature
+     * @param cached   Shows whether this is a cached response or not
+     */
+    private void updateUiAfterResponse(String feature, boolean enabled, String metadata, boolean cached) {
+        featureButton.setText(feature + " is " + (enabled ? "enabled" : "disabled"));
+        featureButton.setEnabled(enabled);
+        metadataTextView.setText("Metadata: " + metadata);
+        cachedTextView.setText("Cached: " + cached);
+    }
+
+    /**
+     * Simple helper method to show Toasts
+     *
+     * @param message
+     */
+    private void showMessage(String message) {
+        Toast.makeText(SampleStringActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }
