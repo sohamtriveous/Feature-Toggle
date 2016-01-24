@@ -39,14 +39,14 @@ public class SampleStringActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows how to use {@link Toggle#getConfig(String)} to get the config from a {@link String} resource
+     * Shows how to use {@link Toggle#setConfig(String)} to get the config from a {@link String} resource
      * The string input must follow the standard {@link Config} json structure
      */
-    @OnClick(R.id.activity_sample_get_config)
-    public void getConfigButton_onClick() {
+    @OnClick(R.id.activity_sample_set_config)
+    public void setConfigButton_onClick() {
         Toast.makeText(SampleStringActivity.this, "Importing config from a local String object", Toast.LENGTH_SHORT).show();
         try {
-            Toggle.with(this).getConfig("{\"product\": \"jsappbasics\", \"features\":[{\"name\":\"video\", \"state\":\"disabled\", \"default\": \"enabled\", \"rules\":[{\"enabled\": false, \"value\": {\"apilevel_min\": 21, \"apilevel_max\": 23, \"appversion_min\": 11, \"appversion_max\": 13, \"date_min\": 1452766668000, \"date_max\": 1455566668000, \"buildtype\":\"debug\", \"device\":[{\"manufacturer\":\"xiaomi\",\"model\":\"mi3\"}, {\"manufacturer\":\"samsung\", \"model\":\"s4\"}]}}, {\"enabled\": false, \"value\": {\"appversion_max\": 13}}]},{\"name\":\"crash_reporting\", \"rules\":[{\"enabled\": false, \"value\": {\"appversion\": 11, \"buildtype\": \"debug\"}}]},{\"name\":\"mixpanel\",\"state\": \"enabled\"}]}");
+            Toggle.with(this).setConfig("{\"product\": \"jsappbasics\", \"features\":[{\"name\":\"video\", \"state\":\"disabled\", \"default\": \"enabled\", \"rules\":[{\"enabled\": false, \"value\": {\"apilevel_min\": 21, \"apilevel_max\": 23, \"appversion_min\": 11, \"appversion_max\": 13, \"date_min\": 1452766668000, \"date_max\": 1455566668000, \"buildtype\":\"debug\", \"device\":[{\"manufacturer\":\"xiaomi\",\"model\":\"mi3\"}, {\"manufacturer\":\"samsung\", \"model\":\"s4\"}]}}, {\"enabled\": false, \"value\": {\"appversion_max\": 13}}]},{\"name\":\"crash_reporting\", \"rules\":[{\"enabled\": false, \"value\": {\"appversion\": 11, \"buildtype\": \"debug\"}}]},{\"name\":\"mixpanel\",\"state\": \"enabled\"}]}");
         } catch (Exception e) {
             e.printStackTrace();
         }

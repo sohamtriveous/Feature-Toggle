@@ -3,17 +3,17 @@ package cc.soham.toggle.network;
 import cc.soham.toggle.objects.Config;
 
 /**
- * Response of {@link GetConfigAsyncTask}
+ * Response of {@link SetConfigAsyncTask}
  */
-public class GetConfigResponse {
+public class SetConfigResponse {
     Config config;
     boolean cached = false;
 
-    public GetConfigResponse(Config config) {
+    public SetConfigResponse(Config config) {
         this.config = config;
     }
 
-    public GetConfigResponse(Config config, boolean cached) {
+    public SetConfigResponse(Config config, boolean cached) {
         this.config = config;
         this.cached = cached;
     }

@@ -23,7 +23,7 @@ import cc.soham.toggle.objects.Value;
 
 /**
  * Sample Config Activity, shows how to
- * - Use {@link Toggle#getConfig(Config)} to configure Toggle
+ * - Use {@link Toggle#setConfig(Config)} to configure Toggle
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  *
  */
@@ -46,11 +46,11 @@ public class SampleConfigActivity extends AppCompatActivity {
     /**
      * Shows how to configure Toggle by using a {@link Config} object
      */
-    @OnClick(R.id.activity_sample_get_config)
-    public void getConfigButton_onClick() {
+    @OnClick(R.id.activity_sample_set_config)
+    public void setConfigButton_onClick() {
         showMessage("Importing configuration via a Config object");
         Config config = createSampleConfig();
-        Toggle.with(SampleConfigActivity.this).getConfig(config);
+        Toggle.with(SampleConfigActivity.this).setConfig(config);
         showMessage("Importing configuration via a Config object");
     }
 

@@ -21,10 +21,10 @@ import retrofit2.Response;
 /**
  * Sample Retrofit Activity, shows how to
  * - Use {@link retrofit2.Retrofit} to make a network call and manually retrieve a {@link Config} configuration
- * - Once the config is retrieved, use {@link Toggle#getConfig(Config)} to store the config in {@link Toggle}
+ * - Once the config is retrieved, use {@link Toggle#setConfig(Config)} to store the config in {@link Toggle}
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  *
- * Note: {@link Toggle#check(String)} can be called before/after {@link Toggle#getConfig(Config)} is called
+ * Note: {@link Toggle#check(String)} can be called before/after {@link Toggle#setConfig(Config)} is called
  * Here {@link Toggle#check(String)} will check for cache and the default value in the Request to check for the feature
  */
 public class SampleRetrofitActivity extends AppCompatActivity {
@@ -45,10 +45,10 @@ public class SampleRetrofitActivity extends AppCompatActivity {
 
     /**
      * Shows how to manually create a {@link retrofit2.Retrofit} network call to retrieve a {@link Config} config
-     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Config)}
+     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#setConfig(Config)}
      */
-    @OnClick(R.id.activity_sample_get_config)
-    public void getConfigButton_onClick() {
+    @OnClick(R.id.activity_sample_set_config)
+    public void setConfigButton_onClick() {
         showMessage("Making a retrofit call to get the config");
         Call<Config> configCall = MyApi.getApi().getConfig();
         configCall.enqueue(new Callback<Config>() {
@@ -56,7 +56,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
             public void onResponse(final Response<Config> response) {
                 Toast.makeText(SampleRetrofitActivity.this, "Retrofit response received, storing in toggle", Toast.LENGTH_SHORT).show();
                 Config config = response.body();
-                Toggle.with(SampleRetrofitActivity.this).getConfig(config);
+                Toggle.with(SampleRetrofitActivity.this).setConfig(config);
             }
 
             @Override

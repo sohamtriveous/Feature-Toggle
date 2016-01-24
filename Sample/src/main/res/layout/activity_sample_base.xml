@@ -11,17 +11,17 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <Button
-        android:id="@+id/activity_sample_get_config"
+        android:id="@+id/activity_sample_set_config"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:text="Get Config" />
+        android:text="Set Config" />
 
     <Button
         android:id="@+id/activity_sample_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/activity_sample_get_config"
+        android:layout_below="@id/activity_sample_set_config"
         android:text="Check" />
 
     <Button

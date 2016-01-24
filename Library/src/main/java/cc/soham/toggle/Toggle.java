@@ -10,13 +10,13 @@ import com.google.gson.JsonElement;
 
 import java.net.URL;
 
-import cc.soham.toggle.callbacks.GetConfigCallback;
+import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.enums.ResponseDecision;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.enums.State;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
 import cc.soham.toggle.network.FeatureCheckResponse;
-import cc.soham.toggle.network.GetConfigAsyncTask;
+import cc.soham.toggle.network.SetConfigAsyncTask;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.ResponseDecisionMeta;
@@ -70,7 +70,7 @@ public class Toggle {
         this.sourceType = sourceType;
     }
 
-    public void getConfig(String configInString) {
+    public void setConfig(String configInString) {
         setSourceType(SourceType.STRING);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.STRING);
@@ -80,7 +80,7 @@ public class Toggle {
         PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(JsonElement configInJson) {
+    public void setConfig(JsonElement configInJson) {
         setSourceType(SourceType.JSONOBJECT);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.JSONOBJECT);
@@ -90,7 +90,7 @@ public class Toggle {
         PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(Config config) {
+    public void setConfig(Config config) {
         setSourceType(SourceType.CONFIG);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.CONFIG);
@@ -98,17 +98,17 @@ public class Toggle {
         PersistUtils.storeConfig(config);
     }
 
-    public void getConfig(URL configUrl) {
-        getConfig(configUrl, null);
+    public void setConfig(URL configUrl) {
+        setConfig(configUrl, null);
     }
 
-    public void getConfig(URL configUrl, GetConfigCallback getConfigCallback) {
+    public void setConfig(URL configUrl, SetConfigCallback setConfigCallback) {
         setSourceType(SourceType.URL);
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.URL);
         PersistUtils.storeSourceURL(getContext(), configUrl);
         // make the network request and store the results
-        GetConfigAsyncTask.start(configUrl.toExternalForm(), getConfigCallback);
+        SetConfigAsyncTask.start(configUrl.toExternalForm(), setConfigCallback);
     }
 
     public FeatureCheckRequest.Builder check(String featureName) {

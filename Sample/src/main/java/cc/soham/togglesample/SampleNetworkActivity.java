@@ -14,13 +14,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.Toggle;
-import cc.soham.toggle.callbacks.GetConfigCallback;
+import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.enums.State;
 import cc.soham.toggle.objects.Config;
 
 /**
  * Sample Network Activity, shows how to
- * - Use {@link Toggle#getConfig(Config)} to make a network call and manually retrieve and  astore {@link Config} configuration using {@link }
+ * - Use {@link Toggle#setConfig(Config)} to make a network call and manually retrieve and  astore {@link Config} configuration using {@link }
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link FeatureCheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
@@ -44,14 +44,14 @@ public class SampleNetworkActivity extends AppCompatActivity {
     }
 
     /**
-     * Shows how to use {@link Toggle#getConfig(Config)} to get the config from
-     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#getConfig(Config)}
+     * Shows how to use {@link Toggle#setConfig(Config)} to get the config from
+     * Once the {@link Config} config is received, we manually store it in Toggle using {@link Toggle#setConfig(Config)}
      */
-    @OnClick(R.id.activity_sample_get_config)
-    public void getConfigButton_onClick() {
+    @OnClick(R.id.activity_sample_set_config)
+    public void setConfigButton_onClick() {
         Toast.makeText(SampleNetworkActivity.this, "Making a network call to get the config", Toast.LENGTH_SHORT).show();
         try {
-            Toggle.with(this).getConfig(new URL(Constants.URL_CONFIG), new GetConfigCallback() {
+            Toggle.with(this).setConfig(new URL(Constants.URL_CONFIG), new SetConfigCallback() {
                 @Override
                 public void onConfigReceived(Config config, boolean cached) {
                     Toast.makeText(SampleNetworkActivity.this, "Response received, storing in toggle", Toast.LENGTH_SHORT).show();
