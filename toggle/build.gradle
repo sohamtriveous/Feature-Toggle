@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/triveous/Feature-Toggle'
     gitUrl = 'https://github.com/triveous/Feature-Toggle.git'
 
-    libraryVersion = '0.0.4'
+    libraryVersion = '0.0.5'
 
     developerId = 'triveous'
     developerName = 'Soham Mondal'
