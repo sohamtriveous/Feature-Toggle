@@ -31,9 +31,6 @@ public class Toggle {
     // TODO: generic check for all features (return Config)
     // TODO: check and improve all API calls
     // TODO: host on jcenter/maven on bintray
-    // TODO: re-integrate the build.gradle stuff removed while doing Travis CI
-    // TODO: integrate test coverage in Readme.md
-    // TODO: integrate Travis in Readme.md
 
     public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
