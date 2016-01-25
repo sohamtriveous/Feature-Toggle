@@ -25,9 +25,11 @@ import cc.soham.toggle.objects.Rule;
  */
 public class Toggle {
     // TODO: add overall metadata
-    // add okhttp implementation
+    // TODO: add okhttp implementation
     // TODO: improve documentation
     // TODO: check and improve all API calls
+    // TODO: host on jcenter/maven on bintray
+    // TODO: fix sample chooser
 
     public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
