@@ -59,7 +59,7 @@ Toggle.with(context).check("custom_network_component").defaultState(Toggle.ENABL
 
 In case you are used a URL in setConfig, you can also use the getLatest flag to get the latest config before making the callback
 ```java
-Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+Toggle.with(context).check("custom_network_component").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
             public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
                 updateUiAfterResponse(feature, state, metadata, cached);
