@@ -31,6 +31,9 @@ public class Toggle {
     // TODO: check and improve all API calls
     // TODO: host on jcenter/maven on bintray
     // TODO: fix sample chooser
+    // TODO: integrate Travis CI
+    // TODO: integrate test coverage in Readme.md
+    // TODO: integrate Travis in Readme.md
 
     public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
