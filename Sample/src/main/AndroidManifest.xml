@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".SampleNetworkActivity"
+            android:name=".SampleActivity"
+            android:label="@string/label_home"
             android:theme="@style/AppTheme">
 
             <intent-filter>
@@ -22,23 +23,25 @@
         </activity>
 
         <activity
-            android:name=".SampleRetrofitActivity"
-            android:theme="@style/AppTheme">
+            android:name=".SampleNetworkActivity"
+            android:label="@string/label_network"
+            android:theme="@style/AppTheme" />
 
-        </activity>
+        <activity
+            android:name=".SampleRetrofitActivity"
+            android:label="@string/label_retrofit"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".SampleStringActivity"
-            android:theme="@style/AppTheme">
+            android:label="@string/label_string"
+            android:theme="@style/AppTheme" />
 
-        </activity>
 
         <activity
             android:name=".SampleConfigActivity"
-            android:theme="@style/AppTheme">
-
-
-        </activity>
+            android:label="@string/label_object"
+            android:theme="@style/AppTheme" />
 
 
     </application>
