@@ -36,22 +36,47 @@ public class FeatureCheckRequest {
             this.featureName = featureName;
         }
 
+        /**
+         * Sets the default state of this request
+         * @param defaultState
+         * @return
+         */
         public Builder defaultState(String defaultState) {
             this.defaultState = defaultState;
             return this;
         }
 
+        /**
+         * Should we check for the latest config before delivering the result
+         * NOTE: only applicable for {@link cc.soham.toggle.enums.SourceType#URL}
+         * @return
+         */
         public Builder getLatest() {
             this.getLatest = true;
             return this;
         }
 
+        /**
+         * An optional error parameter to provide a callback in case an error occurs
+         *
+         * @param errorCallback
+         * @return
+         */
         public Builder onError(ErrorCallback errorCallback) {
             this.errorCallback = errorCallback;
             return this;
         }
 
+        /**
+         * Use this method to get the status of an individual feature
+         *
+         * @param callback
+         * @return
+         */
         public FeatureCheckRequest start(Callback callback) {
+            if (featureName == null) {
+                throw new IllegalStateException("You need to provide a feature name to provide a callback when that feature is checked");
+            }
             this.callback = callback;
             return new FeatureCheckRequest(this);
         }
@@ -69,6 +94,7 @@ public class FeatureCheckRequest {
 
     /**
      * This constructor is to be used purely for testing
+     *
      * @param toggle
      * @param featureName
      * @param callback

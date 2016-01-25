@@ -24,10 +24,9 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: fix travis + bintray upload
     // TODO: return the whole product in check
-    // TODO: store Config in memcache
     // TODO: unit tests for the new memcache
+    // TODO: store Config in memcache
     // TODO: add overall metadata
     // TODO: add okhttp implementation
     // TODO: improve documentation
@@ -61,7 +60,7 @@ public class Toggle {
     private Config config;
 
     public static void storeConfigInMem(Config config) {
-        if(singleton!=null) {
+        if (singleton != null) {
             singleton.config = config;
         }
     }
@@ -147,41 +146,43 @@ public class Toggle {
 
     // TODO: need to unit test this again in light of mem cache
     public void getAndProcessCachedConfig(final FeatureCheckRequest featureCheckRequest) {
-        if(config == null) {
+        if (config == null) {
             // get cached or get default
             PersistUtils.getConfig(new ReservoirGetCallback<Config>() {
                 @Override
                 public void onSuccess(Config config) {
-                    processConfigSuccess(config, featureCheckRequest);
-
+                    // store in mem
+                    Toggle.storeConfigInMem(config);
+                    // call the success method
+                    configRetrievedSuccess(config, featureCheckRequest);
                 }
 
                 @Override
                 public void onFailure(Exception e) {
                     // couldnt retrieve a stored config, send back the default response
                     e.printStackTrace();
-                    processConfigFailure(featureCheckRequest);
+                    configRetrievedFailure(featureCheckRequest);
                 }
             });
         } else {
-            processConfig(config, featureCheckRequest);
+            // call the success method
+            configRetrievedSuccess(config, featureCheckRequest);
         }
     }
 
-    private void processConfigFailure(FeatureCheckRequest featureCheckRequest) {
-        // send back a default response
-        String state = DEFAULT_STATE;
-        if(featureCheckRequest.getDefaultState() != null) {
-            state = featureCheckRequest.getDefaultState();
-        }
-        featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
-    }
-
-    private void processConfigSuccess(Config config, FeatureCheckRequest featureCheckRequest) {
-        // process the config
+    private void configRetrievedSuccess(Config config, FeatureCheckRequest featureCheckRequest) {
         FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
         // make the callback
         makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
+    }
+
+    private void configRetrievedFailure(FeatureCheckRequest featureCheckRequest) {
+        // send back a default response
+        String state = DEFAULT_STATE;
+        if (featureCheckRequest.getDefaultState() != null) {
+            state = featureCheckRequest.getDefaultState();
+        }
+        featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
     }
 
     public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {

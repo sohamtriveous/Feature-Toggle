@@ -25,6 +25,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
     /**
      * Attempt to download the config file and process the feature (wrt the config) here
      * Also return cached responses wherever the network is not available
+     *
      * @param params
      * @return
      */
@@ -35,6 +36,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
 
     /**
      * Initiating the {@link cc.soham.toggle.callbacks.Callback} is on the UI thread, when applicable
+     *
      * @param featureCheckResponse the {@link FeatureCheckResponse} after downloading and processing
      */
     @Override
@@ -44,6 +46,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
 
     /**
      * Initate a {@link cc.soham.toggle.callbacks.Callback} if needed
+     *
      * @param featureCheckResponse
      * @param featureCheckRequest
      */
@@ -60,6 +63,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
 
     /**
      * Generates a {@link FeatureCheckResponse} for a given {@link FeatureCheckRequest}
+     *
      * @param featureCheckRequest the given {@link FeatureCheckRequest} which needs to be downloaded and processed
      * @return the resultant {@link FeatureCheckResponse} after downloading and processing (or cached in case of errors)
      */
@@ -92,6 +96,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
     /**
      * A static helper method to initiate a {@link CheckLatestAsyncTask} call
      * Checks the network for the latest config and then sends the latest response to the callee
+     *
      * @param featureCheckRequest
      */
     public static void start(final FeatureCheckRequest featureCheckRequest) {
