@@ -24,7 +24,6 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: return the whole product in check
     // TODO: unit tests for the new memcache
     // TODO: store Config in memcache
     // TODO: add overall metadata
