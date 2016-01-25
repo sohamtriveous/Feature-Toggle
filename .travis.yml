@@ -9,4 +9,4 @@ android:
 
 script:
     - ./gradlew assembleDebug
-    - ./gradlew Library:test
+    - ./gradlew toggle:test

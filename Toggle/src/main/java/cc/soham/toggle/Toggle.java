@@ -24,6 +24,7 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
+    // TODO: fix travis + bintray upload
     // TODO: store Config in memcache
     // TODO: add overall metadata
     // TODO: add okhttp implementation
