@@ -46,11 +46,11 @@ public class Toggle {
         if (singleton == null) {
             try {
                 Reservoir.init(context.getApplicationContext(), 20000);
-                synchronized (Toggle.class) {
-                    singleton = new Toggle(context);
-                }
             } catch (Exception exception) {
                 exception.printStackTrace();
+            }
+            synchronized (Toggle.class) {
+                singleton = new Toggle(context);
             }
         }
         return singleton;
