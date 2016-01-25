@@ -3,6 +3,7 @@ package cc.soham.togglesample;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ public class SampleStringActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_sample_base);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle("String Sample");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -89,5 +90,16 @@ public class SampleStringActivity extends AppCompatActivity {
      */
     private void showMessage(String message) {
         Toast.makeText(SampleStringActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

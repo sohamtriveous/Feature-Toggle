@@ -3,6 +3,7 @@ package cc.soham.togglesample;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +40,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample_base);
         ButterKnife.bind(this);
-        getSupportActionBar().setTitle("Retrofit Sample");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -101,5 +102,16 @@ public class SampleRetrofitActivity extends AppCompatActivity {
      */
     private void showMessage(String message) {
         Toast.makeText(SampleRetrofitActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
