@@ -14,10 +14,12 @@ This is often a long process and by that time the user might even uninstall the 
 
 With this library the following would happen
 - You would update a configuration file on your server disabling the feature for that device
-- The next time the app is opened (or over the app) the app downloads the config again
-- It then checks whether the feature is enabled/disabled and proceeds accordingly
+- The next time the app is opened (or over the air) the app downloads the config again
+- It then checks whether the feature is enabled/disabled and disables the feature silently
 
-You can also use this library to enable features (show messages for example) at certain times or on certain devices etc.
+Other use cases:
+- You can also use this library to enable features (show messages for example) at certain times or on certain devices etc.
+- Test certain features for certain devices/api levels dynamically
 
 In the context of android, it is often important to have the ability to 
 - change the capability/featureset of an app in a live environment
