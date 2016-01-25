@@ -27,6 +27,7 @@ public class Toggle {
     // TODO: fix travis + bintray upload
     // TODO: return the whole product in check
     // TODO: store Config in memcache
+    // TODO: unit tests for the new memcache
     // TODO: add overall metadata
     // TODO: add okhttp implementation
     // TODO: improve documentation

@@ -8,4 +8,5 @@ android:
     - extra
 
 script:
-    - ./gradlew toggle-sample:assembleDebug
+    - ./gradlew assembleDebug
+    - ./gradlew toggle:test
