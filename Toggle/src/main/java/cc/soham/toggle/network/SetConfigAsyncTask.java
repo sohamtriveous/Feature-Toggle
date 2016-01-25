@@ -9,6 +9,7 @@ import java.io.IOException;
 
 import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.PersistUtils;
+import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.objects.Config;
 
@@ -70,6 +71,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
             // convert string to config
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config
+            Toggle.storeConfigInMem(config);
             PersistUtils.storeConfig(config);
             return new SetConfigResponse(config);
         } catch (IOException e) {

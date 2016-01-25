@@ -9,6 +9,7 @@ import java.io.IOException;
 import cc.soham.toggle.ConversionUtils;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.PersistUtils;
+import cc.soham.toggle.Toggle;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -71,6 +72,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             // convert string to config
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config
+            Toggle.storeConfigInMem(config);
             PersistUtils.storeConfig(config);
             // process the resultant config
             FeatureCheckResponse result = featureCheckRequest.getToggle().processConfig(config, featureCheckRequest);

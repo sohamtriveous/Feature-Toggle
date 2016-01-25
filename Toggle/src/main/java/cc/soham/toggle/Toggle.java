@@ -57,6 +57,13 @@ public class Toggle {
 
     private Context context;
     private SourceType sourceType;
+    private Config config;
+
+    public static void storeConfigInMem(Config config) {
+        if(singleton!=null) {
+            singleton.config = config;
+        }
+    }
 
     public Toggle(Context context) {
         if (context == null) {
@@ -76,6 +83,7 @@ public class Toggle {
         // convert from string to config
         Config config = ConversionUtils.convertStringToConfig(configInString);
         // store config
+        storeConfigInMem(config);
         PersistUtils.storeConfig(config);
     }
 
@@ -86,6 +94,7 @@ public class Toggle {
         // convert from json to config
         Config config = ConversionUtils.convertJSONObjectToConfig(configInJson);
         // store config
+        storeConfigInMem(config);
         PersistUtils.storeConfig(config);
     }
 
@@ -94,6 +103,7 @@ public class Toggle {
         // store source
         PersistUtils.storeSourceType(getContext(), SourceType.CONFIG);
         // store config
+        storeConfigInMem(config);
         PersistUtils.storeConfig(config);
     }
 
@@ -134,29 +144,43 @@ public class Toggle {
         }
     }
 
+    // TODO: need to unit test this again in light of mem cache
     public void getAndProcessCachedConfig(final FeatureCheckRequest featureCheckRequest) {
-        // get cached or get default
-        PersistUtils.getConfig(new ReservoirGetCallback<Config>() {
-            @Override
-            public void onSuccess(Config config) {
-                // process the config
-                FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
-                // make the callback
-                makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
-            }
+        if(config == null) {
+            // get cached or get default
+            PersistUtils.getConfig(new ReservoirGetCallback<Config>() {
+                @Override
+                public void onSuccess(Config config) {
+                    processConfigSuccess(config, featureCheckRequest);
 
-            @Override
-            public void onFailure(Exception e) {
-                // couldnt retrieve a stored config, send back the default response
-                e.printStackTrace();
-                // send back a default response
-                String state = DEFAULT_STATE;
-                if(featureCheckRequest.getDefaultState() != null) {
-                    state = featureCheckRequest.getDefaultState();
                 }
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
-            }
-        });
+
+                @Override
+                public void onFailure(Exception e) {
+                    // couldnt retrieve a stored config, send back the default response
+                    e.printStackTrace();
+                    processConfigFailure(featureCheckRequest);
+                }
+            });
+        } else {
+            processConfig(config, featureCheckRequest);
+        }
+    }
+
+    private void processConfigFailure(FeatureCheckRequest featureCheckRequest) {
+        // send back a default response
+        String state = DEFAULT_STATE;
+        if(featureCheckRequest.getDefaultState() != null) {
+            state = featureCheckRequest.getDefaultState();
+        }
+        featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
+    }
+
+    private void processConfigSuccess(Config config, FeatureCheckRequest featureCheckRequest) {
+        // process the config
+        FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
+        // make the callback
+        makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
     }
 
     public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
