@@ -24,12 +24,14 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
+    // TODO: store Config in memcache
     // TODO: add overall metadata
     // TODO: add okhttp implementation
     // TODO: improve documentation
+    // TODO: generic check for all features (return Config)
     // TODO: check and improve all API calls
     // TODO: host on jcenter/maven on bintray
-    // TODO: integrate Travis CI
+    // TODO: re-integrate the build.gradle stuff removed while doing Travis CI
     // TODO: integrate test coverage in Readme.md
     // TODO: integrate Travis in Readme.md
 
