@@ -23,7 +23,6 @@ public class OkHttpUtils {
 
     public static boolean isOkHttpAvailable() {
         try {
-            new OkHttpClient();
             Class cls = Class.forName("okhttp3.OkHttpClient");
             return true;
         } catch (ClassNotFoundException e) {
