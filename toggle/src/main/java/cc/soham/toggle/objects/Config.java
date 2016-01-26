@@ -9,46 +9,10 @@ public class Config {
 
     @SerializedName("name")
     @Expose
-    private String name;
+    public String name;
     @SerializedName("features")
     @Expose
-    private List<Feature> features = new ArrayList<Feature>();
-
-    /**
-     * 
-     * @return
-     *     The name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 
-     * @param name
-     *     The name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * 
-     * @return
-     *     The features
-     */
-    public List<Feature> getFeatures() {
-        return features;
-    }
-
-    /**
-     * 
-     * @param features
-     *     The features
-     */
-    public void setFeatures(List<Feature> features) {
-        this.features = features;
-    }
+    public List<Feature> features = new ArrayList<Feature>();
 
     public Config(String name, List<Feature> features) {
         this.name = name;

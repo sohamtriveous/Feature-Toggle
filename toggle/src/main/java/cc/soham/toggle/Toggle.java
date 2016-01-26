@@ -29,7 +29,6 @@ public class Toggle {
     // TODO: add overall metadata
     // TODO: add okhttp implementation
     // TODO: improve documentation
-
     // TODO: generic check for all features (return Config)
     // TODO: check and improve all API calls
 
@@ -230,9 +229,9 @@ public class Toggle {
      * @return
      */
     public FeatureCheckResponse processConfig(Config config, FeatureCheckRequest featureCheckRequest) {
-        for (Feature feature : config.getFeatures()) {
+        for (Feature feature : config.features) {
             // find the given feature in the received Config
-            if (feature.getName().equals(featureCheckRequest.getFeatureName())) {
+            if (feature.name.equals(featureCheckRequest.getFeatureName())) {
                 ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
                 // if there is a decisive state (either enabled or disabled) initiate the callback and break
                 return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), responseDecisionMeta.state, responseDecisionMeta.metadata);
@@ -270,12 +269,12 @@ public class Toggle {
      */
     @VisibleForTesting
     ResponseDecisionMeta handleFeature(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
-        if (feature.getState() == null) {
-            if (feature.getRules() == null) {
+        if (feature.state == null) {
+            if (feature.rules == null) {
                 throw new IllegalStateException("You must have rules in case the feature does not have a base state");
             }
             // state is null, so we can check the rules
-            for (Rule rule : feature.getRules()) {
+            for (Rule rule : feature.rules) {
                 if (RuleMatcher.matchRule(rule)) {
                     // if a rule is matched
                     // return an enum which contains
@@ -297,7 +296,7 @@ public class Toggle {
     ResponseDecisionMeta getRuleMatchedResponseDecision(Rule rule) {
         // an enabled/disabled state is mandatory for a rule
         // (else we wouldn't know what to do once a rule is matched)
-        if (rule.getState() == null)
+        if (rule.state == null)
             throw new IllegalStateException("The state in a Rule cannot be empty");
         return new ResponseDecisionMeta(rule);
     }
@@ -306,10 +305,10 @@ public class Toggle {
     @VisibleForTesting
     ResponseDecisionMeta getStatePoweredResponseDecision(Feature feature) {
         // if state is null, we can't take state on this
-        if (feature.getState() == null)
+        if (feature.state == null)
             return new ResponseDecisionMeta(DEFAULT_STATE);
         // if state is not null, use the overriding feature
-        return new ResponseDecisionMeta(feature.getState());
+        return new ResponseDecisionMeta(feature.state);
     }
 
     @NonNull
@@ -320,11 +319,11 @@ public class Toggle {
             return new ResponseDecisionMeta(featureCheckRequest.getDefaultState());
         }
         // in case no Default is provided in the feature (in the config), return enabled
-        if (feature.getDefault() == null) {
+        if (feature._default == null) {
             return new ResponseDecisionMeta(DEFAULT_STATE);
         }
         // so no local defaults but some default is provided in the config
-        return new ResponseDecisionMeta(feature.getDefault());
+        return new ResponseDecisionMeta(feature._default);
     }
 
     public Context getContext() {

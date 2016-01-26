@@ -1,7 +1,6 @@
 package cc.soham.toggle;
 
 import android.os.Build;
-import android.support.v4.BuildConfig;
 
 import java.util.List;
 
@@ -21,16 +20,16 @@ public class RuleMatcher {
      * @return
      */
     public static boolean matchRule(Rule rule) {
-        Value value = rule.getValue();
+        Value value = rule.value;
         // match all the rule values
-        if (matchApilevelMin(value.getApilevelMin()) &&
-                matchApilevelMax(value.getApilevelMax()) &&
-                matchAppversionMin(value.getAppversionMin()) &&
-                matchAppversionMax(value.getAppversionMax()) &&
-                matchDateMin(value.getDateMin()) &&
-                matchDateMax(value.getDateMax()) &&
-                matchBuildType(value.getBuildtype()) &&
-                matchDevice(value.getDevice()))
+        if (matchApilevelMin(value.apilevelMin) &&
+                matchApilevelMax(value.apilevelMax) &&
+                matchAppversionMin(value.appversionMin) &&
+                matchAppversionMax(value.appversionMax) &&
+                matchDateMin(value.dateMin) &&
+                matchDateMax(value.dateMax) &&
+                matchBuildType(value.buildtype) &&
+                matchDevice(value.device))
             return true;
         else return false;
     }
@@ -118,7 +117,7 @@ public class RuleMatcher {
 
     /**
      * Match any one of the devices
-     * A device match can match a) only the manufacturer or b) only the model or c) both
+     * A device match can match a) only the manufacturerfacturer or b) only the model or c) both
      * @param devices
      * @return
      */
@@ -128,18 +127,18 @@ public class RuleMatcher {
             return true;
         boolean matched = false;
         for (Device device : devices) {
-            if (device.getManufacturer() == null && device.getModel() == null) {
+            if (device.manufacturer == null && device.model == null) {
                 continue;
             }
-            if (device.getManufacturer() != null) {
-                // if the manufacturer does not match, continue
-                if (!device.getManufacturer().equalsIgnoreCase(getManufacturer())) {
+            if (device.manufacturer != null) {
+                // if the manufacturerfacturer does not match, continue
+                if (!device.manufacturer.equalsIgnoreCase(getManufacturer())) {
                     continue;
                 }
             }
-            if (device.getModel() != null) {
+            if (device.model != null) {
                 // if the model does not match, continue
-                if (!device.getModel().equalsIgnoreCase(DeviceModelUtils.getModel(getManufacturer(), getModel()))) {
+                if (!device.model.equalsIgnoreCase(DeviceModelUtils.getModel(getManufacturer(), getModel()))) {
                     continue;
                 }
             }
