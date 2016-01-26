@@ -41,24 +41,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
      */
     @Override
     protected void onPostExecute(final FeatureCheckResponse featureCheckResponse) {
-        initiateCallback(featureCheckResponse, featureCheckRequest);
-    }
-
-    /**
-     * Initate a {@link cc.soham.toggle.callbacks.Callback} if needed
-     *
-     * @param featureCheckResponse
-     * @param featureCheckRequest
-     */
-    private static void initiateCallback(FeatureCheckResponse featureCheckResponse, FeatureCheckRequest featureCheckRequest) {
-        // make the callback if configured
-        if (featureCheckRequest.getCallback() != null) {
-            if (featureCheckResponse != null) {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), false);
-            } else {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
-            }
-        }
+        NetworkUtils.initiateCallbackAfterCheck(featureCheckResponse, featureCheckRequest);
     }
 
     /**
@@ -72,7 +55,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             // get the url from preferences
             String url = PersistUtils.getSourceUrl(featureCheckRequest.getToggle().getContext());
             // make network request to receive response
-            String response = NetworkOperations.downloadUrl(url);
+            String response = NetworkUtils.downloadUrl(url);
             // convert string to config
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config

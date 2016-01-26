@@ -30,7 +30,7 @@ public class SimpleConversionAndCallbackAsyncTask extends AsyncTask<Void, Void, 
 
     @Override
     protected void onPostExecute(SetConfigResponse setConfigResponse) {
-        NetworkOperations.initiateCallback(setConfigResponse, setConfigCallback);
+        NetworkUtils.initiateCallback(setConfigResponse, setConfigCallback);
     }
 
     public static void handle(final String configInString, final SetConfigCallback setConfigCallback) {

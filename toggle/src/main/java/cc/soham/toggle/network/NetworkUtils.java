@@ -8,12 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 
 /**
- * Created by sohammondal on 19/01/16.
+ * Performs various Network operations
  */
-public class NetworkOperations {
+public class NetworkUtils {
     // Given a URL, establishes an HttpUrlConnection and retrieves
     // the web page content as a InputStream, which it returns as
     // a string.
@@ -70,6 +71,23 @@ public class NetworkOperations {
         // make the callback if configured
         if (setConfigCallback != null && setConfigResponse != null) {
             setConfigCallback.onConfigReceived(setConfigResponse.config, setConfigResponse.cached);
+        }
+    }
+
+    /**
+     * Initate a {@link cc.soham.toggle.callbacks.Callback} if needed
+     *
+     * @param featureCheckResponse
+     * @param featureCheckRequest
+     */
+    public static void initiateCallbackAfterCheck(FeatureCheckResponse featureCheckResponse, FeatureCheckRequest featureCheckRequest) {
+        // make the callback if configured
+        if (featureCheckRequest.getCallback() != null) {
+            if (featureCheckResponse != null) {
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), false);
+            } else {
+                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
+            }
         }
     }
 }

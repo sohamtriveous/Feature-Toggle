@@ -43,7 +43,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
      */
     @Override
     protected void onPostExecute(SetConfigResponse setConfigResponse) {
-        NetworkOperations.initiateCallback(setConfigResponse, setConfigCallback);
+        NetworkUtils.initiateCallback(setConfigResponse, setConfigCallback);
     }
 
     /**
@@ -55,7 +55,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
     private static SetConfigResponse getSetConfigResponse(String url) {
         try {
             // make network request to receive response
-            String response = NetworkOperations.downloadUrl(url);
+            String response = NetworkUtils.downloadUrl(url);
             // convert string to config
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config

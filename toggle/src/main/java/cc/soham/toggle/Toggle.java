@@ -116,7 +116,7 @@ public class Toggle {
         PersistUtils.storeSourceType(getContext(), SourceType.URL);
         PersistUtils.storeSourceURL(getContext(), configUrl);
         // make the network request and store the results
-        if(OkHttpUtils.isOkHttpAvailable()) {
+        if (OkHttpUtils.isOkHttpAvailable()) {
             OkHttpUtils.startSetConfig(configUrl.toExternalForm(), setConfigCallback);
         } else {
             SetConfigAsyncTask.start(configUrl.toExternalForm(), setConfigCallback);
@@ -253,7 +253,11 @@ public class Toggle {
      * makes a network request for the given params
      */
     public void makeNetworkFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
-        CheckLatestAsyncTask.start(featureCheckRequest);
+        if (OkHttpUtils.isOkHttpAvailable()) {
+            OkHttpUtils.startCheck(featureCheckRequest);
+        } else {
+            CheckLatestAsyncTask.start(featureCheckRequest);
+        }
     }
 
     /**
