@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import cc.soham.toggle.callbacks.SetConfigCallback;
+
 /**
  * Created by sohammondal on 19/01/16.
  */
@@ -56,6 +58,18 @@ public class NetworkOperations {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Initiate a {@link SetConfigCallback} if needed
+     * @param setConfigResponse
+     * @param setConfigCallback
+     */
+    public static void initiateCallback(SetConfigResponse setConfigResponse, SetConfigCallback setConfigCallback) {
+        // make the callback if configured
+        if (setConfigCallback != null && setConfigResponse != null) {
+            setConfigCallback.onConfigReceived(setConfigResponse.config, setConfigResponse.cached);
         }
     }
 }

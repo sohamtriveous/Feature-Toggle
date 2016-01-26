@@ -43,19 +43,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
      */
     @Override
     protected void onPostExecute(SetConfigResponse setConfigResponse) {
-        initiateCallback(setConfigResponse, setConfigCallback);
-    }
-
-    /**
-     * Initiate a {@link SetConfigCallback} if needed
-     * @param setConfigResponse
-     * @param setConfigCallback
-     */
-    private static void initiateCallback(SetConfigResponse setConfigResponse, SetConfigCallback setConfigCallback) {
-        // make the callback if configured
-        if (setConfigCallback != null && setConfigResponse != null) {
-            setConfigCallback.onConfigReceived(setConfigResponse.config, setConfigResponse.cached);
-        }
+        NetworkOperations.initiateCallback(setConfigResponse, setConfigCallback);
     }
 
     /**

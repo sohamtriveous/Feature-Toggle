@@ -14,6 +14,7 @@ import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
 import cc.soham.toggle.network.FeatureCheckResponse;
+import cc.soham.toggle.network.OkHttpUtils;
 import cc.soham.toggle.network.SetConfigAsyncTask;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.Config;
@@ -24,14 +25,13 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: unit tests for the new memcache
-    // TODO: store Config in memcache
+    // TODO: unit tests for the new memcache (store config in memcache for all conditions)
     // TODO: add overall metadata
     // TODO: add okhttp implementation
     // TODO: improve documentation
+
     // TODO: generic check for all features (return Config)
     // TODO: check and improve all API calls
-    // TODO: host on jcenter/maven on bintray
 
     public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
@@ -116,7 +116,11 @@ public class Toggle {
         PersistUtils.storeSourceType(getContext(), SourceType.URL);
         PersistUtils.storeSourceURL(getContext(), configUrl);
         // make the network request and store the results
-        SetConfigAsyncTask.start(configUrl.toExternalForm(), setConfigCallback);
+        if(OkHttpUtils.isOkHttpAvailable()) {
+            OkHttpUtils.startSetConfig(configUrl.toExternalForm(), setConfigCallback);
+        } else {
+            SetConfigAsyncTask.start(configUrl.toExternalForm(), setConfigCallback);
+        }
     }
 
     public FeatureCheckRequest.Builder check(String featureName) {
@@ -307,7 +311,7 @@ public class Toggle {
     @NonNull
     @VisibleForTesting
     ResponseDecisionMeta getDefaultResponseDecision(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
-        // first preference in defaults is given to the local variable (provided while the Toggle.with().check().setDefault().start() call)
+        // first preference in defaults is given to the local variable (provided while the Toggle.with().check().setDefault().handle() call)
         if (featureCheckRequest.getDefaultState() != null) {
             return new ResponseDecisionMeta(featureCheckRequest.getDefaultState());
         }

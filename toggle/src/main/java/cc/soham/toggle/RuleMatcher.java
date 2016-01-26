@@ -1,6 +1,7 @@
 package cc.soham.toggle;
 
 import android.os.Build;
+import android.support.v4.BuildConfig;
 
 import java.util.List;
 
