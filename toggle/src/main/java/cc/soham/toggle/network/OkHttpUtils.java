@@ -78,7 +78,7 @@ public class OkHttpUtils {
         }
 
         // get the url from preferences
-        String url = PersistUtils.getSourceUrl(featureCheckRequest.getToggle().getContext());
+        String url = PersistUtils.getSourceUrl(featureCheckRequest.toggle.getContext());
         // make network request to receive response
         Request request = new Request.Builder()
                 .url(url)

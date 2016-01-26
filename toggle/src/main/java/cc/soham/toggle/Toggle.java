@@ -138,7 +138,7 @@ public class Toggle {
         if (sourceType == null) {
             sourceType = PersistUtils.getSourceType(getContext());
         }
-        if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.shouldGetLatest()) {
+        if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.getLatest) {
             getAndProcessCachedConfig(featureCheckRequest);
         } else {
             // make network featureCheckRequest
@@ -181,10 +181,10 @@ public class Toggle {
     private void configRetrievedFailure(FeatureCheckRequest featureCheckRequest) {
         // send back a default response
         String state = DEFAULT_STATE;
-        if (featureCheckRequest.getDefaultState() != null) {
-            state = featureCheckRequest.getDefaultState();
+        if (featureCheckRequest.defaultState != null) {
+            state = featureCheckRequest.defaultState;
         }
-        featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), state, null, true);
+        featureCheckRequest.callback.onStatusChecked(featureCheckRequest.featureName, state, null, true);
     }
 
     public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
@@ -197,10 +197,10 @@ public class Toggle {
         }
         // check for null
         if (config == null) {
-            if (featureCheckRequest.getDefaultState() == null) {
+            if (featureCheckRequest.defaultState == null) {
                 throw new IllegalStateException("No configuration found (Config) and no default state configured in the state check");
             }
-            return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
+            return new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, true);
         }
         // process the config
         FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
@@ -212,13 +212,13 @@ public class Toggle {
     @VisibleForTesting
         // TODO: unit test getExceptionFeatureCheckResponse
     FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), DEFAULT_STATE, null, true);
+        return new FeatureCheckResponse(featureCheckRequest.featureName, DEFAULT_STATE, null, true);
     }
 
     @VisibleForTesting
         // TODO: unit test makeFeatureCheckCallback
     void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
-        featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), true);
+        featureCheckRequest.callback.onStatusChecked(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.metadata, true);
     }
 
     /**
@@ -231,21 +231,21 @@ public class Toggle {
     public FeatureCheckResponse processConfig(Config config, FeatureCheckRequest featureCheckRequest) {
         for (Feature feature : config.features) {
             // find the given feature in the received Config
-            if (feature.name.equals(featureCheckRequest.getFeatureName())) {
+            if (feature.name.equals(featureCheckRequest.featureName)) {
                 ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
                 // if there is a decisive state (either enabled or disabled) initiate the callback and break
-                return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), responseDecisionMeta.state, responseDecisionMeta.metadata);
+                return new FeatureCheckResponse(featureCheckRequest.featureName, responseDecisionMeta.state, responseDecisionMeta.metadata);
             }
         }
         // a) feature not found or b) no state could be made based on the config
         // check if there was no default state in the request, send enabled (default toggle)
         String state;
-        if (featureCheckRequest.getDefaultState() == null) {
+        if (featureCheckRequest.defaultState == null) {
             state = DEFAULT_STATE;
         } else {
-            state = featureCheckRequest.getDefaultState();
+            state = featureCheckRequest.defaultState;
         }
-        return new FeatureCheckResponse(featureCheckRequest.getFeatureName(), state, null, false);
+        return new FeatureCheckResponse(featureCheckRequest.featureName, state, null, false);
     }
 
     /**
@@ -315,8 +315,8 @@ public class Toggle {
     @VisibleForTesting
     ResponseDecisionMeta getDefaultResponseDecision(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
         // first preference in defaults is given to the local variable (provided while the Toggle.with().check().setDefault().handle() call)
-        if (featureCheckRequest.getDefaultState() != null) {
-            return new ResponseDecisionMeta(featureCheckRequest.getDefaultState());
+        if (featureCheckRequest.defaultState != null) {
+            return new ResponseDecisionMeta(featureCheckRequest.defaultState);
         }
         // in case no Default is provided in the feature (in the config), return enabled
         if (feature._default == null) {

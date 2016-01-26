@@ -11,14 +11,14 @@ import cc.soham.toggle.callbacks.ErrorCallback;
  */
 public class FeatureCheckRequest {
     // Required parameters
-    private final Toggle toggle;
-    private final String featureName;
-    private final Callback callback;
+    public final Toggle toggle;
+    public final String featureName;
+    public final Callback callback;
 
     // Optional parameters
-    private final String defaultState;
-    private final boolean getLatest;
-    private final ErrorCallback errorCallback;
+    public final String defaultState;
+    public final boolean getLatest;
+    public final ErrorCallback errorCallback;
 
     public static class Builder {
         // Required parameters
@@ -110,29 +110,5 @@ public class FeatureCheckRequest {
         this.defaultState = defaultState;
         this.getLatest = getLatest;
         this.errorCallback = errorCallback;
-    }
-
-    public String getFeatureName() {
-        return featureName;
-    }
-
-    public Callback getCallback() {
-        return callback;
-    }
-
-    public String getDefaultState() {
-        return defaultState;
-    }
-
-    public boolean shouldGetLatest() {
-        return getLatest;
-    }
-
-    public ErrorCallback getErrorCallback() {
-        return errorCallback;
-    }
-
-    public Toggle getToggle() {
-        return toggle;
     }
 }

@@ -53,7 +53,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
     private static FeatureCheckResponse getFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
         try {
             // get the url from preferences
-            String url = PersistUtils.getSourceUrl(featureCheckRequest.getToggle().getContext());
+            String url = PersistUtils.getSourceUrl(featureCheckRequest.toggle.getContext());
             // make network request to receive response
             String response = NetworkUtils.downloadUrl(url);
             // convert string to config
@@ -62,9 +62,9 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             Toggle.storeConfigInMem(config);
             PersistUtils.storeConfig(config);
             // process the resultant config
-            FeatureCheckResponse result = featureCheckRequest.getToggle().processConfig(config, featureCheckRequest);
+            FeatureCheckResponse result = featureCheckRequest.toggle.processConfig(config, featureCheckRequest);
             // disable the cache flag since this is a live request
-            result.setCached(false);
+            result.cached = false;
             return result;
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +73,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return featureCheckRequest.getToggle().getAndProcessCachedConfigSync(featureCheckRequest);
+        return featureCheckRequest.toggle.getAndProcessCachedConfigSync(featureCheckRequest);
     }
 
     /**

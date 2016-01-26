@@ -439,10 +439,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isFalse();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isFalse();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -469,10 +469,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isFalse();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isFalse();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -499,10 +499,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isFalse();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DEFAULT_STATE);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isFalse();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
     }
 
     // feature present but no conclusion could not be made
@@ -534,10 +534,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -567,10 +567,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -600,10 +600,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DEFAULT_STATE);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
     }
 
     // default present in config and request (conflict management)
@@ -636,10 +636,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -669,10 +669,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(defaultStateInRequest);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -702,10 +702,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DISABLED);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
     }
 
     @Test
@@ -735,10 +735,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(null);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.ENABLED);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(null);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     // feature present and rules are matched
@@ -769,10 +769,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.ENABLED);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(metadata);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     @Test
@@ -802,10 +802,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DISABLED);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isEqualTo(metadata);
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
     }
 
     @Test
@@ -835,10 +835,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getMetadata()).isNull();
-        assertThat(featureCheckResponse.isCached()).isTrue();
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.ENABLED);
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.metadata).isNull();
+        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     @Test
@@ -859,10 +859,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
-        assertThat(featureCheckResponse.isCached()).isTrue();
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(featureCheckResponse.metadata).isEqualTo(metadata);
+        assertThat(featureCheckResponse.cached).isTrue();
     }
 
     @NonNull
@@ -912,10 +912,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.getMetadata()).isEqualTo(metadata);
-        assertThat(featureCheckResponse.isCached()).isTrue();
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureCheckRequest.featureName);
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(featureCheckResponse.metadata).isEqualTo(metadata);
+        assertThat(featureCheckResponse.cached).isTrue();
     }
 
     @Test
@@ -941,10 +941,10 @@ public class ToggleTests {
 
         FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
 
-        assertThat(featureCheckResponse.getFeatureName()).isEqualTo(featureCheckRequest.getFeatureName());
-        assertThat(featureCheckResponse.getState()).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.getMetadata()).isNull();
-        assertThat(featureCheckResponse.isCached()).isTrue();
+        assertThat(featureCheckResponse.featureName).isEqualTo(featureCheckRequest.featureName);
+        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(featureCheckResponse.metadata).isNull();
+        assertThat(featureCheckResponse.cached).isTrue();
     }
 
     @Test(expected = IllegalStateException.class)

@@ -31,9 +31,9 @@ public class SimpleConversionAndCheckCallbackAsyncTask extends AsyncTask<Void, V
         Toggle.storeConfigInMem(config);
         PersistUtils.storeConfig(config);
         // process the resultant config
-        FeatureCheckResponse result = featureCheckRequest.getToggle().processConfig(config, featureCheckRequest);
+        FeatureCheckResponse result = featureCheckRequest.toggle.processConfig(config, featureCheckRequest);
         // disable the cache flag since this is a live request
-        result.setCached(false);
+        result.cached = false;
         return result;
     }
 

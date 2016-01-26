@@ -82,11 +82,11 @@ public class NetworkUtils {
      */
     public static void initiateCallbackAfterCheck(FeatureCheckResponse featureCheckResponse, FeatureCheckRequest featureCheckRequest) {
         // make the callback if configured
-        if (featureCheckRequest.getCallback() != null) {
+        if (featureCheckRequest.callback != null) {
             if (featureCheckResponse != null) {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckResponse.getFeatureName(), featureCheckResponse.getState(), featureCheckResponse.getMetadata(), false);
+                featureCheckRequest.callback.onStatusChecked(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.metadata, false);
             } else {
-                featureCheckRequest.getCallback().onStatusChecked(featureCheckRequest.getFeatureName(), featureCheckRequest.getDefaultState(), null, true);
+                featureCheckRequest.callback.onStatusChecked(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, true);
             }
         }
     }
