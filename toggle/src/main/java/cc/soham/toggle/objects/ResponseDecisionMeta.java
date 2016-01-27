@@ -5,16 +5,18 @@ package cc.soham.toggle.objects;
  */
 public class ResponseDecisionMeta {
     public String state;
-    public String metadata;
+    public String featureMetadata;
+    public String ruleMetadata;
 
     public ResponseDecisionMeta(Rule rule) {
         this.state = rule.state;
-        this.metadata = rule.metadata;
+        this.ruleMetadata = rule.ruleMetadata;
     }
 
-    public ResponseDecisionMeta(String state, String metadata) {
+    public ResponseDecisionMeta(String state, String featureMetadata, String ruleMetadata) {
         this.state = state;
-        this.metadata = metadata;
+        this.featureMetadata = featureMetadata;
+        this.ruleMetadata = ruleMetadata;
     }
 
     public ResponseDecisionMeta(String state) {

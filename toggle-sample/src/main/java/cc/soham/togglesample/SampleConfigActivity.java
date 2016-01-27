@@ -16,6 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
+import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.Rule;
@@ -62,9 +63,9 @@ public class SampleConfigActivity extends AppCompatActivity {
         showMessage("Checking for the feature");
         Toggle.with(SampleConfigActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
+            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, state, metadata, cached);
+                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
             }
         });
     }
@@ -73,7 +74,7 @@ public class SampleConfigActivity extends AppCompatActivity {
      * Update the UI as per the feature state
      *
      * @param feature  Name of the feature
-     * @param state  The feature-toggle state of the feature: enabled/disabled
+     * @param state    The feature-toggle state of the feature: enabled/disabled
      * @param metadata Metadata attached to the feature
      * @param cached   Shows whether this is a cached response or not
      */
@@ -104,13 +105,13 @@ public class SampleConfigActivity extends AppCompatActivity {
         Value value1 = new Value(14, 23, null, null, null, null, null, null);
         Value value2 = new Value(null, null, null, null, 1453196880000L, null, null, null);
 
-        String metadata = "sample metadata";
+        String metadata = "sample ruleMetadata";
         rules.add(new Rule(Toggle.DISABLED, metadata, value1));
         rules.add(new Rule(Toggle.DISABLED, metadata, value2));
 
-        Feature featureVideo = new Feature("video", null, Toggle.ENABLED, rules);
-        Feature featureAudio = new Feature("mixpanel", null, Toggle.ENABLED, rules);
-        Feature featureSpeech = new Feature("speech", null, Toggle.DISABLED, rules);
+        Feature featureVideo = new Feature("video", null, Toggle.ENABLED, null, rules);
+        Feature featureAudio = new Feature("mixpanel", null, Toggle.ENABLED, null, rules);
+        Feature featureSpeech = new Feature("speech", null, Toggle.DISABLED, null, rules);
 
         List<Feature> features = new ArrayList<>();
         features.add(featureVideo);

@@ -64,6 +64,7 @@ public class NetworkUtils {
 
     /**
      * Initiate a {@link SetConfigCallback} if needed
+     *
      * @param setConfigResponse
      * @param setConfigCallback
      */
@@ -84,9 +85,9 @@ public class NetworkUtils {
         // make the callback if configured
         if (featureCheckRequest.callback != null) {
             if (featureCheckResponse != null) {
-                featureCheckRequest.callback.onStatusChecked(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.metadata, false);
+                featureCheckRequest.callback.onStatusChecked(featureCheckResponse);
             } else {
-                featureCheckRequest.callback.onStatusChecked(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, true);
+                featureCheckRequest.callback.onStatusChecked(new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, null, true));
             }
         }
     }

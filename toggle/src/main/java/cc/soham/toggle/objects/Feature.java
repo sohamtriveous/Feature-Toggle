@@ -13,6 +13,9 @@ public class Feature {
     @SerializedName("state")
     @Expose
     public String state;
+    @SerializedName("feature_metadata")
+    @Expose
+    public String featureMetadata;
     @SerializedName("default")
     @Expose
     public String _default;
@@ -29,10 +32,11 @@ public class Feature {
         this.rules = rules;
     }
 
-    public Feature(String name, String state, String _default, List<Rule> rules) {
+    public Feature(String name, String state, String _default, String featureMetadata, List<Rule> rules) {
         this.name = name;
         this.state = state;
         this._default = _default;
+        this.featureMetadata = featureMetadata;
         this.rules = rules;
     }
 }

@@ -27,7 +27,7 @@ public class Toggle {
     // TODO: Remove Reservoir
     // TODO: fix all the unit tests failing on reservoir
     // TODO: unit tests for the new memcache (store config in memcache for all conditions)
-    // TODO: add overall metadata, return it in the callback
+    // TODO: add overall ruleMetadata, return it in the callback
     // TODO: add okhttp implementation
     // TODO: test okhttp implementation
     // TODO: improve documentation
@@ -181,7 +181,7 @@ public class Toggle {
         if (featureCheckRequest.defaultState != null) {
             state = featureCheckRequest.defaultState;
         }
-        featureCheckRequest.callback.onStatusChecked(featureCheckRequest.featureName, state, null, true);
+        featureCheckRequest.callback.onStatusChecked(new FeatureCheckResponse(featureCheckRequest.featureName, state, null, null, true));
     }
 
     public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
@@ -197,7 +197,7 @@ public class Toggle {
             if (featureCheckRequest.defaultState == null) {
                 throw new IllegalStateException("No configuration found (Config) and no default state configured in the state check");
             }
-            return new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, true);
+            return new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, null, true);
         }
         // process the config
         FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
@@ -209,13 +209,13 @@ public class Toggle {
     @VisibleForTesting
         // TODO: unit test getExceptionFeatureCheckResponse
     FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
-        return new FeatureCheckResponse(featureCheckRequest.featureName, DEFAULT_STATE, null, true);
+        return new FeatureCheckResponse(featureCheckRequest.featureName, DEFAULT_STATE, null, null, true);
     }
 
     @VisibleForTesting
         // TODO: unit test makeFeatureCheckCallback
     void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
-        featureCheckRequest.callback.onStatusChecked(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.metadata, true);
+        featureCheckRequest.callback.onStatusChecked(featureCheckResponse);
     }
 
     /**
@@ -231,7 +231,7 @@ public class Toggle {
             if (feature.name.equals(featureCheckRequest.featureName)) {
                 ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
                 // if there is a decisive state (either enabled or disabled) initiate the callback and break
-                return new FeatureCheckResponse(featureCheckRequest.featureName, responseDecisionMeta.state, responseDecisionMeta.metadata);
+                return new FeatureCheckResponse(featureCheckRequest.featureName, responseDecisionMeta.state, responseDecisionMeta.featureMetadata, responseDecisionMeta.ruleMetadata);
             }
         }
         // a) feature not found or b) no state could be made based on the config
@@ -242,7 +242,7 @@ public class Toggle {
         } else {
             state = featureCheckRequest.defaultState;
         }
-        return new FeatureCheckResponse(featureCheckRequest.featureName, state, null, false);
+        return new FeatureCheckResponse(featureCheckRequest.featureName, state, null, null, false);
     }
 
     /**
@@ -266,6 +266,7 @@ public class Toggle {
      */
     @VisibleForTesting
     ResponseDecisionMeta handleFeature(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
+        ResponseDecisionMeta responseDecisionMeta;
         if (feature.state == null) {
             if (feature.rules == null) {
                 throw new IllegalStateException("You must have rules in case the feature does not have a base state");
@@ -276,15 +277,21 @@ public class Toggle {
                     // if a rule is matched
                     // return an enum which contains
                     // a) whether we should enable/disable the feature
-                    // b) the metadata
-                    return getRuleMatchedResponseDecision(rule);
+                    // b) the ruleMetadata
+                    responseDecisionMeta = getRuleMatchedResponseDecision(rule);
+                    responseDecisionMeta.featureMetadata = feature.featureMetadata;
+                    return responseDecisionMeta;
                 }
             }
             // no rule match, return the default state of the feature
-            return getDefaultResponseDecision(feature, featureCheckRequest);
+            responseDecisionMeta = getDefaultResponseDecision(feature, featureCheckRequest);
+            responseDecisionMeta.featureMetadata = feature.featureMetadata;
+            return responseDecisionMeta;
         } else {
             // if state is not null, that means we need to just set this feature to 'that' state and ignore all rules
-            return getStatePoweredResponseDecision(feature);
+            responseDecisionMeta = getStatePoweredResponseDecision(feature);
+            responseDecisionMeta.featureMetadata = feature.featureMetadata;
+            return responseDecisionMeta;
         }
     }
 

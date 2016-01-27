@@ -8,16 +8,16 @@ public class Rule {
     @SerializedName("state")
     @Expose
     public String state;
-    @SerializedName("metadata")
+    @SerializedName("ruleMetadata")
     @Expose
-    public String metadata;
+    public String ruleMetadata;
     @SerializedName("value")
     @Expose
     public Value value;
 
-    public Rule(String state, String metadata, Value value) {
+    public Rule(String state, String ruleMetadata, Value value) {
         this.state = state;
-        this.metadata = metadata;
+        this.ruleMetadata = ruleMetadata;
         this.value = value;
     }
 }

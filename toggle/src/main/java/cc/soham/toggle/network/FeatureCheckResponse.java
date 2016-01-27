@@ -6,19 +6,22 @@ package cc.soham.toggle.network;
 public class FeatureCheckResponse {
     public String featureName;
     public String state;
-    public String metadata;
+    public String featureMetadata;
+    public String ruleMetadata;
     public boolean cached = true;
 
-    public FeatureCheckResponse(String featureName, String state, String metadata) {
+    public FeatureCheckResponse(String featureName, String state, String featureMetadata, String ruleMetadata) {
         this.featureName = featureName;
         this.state = state;
-        this.metadata = metadata;
+        this.featureMetadata = featureMetadata;
+        this.ruleMetadata = ruleMetadata;
     }
 
-    public FeatureCheckResponse(String featureName, String state, String metadata, boolean cached) {
+    public FeatureCheckResponse(String featureName, String state, String featureMetadata, String ruleMetadata, boolean cached) {
         this.featureName = featureName;
         this.state = state;
-        this.metadata = metadata;
+        this.featureMetadata = featureMetadata;
+        this.ruleMetadata = ruleMetadata;
         this.cached = cached;
     }
 }

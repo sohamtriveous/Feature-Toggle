@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import cc.soham.toggle.FeatureCheckRequest;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.SetConfigCallback;
+import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -70,9 +71,9 @@ public class SampleNetworkActivity extends AppCompatActivity {
         showMessage("Checking for the feature");
         Toggle.with(SampleNetworkActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
+            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(feature, state, metadata, cached);
+                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
             }
         });
     }
@@ -86,9 +87,9 @@ public class SampleNetworkActivity extends AppCompatActivity {
         showMessage("Checking for the latest feature");
         Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(String feature, String state, String metadata, boolean cached) {
+            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
                 showMessage("Latest feature checked");
-                updateUiAfterResponse(feature, state, metadata, cached);
+                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
             }
         });
     }
