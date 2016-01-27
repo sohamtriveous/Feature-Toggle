@@ -57,4 +57,8 @@ public class PreferenceReadAsyncTask extends AsyncTask<Void, Void, Config> {
 
         return config;
     }
+
+    public static void handle(final Context context, PreferenceReadCallback preferenceReadCallback) {
+        new PreferenceReadAsyncTask(context, preferenceReadCallback).execute();
+    }
 }

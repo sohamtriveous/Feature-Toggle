@@ -35,7 +35,7 @@ public class PersistUtils {
      * @param preferenceReadCallback
      */
     public static void getConfig(final Context context, final PreferenceReadCallback preferenceReadCallback) {
-        new PreferenceReadAsyncTask(context, preferenceReadCallback).execute();
+        PreferenceReadAsyncTask.handle(context, preferenceReadCallback);
     }
 
     public static Config getConfigSync(final Context context) throws Exception {
