@@ -1,5 +1,6 @@
 package cc.soham.toggle.network;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import cc.soham.toggle.ConversionUtils;
@@ -14,8 +15,10 @@ import cc.soham.toggle.objects.Config;
 public class SimpleConversionAndCallbackAsyncTask extends AsyncTask<Void, Void, SetConfigResponse> {
     final String configInString;
     final SetConfigCallback setConfigCallback;
+    final Context context;
 
-    public SimpleConversionAndCallbackAsyncTask(String configInString, SetConfigCallback setConfigCallback) {
+    public SimpleConversionAndCallbackAsyncTask(final Context context, String configInString, SetConfigCallback setConfigCallback) {
+        this.context = context;
         this.configInString = configInString;
         this.setConfigCallback = setConfigCallback;
     }
@@ -24,7 +27,7 @@ public class SimpleConversionAndCallbackAsyncTask extends AsyncTask<Void, Void, 
     protected SetConfigResponse doInBackground(Void... params) {
         Config config = ConversionUtils.convertStringToConfig(configInString);
         Toggle.storeConfigInMem(config);
-        PersistUtils.storeConfig(config);
+        PersistUtils.storeConfig(context, config);
         return new SetConfigResponse(config);
     }
 
@@ -33,7 +36,7 @@ public class SimpleConversionAndCallbackAsyncTask extends AsyncTask<Void, Void, 
         NetworkUtils.initiateCallback(setConfigResponse, setConfigCallback);
     }
 
-    public static void handle(final String configInString, final SetConfigCallback setConfigCallback) {
-        new SimpleConversionAndCallbackAsyncTask(configInString, setConfigCallback).execute();
+    public static void handle(final Context context, final String configInString, final SetConfigCallback setConfigCallback) {
+        new SimpleConversionAndCallbackAsyncTask(context, configInString, setConfigCallback).execute();
     }
 }

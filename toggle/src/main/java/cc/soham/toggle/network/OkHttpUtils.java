@@ -1,5 +1,7 @@
 package cc.soham.toggle.network;
 
+import android.content.Context;
+
 import java.io.IOException;
 
 import cc.soham.toggle.FeatureCheckRequest;
@@ -41,7 +43,7 @@ public class OkHttpUtils {
      * @param url
      * @param setConfigCallback
      */
-    public static void startSetConfig(final String url, final SetConfigCallback setConfigCallback) {
+    public static void startSetConfig(final Context context, final String url, final SetConfigCallback setConfigCallback) {
         if (url == null) {
             throw new IllegalStateException("Please pass a valid url");
         }
@@ -61,7 +63,7 @@ public class OkHttpUtils {
                 if (!response.isSuccessful())
                     throw new IOException("Unexpected code " + response);
 
-                SimpleConversionAndCallbackAsyncTask.handle(response.body().string(), setConfigCallback);
+                SimpleConversionAndCallbackAsyncTask.handle(context, response.body().string(), setConfigCallback);
             }
         });
     }

@@ -8,5 +8,5 @@ android:
     - extra
 
 script:
-    - ./gradlew assembleDebug
-    - ./gradlew toggle:test
+    - ./gradlew assemble
+    - ./gradlew test

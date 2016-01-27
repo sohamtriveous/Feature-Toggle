@@ -1,5 +1,6 @@
 package cc.soham.toggle.network;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
@@ -20,8 +21,10 @@ import cc.soham.toggle.objects.Config;
 public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse> {
     final String url;
     final SetConfigCallback setConfigCallback;
+    final Context context;
 
-    public SetConfigAsyncTask(String url, SetConfigCallback setConfigCallback) {
+    public SetConfigAsyncTask(final Context context, String url, SetConfigCallback setConfigCallback) {
+        this.context = context;
         this.url = url;
         this.setConfigCallback = setConfigCallback;
     }
@@ -34,7 +37,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
      */
     @Override
     protected SetConfigResponse doInBackground(Void... params) {
-        return getSetConfigResponse(url);
+        return getSetConfigResponse(context, url);
     }
 
     /**
@@ -52,7 +55,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
      * @return the {@link SetConfigResponse} for the given url
      */
     @Nullable
-    private static SetConfigResponse getSetConfigResponse(String url) {
+    private static SetConfigResponse getSetConfigResponse(final Context context, String url) {
         try {
             // make network request to receive response
             String response = NetworkUtils.downloadUrl(url);
@@ -60,7 +63,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config
             Toggle.storeConfigInMem(config);
-            PersistUtils.storeConfig(config);
+            PersistUtils.storeConfig(context, config);
             return new SetConfigResponse(config);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +76,7 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
         SetConfigResponse setConfigResponse = null;
         // in case of any error, get the Config locally if possible
         try {
-            return new SetConfigResponse(PersistUtils.getConfigSync(), true);
+            return new SetConfigResponse(PersistUtils.getConfigSync(context), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,10 +89,10 @@ public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse>
      * @param url
      * @param setConfigCallback
      */
-    public static void start(String url, SetConfigCallback setConfigCallback) {
+    public static void start(final Context context, String url, SetConfigCallback setConfigCallback) {
         if (url == null) {
             throw new IllegalStateException("Please pass a valid url");
         }
-        new SetConfigAsyncTask(url, setConfigCallback).execute();
+        new SetConfigAsyncTask(context, url, setConfigCallback).execute();
     }
 }

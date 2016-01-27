@@ -3,11 +3,11 @@ package cc.soham.toggle;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.google.gson.Gson;
 
 import java.net.URL;
 
+import cc.soham.toggle.callbacks.PreferenceReadCallback;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.objects.Config;
 
@@ -24,21 +24,22 @@ public class PersistUtils {
      *
      * @param config
      */
-    public static void storeConfig(Config config) {
-        Reservoir.putAsync(CONFIG_KEY, config, null);
+    public static void storeConfig(final Context context, Config config) {
+        String configInString = new Gson().toJson(config, Config.class);
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(CONFIG_KEY, configInString).apply();
     }
 
     /**
      * Retrieves the {@link Config} from disk
-     *
-     * @param configReservoirGetCallback
+     * @param context
+     * @param preferenceReadCallback
      */
-    public static void getConfig(ReservoirGetCallback<Config> configReservoirGetCallback) {
-        Reservoir.getAsync(CONFIG_KEY, Config.class, configReservoirGetCallback);
+    public static void getConfig(final Context context, final PreferenceReadCallback preferenceReadCallback) {
+        new PreferenceReadAsyncTask(context, preferenceReadCallback).execute();
     }
 
-    public static Config getConfigSync() throws Exception {
-        return Reservoir.get(CONFIG_KEY, Config.class);
+    public static Config getConfigSync(final Context context) throws Exception {
+        return PreferenceReadAsyncTask.getStoredConfigStatic(context);
     }
 
     /**

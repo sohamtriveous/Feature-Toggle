@@ -4,12 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import com.anupcowkur.reservoir.Reservoir;
-import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.google.gson.JsonElement;
 
 import java.net.URL;
 
+import cc.soham.toggle.callbacks.PreferenceReadCallback;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
@@ -25,11 +24,14 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
+    // TODO: Remove Reservoir
+    // TODO: fix all the unit tests failing on reservoir
     // TODO: unit tests for the new memcache (store config in memcache for all conditions)
-    // TODO: add overall metadata
+    // TODO: add overall metadata, return it in the callback
     // TODO: add okhttp implementation
+    // TODO: test okhttp implementation
     // TODO: improve documentation
-    // TODO: generic check for all features (return Config)
+    // TODO: create wiki
     // TODO: check and improve all API calls
 
     public static final String DEFAULT_STATE = "default";
@@ -41,11 +43,6 @@ public class Toggle {
 
     public static Toggle with(final Context context) {
         if (singleton == null) {
-            try {
-                Reservoir.init(context.getApplicationContext(), 20000);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
             synchronized (Toggle.class) {
                 singleton = new Toggle(context);
             }
@@ -82,7 +79,7 @@ public class Toggle {
         Config config = ConversionUtils.convertStringToConfig(configInString);
         // store config
         storeConfigInMem(config);
-        PersistUtils.storeConfig(config);
+        PersistUtils.storeConfig(getContext(), config);
     }
 
     public void setConfig(JsonElement configInJson) {
@@ -93,7 +90,7 @@ public class Toggle {
         Config config = ConversionUtils.convertJSONObjectToConfig(configInJson);
         // store config
         storeConfigInMem(config);
-        PersistUtils.storeConfig(config);
+        PersistUtils.storeConfig(getContext(), config);
     }
 
     public void setConfig(Config config) {
@@ -102,7 +99,7 @@ public class Toggle {
         PersistUtils.storeSourceType(getContext(), SourceType.CONFIG);
         // store config
         storeConfigInMem(config);
-        PersistUtils.storeConfig(config);
+        PersistUtils.storeConfig(getContext(), config);
     }
 
     public void setConfig(URL configUrl) {
@@ -116,9 +113,9 @@ public class Toggle {
         PersistUtils.storeSourceURL(getContext(), configUrl);
         // make the network request and store the results
         if (OkHttpUtils.isOkHttpAvailable()) {
-            OkHttpUtils.startSetConfig(configUrl.toExternalForm(), setConfigCallback);
+            OkHttpUtils.startSetConfig(getContext(), configUrl.toExternalForm(), setConfigCallback);
         } else {
-            SetConfigAsyncTask.start(configUrl.toExternalForm(), setConfigCallback);
+            SetConfigAsyncTask.start(getContext(), configUrl.toExternalForm(), setConfigCallback);
         }
     }
 
@@ -150,7 +147,7 @@ public class Toggle {
     public void getAndProcessCachedConfig(final FeatureCheckRequest featureCheckRequest) {
         if (config == null) {
             // get cached or get default
-            PersistUtils.getConfig(new ReservoirGetCallback<Config>() {
+            PersistUtils.getConfig(getContext(), new PreferenceReadCallback() {
                 @Override
                 public void onSuccess(Config config) {
                     // store in mem
@@ -160,9 +157,9 @@ public class Toggle {
                 }
 
                 @Override
-                public void onFailure(Exception e) {
+                public void onFailure(Exception exception) {
                     // couldnt retrieve a stored config, send back the default response
-                    e.printStackTrace();
+                    exception.printStackTrace();
                     configRetrievedFailure(featureCheckRequest);
                 }
             });
@@ -190,7 +187,7 @@ public class Toggle {
     public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
         Config config = null;
         try {
-            config = PersistUtils.getConfigSync();
+            config = PersistUtils.getConfigSync(getContext());
         } catch (Exception exception) {
             exception.printStackTrace();
             return getExceptionFeatureCheckResponse(featureCheckRequest);

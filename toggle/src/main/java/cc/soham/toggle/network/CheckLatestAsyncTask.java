@@ -60,7 +60,7 @@ public class CheckLatestAsyncTask extends AsyncTask<Void, Void, FeatureCheckResp
             Config config = ConversionUtils.convertStringToConfig(response);
             // store config
             Toggle.storeConfigInMem(config);
-            PersistUtils.storeConfig(config);
+            PersistUtils.storeConfig(featureCheckRequest.toggle.getContext(), config);
             // process the resultant config
             FeatureCheckResponse result = featureCheckRequest.toggle.processConfig(config, featureCheckRequest);
             // disable the cache flag since this is a live request

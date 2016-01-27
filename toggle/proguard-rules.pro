@@ -15,3 +15,14 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-verbose
+-keep class cc.soham.** { *; }
+-keep class android.support.v7.** { *; }
+-dontskipnonpubliclibraryclasses
+-dontwarn
+-assumenosideeffects class io.reactivex.** { *; }
+-assumenosideeffects class rx.** { *; }
+-dontskipnonpubliclibraryclassmembers
+-whyareyoukeeping class io.reactivex.** { *; }
+-whyareyoukeeping class rx.** { *; }
