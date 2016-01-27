@@ -13,17 +13,17 @@ import java.net.URL;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cc.soham.toggle.FeatureCheckRequest;
+import cc.soham.toggle.CheckRequest;
+import cc.soham.toggle.CheckResponse;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.callbacks.SetConfigCallback;
-import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.objects.Config;
 
 /**
  * Sample Network Activity, shows how to
  * - Use {@link Toggle#setConfig(Config)} to make a network call and manually retrieve and  astore {@link Config} configuration using {@link }
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
- * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link FeatureCheckRequest.Builder#getLatest()} flag to check for the
+ * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link CheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
  */
 public class SampleNetworkActivity extends AppCompatActivity {
@@ -71,9 +71,9 @@ public class SampleNetworkActivity extends AppCompatActivity {
         showMessage("Checking for the feature");
         Toggle.with(SampleNetworkActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
+            public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
     }
@@ -87,9 +87,9 @@ public class SampleNetworkActivity extends AppCompatActivity {
         showMessage("Checking for the latest feature");
         Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
+            public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Latest feature checked");
-                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
     }

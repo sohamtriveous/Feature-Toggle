@@ -13,7 +13,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cc.soham.toggle.Toggle;
-import cc.soham.toggle.network.FeatureCheckResponse;
+import cc.soham.toggle.CheckResponse;
 import cc.soham.toggle.objects.Config;
 
 /**
@@ -62,9 +62,9 @@ public class SampleStringActivity extends AppCompatActivity {
         showMessage("Checking for the feature");
         Toggle.with(SampleStringActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
+            public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
     }

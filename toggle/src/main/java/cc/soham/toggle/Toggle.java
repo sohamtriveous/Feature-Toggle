@@ -12,7 +12,6 @@ import cc.soham.toggle.callbacks.PreferenceReadCallback;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.network.CheckLatestAsyncTask;
-import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.network.OkHttpUtils;
 import cc.soham.toggle.network.SetConfigAsyncTask;
 import cc.soham.toggle.objects.Feature;
@@ -119,32 +118,32 @@ public class Toggle {
         }
     }
 
-    public FeatureCheckRequest.Builder check(String featureName) {
-        return new FeatureCheckRequest.Builder(singleton, featureName);
+    public CheckRequest.Builder check(String featureName) {
+        return new CheckRequest.Builder(singleton, featureName);
     }
 
     // core methods
 
     /**
-     * Handles a featureCheckRequest
+     * Handles a checkRequest
      * Called once a check is initiated for a given feature (name)
      *
-     * @param featureCheckRequest
+     * @param checkRequest
      */
-    public void handleFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
+    public void handleFeatureCheckRequest(final CheckRequest checkRequest) {
         if (sourceType == null) {
             sourceType = PersistUtils.getSourceType(getContext());
         }
-        if (!sourceType.equals(SourceType.URL) || !featureCheckRequest.getLatest) {
-            getAndProcessCachedConfig(featureCheckRequest);
+        if (!sourceType.equals(SourceType.URL) || !checkRequest.getLatest) {
+            getAndProcessCachedConfig(checkRequest);
         } else {
-            // make network featureCheckRequest
-            makeNetworkFeatureCheckRequest(featureCheckRequest);
+            // make network checkRequest
+            makeNetworkFeatureCheckRequest(checkRequest);
         }
     }
 
     // TODO: need to unit test this again in light of mem cache
-    public void getAndProcessCachedConfig(final FeatureCheckRequest featureCheckRequest) {
+    public void getAndProcessCachedConfig(final CheckRequest checkRequest) {
         if (config == null) {
             // get cached or get default
             PersistUtils.getConfig(getContext(), new PreferenceReadCallback() {
@@ -153,106 +152,106 @@ public class Toggle {
                     // store in mem
                     Toggle.storeConfigInMem(config);
                     // call the success method
-                    configRetrievedSuccess(config, featureCheckRequest);
+                    configRetrievedSuccess(config, checkRequest);
                 }
 
                 @Override
                 public void onFailure(Exception exception) {
                     // couldnt retrieve a stored config, send back the default response
                     exception.printStackTrace();
-                    configRetrievedFailure(featureCheckRequest);
+                    configRetrievedFailure(checkRequest);
                 }
             });
         } else {
             // call the success method
-            configRetrievedSuccess(config, featureCheckRequest);
+            configRetrievedSuccess(config, checkRequest);
         }
     }
 
-    private void configRetrievedSuccess(Config config, FeatureCheckRequest featureCheckRequest) {
-        FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
+    private void configRetrievedSuccess(Config config, CheckRequest checkRequest) {
+        CheckResponse checkResponse = processConfig(config, checkRequest);
         // make the callback
-        makeFeatureCheckCallback(featureCheckRequest, featureCheckResponse);
+        makeFeatureCheckCallback(checkRequest, checkResponse);
     }
 
-    private void configRetrievedFailure(FeatureCheckRequest featureCheckRequest) {
+    private void configRetrievedFailure(CheckRequest checkRequest) {
         // send back a default response
         String state = DEFAULT_STATE;
-        if (featureCheckRequest.defaultState != null) {
-            state = featureCheckRequest.defaultState;
+        if (checkRequest.defaultState != null) {
+            state = checkRequest.defaultState;
         }
-        featureCheckRequest.callback.onStatusChecked(new FeatureCheckResponse(featureCheckRequest.featureName, state, null, null, true));
+        checkRequest.callback.onStatusChecked(new CheckResponse(checkRequest.featureName, state, null, null, true));
     }
 
-    public FeatureCheckResponse getAndProcessCachedConfigSync(final FeatureCheckRequest featureCheckRequest) {
+    public CheckResponse getAndProcessCachedConfigSync(final CheckRequest checkRequest) {
         Config config = null;
         try {
             config = PersistUtils.getConfigSync(getContext());
         } catch (Exception exception) {
             exception.printStackTrace();
-            return getExceptionFeatureCheckResponse(featureCheckRequest);
+            return getExceptionCheckResponse(checkRequest);
         }
         // check for null
         if (config == null) {
-            if (featureCheckRequest.defaultState == null) {
+            if (checkRequest.defaultState == null) {
                 throw new IllegalStateException("No configuration found (Config) and no default state configured in the state check");
             }
-            return new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, null, true);
+            return new CheckResponse(checkRequest.featureName, checkRequest.defaultState, null, null, true);
         }
         // process the config
-        FeatureCheckResponse featureCheckResponse = processConfig(config, featureCheckRequest);
-        return featureCheckResponse;
+        CheckResponse checkResponse = processConfig(config, checkRequest);
+        return checkResponse;
 
     }
 
     @NonNull
     @VisibleForTesting
-        // TODO: unit test getExceptionFeatureCheckResponse
-    FeatureCheckResponse getExceptionFeatureCheckResponse(FeatureCheckRequest featureCheckRequest) {
-        return new FeatureCheckResponse(featureCheckRequest.featureName, DEFAULT_STATE, null, null, true);
+        // TODO: unit test getExceptionCheckResponse
+    CheckResponse getExceptionCheckResponse(CheckRequest checkRequest) {
+        return new CheckResponse(checkRequest.featureName, DEFAULT_STATE, null, null, true);
     }
 
     @VisibleForTesting
         // TODO: unit test makeFeatureCheckCallback
-    void makeFeatureCheckCallback(FeatureCheckRequest featureCheckRequest, FeatureCheckResponse featureCheckResponse) {
-        featureCheckRequest.callback.onStatusChecked(featureCheckResponse);
+    void makeFeatureCheckCallback(CheckRequest checkRequest, CheckResponse checkResponse) {
+        checkRequest.callback.onStatusChecked(checkResponse);
     }
 
     /**
-     * Code for enabling/disabling a feature based on a request ({@link FeatureCheckRequest}) and a config ({@link Config})
+     * Code for enabling/disabling a feature based on a request ({@link CheckRequest}) and a config ({@link Config})
      *
      * @param config
-     * @param featureCheckRequest
+     * @param checkRequest
      * @return
      */
-    public FeatureCheckResponse processConfig(Config config, FeatureCheckRequest featureCheckRequest) {
+    public CheckResponse processConfig(Config config, CheckRequest checkRequest) {
         for (Feature feature : config.features) {
             // find the given feature in the received Config
-            if (feature.name.equals(featureCheckRequest.featureName)) {
-                ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, featureCheckRequest);
+            if (feature.name.equals(checkRequest.featureName)) {
+                ResponseDecisionMeta responseDecisionMeta = handleFeature(feature, checkRequest);
                 // if there is a decisive state (either enabled or disabled) initiate the callback and break
-                return new FeatureCheckResponse(featureCheckRequest.featureName, responseDecisionMeta.state, responseDecisionMeta.featureMetadata, responseDecisionMeta.ruleMetadata);
+                return new CheckResponse(checkRequest.featureName, responseDecisionMeta.state, responseDecisionMeta.featureMetadata, responseDecisionMeta.ruleMetadata);
             }
         }
         // a) feature not found or b) no state could be made based on the config
         // check if there was no default state in the request, send enabled (default toggle)
         String state;
-        if (featureCheckRequest.defaultState == null) {
+        if (checkRequest.defaultState == null) {
             state = DEFAULT_STATE;
         } else {
-            state = featureCheckRequest.defaultState;
+            state = checkRequest.defaultState;
         }
-        return new FeatureCheckResponse(featureCheckRequest.featureName, state, null, null, false);
+        return new CheckResponse(checkRequest.featureName, state, null, null, false);
     }
 
     /**
      * makes a network request for the given params
      */
-    public void makeNetworkFeatureCheckRequest(final FeatureCheckRequest featureCheckRequest) {
+    public void makeNetworkFeatureCheckRequest(final CheckRequest checkRequest) {
         if (OkHttpUtils.isOkHttpAvailable()) {
-            OkHttpUtils.startCheck(featureCheckRequest);
+            OkHttpUtils.startCheck(checkRequest);
         } else {
-            CheckLatestAsyncTask.start(featureCheckRequest);
+            CheckLatestAsyncTask.start(checkRequest);
         }
     }
 
@@ -261,11 +260,11 @@ public class Toggle {
      * (when a match between a requested feature and the store feature is found)
      *
      * @param feature
-     * @param featureCheckRequest
+     * @param checkRequest
      * @return
      */
     @VisibleForTesting
-    ResponseDecisionMeta handleFeature(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
+    ResponseDecisionMeta handleFeature(final Feature feature, final CheckRequest checkRequest) {
         ResponseDecisionMeta responseDecisionMeta;
         if (feature.state == null) {
             if (feature.rules == null) {
@@ -284,7 +283,7 @@ public class Toggle {
                 }
             }
             // no rule match, return the default state of the feature
-            responseDecisionMeta = getDefaultResponseDecision(feature, featureCheckRequest);
+            responseDecisionMeta = getDefaultResponseDecision(feature, checkRequest);
             responseDecisionMeta.featureMetadata = feature.featureMetadata;
             return responseDecisionMeta;
         } else {
@@ -317,10 +316,10 @@ public class Toggle {
 
     @NonNull
     @VisibleForTesting
-    ResponseDecisionMeta getDefaultResponseDecision(final Feature feature, final FeatureCheckRequest featureCheckRequest) {
+    ResponseDecisionMeta getDefaultResponseDecision(final Feature feature, final CheckRequest checkRequest) {
         // first preference in defaults is given to the local variable (provided while the Toggle.with().check().setDefault().handle() call)
-        if (featureCheckRequest.defaultState != null) {
-            return new ResponseDecisionMeta(featureCheckRequest.defaultState);
+        if (checkRequest.defaultState != null) {
+            return new ResponseDecisionMeta(checkRequest.defaultState);
         }
         // in case no Default is provided in the feature (in the config), return enabled
         if (feature._default == null) {

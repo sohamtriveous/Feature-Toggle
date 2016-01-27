@@ -2,8 +2,9 @@ package cc.soham.toggle.network;
 
 import android.os.AsyncTask;
 
+import cc.soham.toggle.CheckResponse;
 import cc.soham.toggle.ConversionUtils;
-import cc.soham.toggle.FeatureCheckRequest;
+import cc.soham.toggle.CheckRequest;
 import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.Toggle;
 import cc.soham.toggle.objects.Config;
@@ -14,41 +15,41 @@ import cc.soham.toggle.objects.Config;
  * - store it in memory and disk
  * - initiate a callback on the UI thread
  */
-public class SimpleConversionAndCheckCallbackAsyncTask extends AsyncTask<Void, Void, FeatureCheckResponse> {
+public class SimpleConversionAndCheckCallbackAsyncTask extends AsyncTask<Void, Void, CheckResponse> {
     final String configInString;
-    final FeatureCheckRequest featureCheckRequest;
+    final CheckRequest checkRequest;
 
-    public SimpleConversionAndCheckCallbackAsyncTask(String configInString, FeatureCheckRequest featureCheckRequest) {
+    public SimpleConversionAndCheckCallbackAsyncTask(String configInString, CheckRequest checkRequest) {
         this.configInString = configInString;
-        this.featureCheckRequest = featureCheckRequest;
+        this.checkRequest = checkRequest;
     }
 
     @Override
-    protected FeatureCheckResponse doInBackground(Void... params) {
+    protected CheckResponse doInBackground(Void... params) {
         // convert string to config
         Config config = ConversionUtils.convertStringToConfig(configInString);
         // store config
         Toggle.storeConfigInMem(config);
-        PersistUtils.storeConfig(featureCheckRequest.toggle.getContext(), config);
+        PersistUtils.storeConfig(checkRequest.toggle.getContext(), config);
         // process the resultant config
-        FeatureCheckResponse result = featureCheckRequest.toggle.processConfig(config, featureCheckRequest);
+        CheckResponse result = checkRequest.toggle.processConfig(config, checkRequest);
         // disable the cache flag since this is a live request
         result.cached = false;
         return result;
     }
 
     @Override
-    protected void onPostExecute(FeatureCheckResponse featureCheckResponse) {
+    protected void onPostExecute(CheckResponse checkResponse) {
         // initiate a callback on the UI thread
-        NetworkUtils.initiateCallbackAfterCheck(featureCheckResponse, featureCheckRequest);
+        NetworkUtils.initiateCallbackAfterCheck(checkResponse, checkRequest);
     }
 
     /**
      * Converts, stores and initates a callback for a given OkHttp3 response
      * @param configInString
-     * @param featureCheckRequest
+     * @param checkRequest
      */
-    public static void handle(final String configInString, final FeatureCheckRequest featureCheckRequest) {
-        new SimpleConversionAndCheckCallbackAsyncTask(configInString, featureCheckRequest).execute();
+    public static void handle(final String configInString, final CheckRequest checkRequest) {
+        new SimpleConversionAndCheckCallbackAsyncTask(configInString, checkRequest).execute();
     }
 }

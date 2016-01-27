@@ -9,7 +9,7 @@ import cc.soham.toggle.callbacks.ErrorCallback;
  * Represents a feature check request
  * Called as a challenge to the config for the given feature name
  */
-public class FeatureCheckRequest {
+public class CheckRequest {
     // Required parameters
     public final Toggle toggle;
     public final String featureName;
@@ -73,16 +73,16 @@ public class FeatureCheckRequest {
          * @param callback
          * @return
          */
-        public FeatureCheckRequest start(Callback callback) {
+        public CheckRequest start(Callback callback) {
             if (featureName == null) {
                 throw new IllegalStateException("You need to provide a feature name to provide a callback when that feature is checked");
             }
             this.callback = callback;
-            return new FeatureCheckRequest(this);
+            return new CheckRequest(this);
         }
     }
 
-    private FeatureCheckRequest(Builder builder) {
+    private CheckRequest(Builder builder) {
         this.toggle = builder.toggle;
         this.featureName = builder.featureName;
         this.callback = builder.callback;
@@ -103,7 +103,7 @@ public class FeatureCheckRequest {
      * @param errorCallback
      */
     @VisibleForTesting
-    FeatureCheckRequest(Toggle toggle, String featureName, Callback callback, String defaultState, boolean getLatest, ErrorCallback errorCallback) {
+    CheckRequest(Toggle toggle, String featureName, Callback callback, String defaultState, boolean getLatest, ErrorCallback errorCallback) {
         this.toggle = toggle;
         this.featureName = featureName;
         this.callback = callback;

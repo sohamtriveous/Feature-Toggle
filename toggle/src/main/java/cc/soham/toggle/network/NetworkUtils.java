@@ -8,7 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import cc.soham.toggle.FeatureCheckRequest;
+import cc.soham.toggle.CheckRequest;
+import cc.soham.toggle.CheckResponse;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 
 /**
@@ -78,16 +79,16 @@ public class NetworkUtils {
     /**
      * Initate a {@link cc.soham.toggle.callbacks.Callback} if needed
      *
-     * @param featureCheckResponse
-     * @param featureCheckRequest
+     * @param checkResponse
+     * @param checkRequest
      */
-    public static void initiateCallbackAfterCheck(FeatureCheckResponse featureCheckResponse, FeatureCheckRequest featureCheckRequest) {
+    public static void initiateCallbackAfterCheck(CheckResponse checkResponse, CheckRequest checkRequest) {
         // make the callback if configured
-        if (featureCheckRequest.callback != null) {
-            if (featureCheckResponse != null) {
-                featureCheckRequest.callback.onStatusChecked(featureCheckResponse);
+        if (checkRequest.callback != null) {
+            if (checkResponse != null) {
+                checkRequest.callback.onStatusChecked(checkResponse);
             } else {
-                featureCheckRequest.callback.onStatusChecked(new FeatureCheckResponse(featureCheckRequest.featureName, featureCheckRequest.defaultState, null, null, true));
+                checkRequest.callback.onStatusChecked(new CheckResponse(checkRequest.featureName, checkRequest.defaultState, null, null, true));
             }
         }
     }

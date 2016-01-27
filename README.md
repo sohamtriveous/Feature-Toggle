@@ -53,8 +53,8 @@ You can check for a feature using the check method
 ```java
 Toggle.with(context).check("custom_network_component").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
-                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.featureMetaData, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
+            public void onStatusChecked(CheckResponse checkResponse) {
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetaData, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
 ```
@@ -63,8 +63,8 @@ In case you are used a URL in setConfig, you can also use the getLatest flag to 
 ```java
 Toggle.with(context).check("custom_network_component").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
-            public void onStatusChecked(FeatureCheckResponse featureCheckResponse) {
-                updateUiAfterResponse(featureCheckResponse.featureName, featureCheckResponse.state, featureCheckResponse.featureMetaData, featureCheckResponse.ruleMetadata, featureCheckResponse.cached);
+            public void onStatusChecked(CheckResponse checkResponse) {
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetaData, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
 ```        

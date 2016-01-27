@@ -4,7 +4,7 @@ import android.content.Context;
 
 import java.io.IOException;
 
-import cc.soham.toggle.FeatureCheckRequest;
+import cc.soham.toggle.CheckRequest;
 import cc.soham.toggle.PersistUtils;
 import cc.soham.toggle.callbacks.SetConfigCallback;
 import okhttp3.Callback;
@@ -72,15 +72,15 @@ public class OkHttpUtils {
      * A static helper method to initiate a {@link CheckLatestAsyncTask} call
      * Checks the network for the latest config and then sends the latest response to the callee
      *
-     * @param featureCheckRequest
+     * @param checkRequest
      */
-    public static void startCheck(final FeatureCheckRequest featureCheckRequest) {
-        if (featureCheckRequest == null) {
-            throw new IllegalStateException("Please pass a valid FeatureCheckRequest");
+    public static void startCheck(final CheckRequest checkRequest) {
+        if (checkRequest == null) {
+            throw new IllegalStateException("Please pass a valid CheckRequest");
         }
 
         // get the url from preferences
-        String url = PersistUtils.getSourceUrl(featureCheckRequest.toggle.getContext());
+        String url = PersistUtils.getSourceUrl(checkRequest.toggle.getContext());
         // make network request to receive response
         Request request = new Request.Builder()
                 .url(url)
@@ -97,7 +97,7 @@ public class OkHttpUtils {
                 if (!response.isSuccessful())
                     throw new IOException("Unexpected code " + response);
 
-                SimpleConversionAndCheckCallbackAsyncTask.handle(response.body().string(), featureCheckRequest);
+                SimpleConversionAndCheckCallbackAsyncTask.handle(response.body().string(), checkRequest);
             }
         });
     }

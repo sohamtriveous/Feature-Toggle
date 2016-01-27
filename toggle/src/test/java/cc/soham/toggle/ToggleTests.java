@@ -22,7 +22,6 @@ import java.util.List;
 import cc.soham.toggle.callbacks.Callback;
 import cc.soham.toggle.callbacks.PreferenceReadCallback;
 import cc.soham.toggle.enums.SourceType;
-import cc.soham.toggle.network.FeatureCheckResponse;
 import cc.soham.toggle.objects.Config;
 import cc.soham.toggle.objects.Feature;
 import cc.soham.toggle.objects.ResponseDecisionMeta;
@@ -76,9 +75,9 @@ public class ToggleTests {
         getApiValue(rules);
         Feature feature = new Feature("video", null, null, featureMetadata, rules);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, checkRequest);
 
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DEFAULT_STATE);
     }
@@ -95,9 +94,9 @@ public class ToggleTests {
         getApiValue(rules);
         Feature feature = new Feature("video", null, Toggle.ENABLED, featureMetadata, rules);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, checkRequest);
 
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
     }
@@ -109,9 +108,9 @@ public class ToggleTests {
         getApiValue(rules);
         Feature feature = new Feature("video", null, Toggle.DISABLED, featureMetadata, rules);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, checkRequest);
 
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
     }
@@ -123,9 +122,9 @@ public class ToggleTests {
         getApiValue(rules);
         Feature feature = new Feature("video", null, Toggle.ENABLED, featureMetadata, rules);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, Toggle.DISABLED, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, Toggle.DISABLED, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, checkRequest);
 
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
     }
@@ -137,9 +136,9 @@ public class ToggleTests {
         getApiValue(rules);
         Feature feature = new Feature("video", null, Toggle.DISABLED, featureMetadata, rules);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, Toggle.ENABLED, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, Toggle.ENABLED, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.getDefaultResponseDecision(feature, checkRequest);
 
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
     }
@@ -233,9 +232,9 @@ public class ToggleTests {
         List<Rule> rules = new ArrayList<>();
         getApiValue(rules);
         Feature feature = new Feature("video", Toggle.ENABLED, null, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
     }
@@ -246,9 +245,9 @@ public class ToggleTests {
         List<Rule> rules = new ArrayList<>();
         getApiValue(rules);
         Feature feature = new Feature("video", Toggle.DISABLED, null, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
     }
@@ -259,12 +258,12 @@ public class ToggleTests {
         List<Rule> rules = new ArrayList<>();
         getApiValue(rules);
         Feature feature = new Feature("video", null, Toggle.DISABLED, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isEqualTo(ruleMetadata);
@@ -277,12 +276,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.DISABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, Toggle.ENABLED, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isEqualTo(ruleMetadata);
@@ -295,12 +294,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(null, ruleMetadata, value));
         Feature feature = new Feature("video", null, Toggle.ENABLED, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        toggle.handleFeature(feature, featureCheckRequest);
+        toggle.handleFeature(feature, checkRequest);
     }
 
     @Test
@@ -310,12 +309,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.DISABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, Toggle.ENABLED, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isNull();
@@ -328,12 +327,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.ENABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, Toggle.DISABLED, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isNull();
@@ -346,12 +345,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.DISABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, null, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DEFAULT_STATE);
         assertThat(responseDecisionMeta.ruleMetadata).isNull();
@@ -362,9 +361,9 @@ public class ToggleTests {
     public void handleFeature_stateNull_ruleNull_defaultNull_returnsEnabled() {
         Toggle toggle = new Toggle(context);
         Feature feature = new Feature("video", null, null, featureMetadata, null);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, null, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, null, false, null);
 
-        toggle.handleFeature(feature, featureCheckRequest);
+        toggle.handleFeature(feature, checkRequest);
     }
 
     @Test
@@ -374,12 +373,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.DISABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, null, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, Toggle.ENABLED, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, Toggle.ENABLED, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.ENABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isNull();
@@ -392,12 +391,12 @@ public class ToggleTests {
         Value value = new Value(14, 18, null, null, null, null, null, null);
         rules.add(new Rule(Toggle.DISABLED, ruleMetadata, value));
         Feature feature = new Feature("video", null, null, featureMetadata, rules);
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, "video", null, Toggle.DISABLED, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, "video", null, Toggle.DISABLED, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, featureCheckRequest);
+        ResponseDecisionMeta responseDecisionMeta = toggle.handleFeature(feature, checkRequest);
         // assert the state and ruleMetadata
         assertThat(responseDecisionMeta.state).isEqualTo(Toggle.DISABLED);
         assertThat(responseDecisionMeta.ruleMetadata).isNull();
@@ -428,14 +427,14 @@ public class ToggleTests {
         String featureToBeSearched = "share";
         String defaultStateInRequest = Toggle.DISABLED;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isFalse();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isFalse();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -458,14 +457,14 @@ public class ToggleTests {
         String featureToBeSearched = "share";
         String defaultStateInRequest = Toggle.ENABLED;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isFalse();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isFalse();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -488,14 +487,14 @@ public class ToggleTests {
         String featureToBeSearched = "share";
         String defaultStateInRequest = null;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isFalse();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isFalse();
+        assertThat(checkResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
     }
 
     // feature present but no conclusion could not be made
@@ -523,14 +522,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -556,14 +555,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -589,14 +588,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
     }
 
     // default present in config and request (conflict management)
@@ -625,14 +624,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -658,14 +657,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(defaultStateInRequest);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(defaultStateInRequest);
     }
 
     @Test
@@ -691,14 +690,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
     }
 
     @Test
@@ -724,14 +723,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(20);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     // feature present and rules are matched
@@ -758,14 +757,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     @Test
@@ -791,14 +790,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
     }
 
     @Test
@@ -824,14 +823,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.ruleMetadata).isNull();
-        assertThat(featureCheckResponse.cached).isTrue();
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.ruleMetadata).isNull();
+        assertThat(checkResponse.cached).isTrue();
+        assertThat(checkResponse.state).isEqualTo(Toggle.ENABLED);
     }
 
     @Test
@@ -848,14 +847,14 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, null, defaultStateInRequest, false, null);
 
-        FeatureCheckResponse featureCheckResponse = toggle.processConfig(config, featureCheckRequest);
+        CheckResponse checkResponse = toggle.processConfig(config, checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @NonNull
@@ -893,7 +892,7 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
             PowerMockito.when(PersistUtils.getConfigSync(context)).thenReturn(getStandardConfig(ruleMetadata));
@@ -903,12 +902,12 @@ public class ToggleTests {
 
         Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
+        CheckResponse checkResponse = toggle.getAndProcessCachedConfigSync(checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureCheckRequest.featureName);
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(checkResponse.featureName).isEqualTo(checkRequest.featureName);
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test
@@ -921,7 +920,7 @@ public class ToggleTests {
         String featureToBeSearched = "video";
         String defaultStateInRequest = Toggle.DISABLED;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
             PowerMockito.when(PersistUtils.getConfigSync(context)).thenReturn(null);
@@ -932,12 +931,12 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        FeatureCheckResponse featureCheckResponse = toggle.getAndProcessCachedConfigSync(featureCheckRequest);
+        CheckResponse checkResponse = toggle.getAndProcessCachedConfigSync(checkRequest);
 
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureCheckRequest.featureName);
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isNull();
-        assertThat(featureCheckResponse.cached).isTrue();
+        assertThat(checkResponse.featureName).isEqualTo(checkRequest.featureName);
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isNull();
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test(expected = IllegalStateException.class)
@@ -950,7 +949,7 @@ public class ToggleTests {
         String featureToBeSearched = "video";
         String defaultStateInRequest = null;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         try {
             PowerMockito.when(PersistUtils.getConfigSync(context)).thenReturn(null);
@@ -961,7 +960,7 @@ public class ToggleTests {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
-        toggle.getAndProcessCachedConfigSync(featureCheckRequest);
+        toggle.getAndProcessCachedConfigSync(checkRequest);
     }
 
     // handleFeatureCheckRequest
@@ -977,14 +976,14 @@ public class ToggleTests {
         String featureToBeSearched = "video";
         String defaultStateInRequest = Toggle.DISABLED;
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.when(RuleMatcher.getBuildVersion()).thenReturn(16);
 
         Config config = getStandardConfig(ruleMetadata);
 
-        toggle.handleFeatureCheckRequest(featureCheckRequest);
+        toggle.handleFeatureCheckRequest(checkRequest);
 
 
     }
@@ -1001,18 +1000,18 @@ public class ToggleTests {
     private ArgumentCaptor<Context> contextArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<FeatureCheckResponse> featureCheckResponseArgumentCaptor;
+    private ArgumentCaptor<CheckResponse> featureCheckResponseArgumentCaptor;
 
 
     /**
-     * The idea here is to invoke {@link Toggle#getAndProcessCachedConfig(FeatureCheckRequest)}
+     * The idea here is to invoke {@link Toggle#getAndProcessCachedConfig(CheckRequest)}
      * This in turn makes a call to {@link PersistUtils#getConfig(Context, PreferenceReadCallback)}  which in turn
      * calls {@link PreferenceReadAsyncTask#handle(Context, PreferenceReadCallback)}
      * <p/>
      * The challenge here is to unit test this properly, here we face the following challenges:
      * 1. We need to intercept the {@link PreferenceReadCallback} (among other things) passed to {@link PreferenceReadAsyncTask#handle(Context, PreferenceReadCallback)}
      * 2. Then we need to test success and failure scenarios manually by taking that intercept and then call the success/failure callbacks manually
-     * 3. Then we need to check if the final output, which in this case is a callback (passed in {@link FeatureCheckRequest}
+     * 3. Then we need to check if the final output, which in this case is a callback (passed in {@link CheckRequest}
      * to the callee with the right parameters. So basically, the rule enable/disable needs to be properly passed back to the callee.
      * <p/>
      * Remember, we are not unit testing {@link PreferenceReadAsyncTask} here, we just assume that it will work!
@@ -1028,11 +1027,11 @@ public class ToggleTests {
         String defaultStateInRequest = Toggle.DISABLED;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // call the getAndProcessCachedConfig is called
-        toggle.getAndProcessCachedConfig(featureCheckRequest);
+        toggle.getAndProcessCachedConfig(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1051,12 +1050,12 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo("video");
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(featureMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo("video");
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.featureMetadata).isEqualTo(featureMetadata);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test
@@ -1069,11 +1068,11 @@ public class ToggleTests {
         String defaultStateInRequest = Toggle.DISABLED;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // call the getAndProcessCachedConfig is called
-        toggle.getAndProcessCachedConfig(featureCheckRequest);
+        toggle.getAndProcessCachedConfig(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1092,12 +1091,12 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo("video");
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(featureMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo("video");
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.featureMetadata).isEqualTo(featureMetadata);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test
@@ -1110,11 +1109,11 @@ public class ToggleTests {
         String defaultStateInRequest = Toggle.DISABLED;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // call the getAndProcessCachedConfig is called
-        toggle.getAndProcessCachedConfig(featureCheckRequest);
+        toggle.getAndProcessCachedConfig(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1133,12 +1132,12 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo("video");
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo("video");
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.featureMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test
@@ -1151,11 +1150,11 @@ public class ToggleTests {
         String defaultStateInRequest = Toggle.ENABLED;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // call the getAndProcessCachedConfig is called
-        toggle.getAndProcessCachedConfig(featureCheckRequest);
+        toggle.getAndProcessCachedConfig(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1174,12 +1173,12 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo("video");
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.ENABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo("video");
+        assertThat(checkResponse.state).isEqualTo(Toggle.ENABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.featureMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     @Test
@@ -1192,11 +1191,11 @@ public class ToggleTests {
         String defaultStateInRequest = null;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // call the getAndProcessCachedConfig is called
-        toggle.getAndProcessCachedConfig(featureCheckRequest);
+        toggle.getAndProcessCachedConfig(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1215,12 +1214,12 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo("video");
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(null);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo("video");
+        assertThat(checkResponse.state).isEqualTo(Toggle.DEFAULT_STATE);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(null);
+        assertThat(checkResponse.featureMetadata).isEqualTo(null);
+        assertThat(checkResponse.cached).isTrue();
     }
 
     // handleFeatureCheckRequest
@@ -1241,15 +1240,15 @@ public class ToggleTests {
         String defaultStateInRequest = null;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
 
-        Mockito.doCallRealMethod().when(toggle).handleFeatureCheckRequest(featureCheckRequest);
+        Mockito.doCallRealMethod().when(toggle).handleFeatureCheckRequest(checkRequest);
         Mockito.doCallRealMethod().when(toggle).setSourceType(null);
 
         toggle.setSourceType(null);
-        toggle.handleFeatureCheckRequest(featureCheckRequest);
+        toggle.handleFeatureCheckRequest(checkRequest);
 
-        verify(toggle).getAndProcessCachedConfig(featureCheckRequest);
+        verify(toggle).getAndProcessCachedConfig(checkRequest);
     }
 
     @Test
@@ -1261,7 +1260,7 @@ public class ToggleTests {
         String defaultStateInRequest = Toggle.ENABLED;
         Callback callback = mock(Callback.class);
 
-        FeatureCheckRequest featureCheckRequest = new FeatureCheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
+        CheckRequest checkRequest = new CheckRequest(toggle, featureToBeSearched, callback, defaultStateInRequest, false, null);
         Config config = getStandardConfig(ruleMetadata);
 
         // setup the environment to match
@@ -1270,7 +1269,7 @@ public class ToggleTests {
 
         toggle.setSourceType(SourceType.JSONOBJECT);
 
-        toggle.handleFeatureCheckRequest(featureCheckRequest);
+        toggle.handleFeatureCheckRequest(checkRequest);
 
         // verify that a) a call to Reservoir.getAsync is made
         // b) capture the callback argument so that we can call it ourselves
@@ -1285,11 +1284,11 @@ public class ToggleTests {
         // verify that the final customer callback was made with the right parameters
         verify(callback).onStatusChecked(featureCheckResponseArgumentCaptor.capture());
 
-        FeatureCheckResponse featureCheckResponse = featureCheckResponseArgumentCaptor.getValue();
-        assertThat(featureCheckResponse.featureName).isEqualTo(featureToBeSearched);
-        assertThat(featureCheckResponse.state).isEqualTo(Toggle.DISABLED);
-        assertThat(featureCheckResponse.ruleMetadata).isEqualTo(ruleMetadata);
-        assertThat(featureCheckResponse.featureMetadata).isEqualTo(featureMetadata);
-        assertThat(featureCheckResponse.cached).isTrue();
+        CheckResponse checkResponse = featureCheckResponseArgumentCaptor.getValue();
+        assertThat(checkResponse.featureName).isEqualTo(featureToBeSearched);
+        assertThat(checkResponse.state).isEqualTo(Toggle.DISABLED);
+        assertThat(checkResponse.ruleMetadata).isEqualTo(ruleMetadata);
+        assertThat(checkResponse.featureMetadata).isEqualTo(featureMetadata);
+        assertThat(checkResponse.cached).isTrue();
     }
 }
