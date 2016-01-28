@@ -23,8 +23,6 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: integration tests for network/retrofit
-    // TODO: integration test support in Travis
     // TODO: integrate leak cananary in the sample?
     // TODO: unit tests for the new memcache (store config in memcache for all conditions)
     // TODO: unit tests for file and rule metadata
