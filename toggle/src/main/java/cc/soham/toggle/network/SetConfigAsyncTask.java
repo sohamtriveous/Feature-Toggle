@@ -16,7 +16,6 @@ import cc.soham.toggle.objects.Config;
 
 /**
  * An {@link AsyncTask} that gets the latest config from the network
- * TODO: use OkHTTP (provided) in the future
  */
 public class SetConfigAsyncTask extends AsyncTask<Void, Void, SetConfigResponse> {
     final String url;

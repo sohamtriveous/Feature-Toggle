@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +26,14 @@ import cc.soham.toggle.objects.Config;
 public class SampleStringActivity extends AppCompatActivity {
     @Bind(R.id.activity_sample_feature)
     Button featureButton;
-    @Bind(R.id.activity_sample_feature_metadata)
-    TextView metadataTextView;
+    @Bind(R.id.activity_sample_feature_rule_metadata)
+    TextView ruleMetadataTextView;
+    @Bind(R.id.activity_sample_feature_feature_metadata)
+    TextView featureMetadataTextView;
     @Bind(R.id.activity_sample_feature_cached)
     TextView cachedTextView;
+    @Bind(R.id.activity_sample_feature_progress)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +69,7 @@ public class SampleStringActivity extends AppCompatActivity {
             @Override
             public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Feature checked");
-                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.ruleMetadata, checkResponse.cached);
+                updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetadata, checkResponse.ruleMetadata, checkResponse.cached);
             }
         });
     }
@@ -73,16 +78,19 @@ public class SampleStringActivity extends AppCompatActivity {
      * Update the UI as per the feature state
      *
      * @param feature  Name of the feature
-     * @param state  The feature-toggle state of the feature: enabled/disabled
-     * @param metadata Metadata attached to the feature
+     * @param state    The feature-toggle state of the feature: state/disabled
+     * @param featureMetadata Feature Metadata attached to the feature
+     * @param ruleMetadata Rule Metadata attached to the feature
      * @param cached   Shows whether this is a cached response or not
      */
-    private void updateUiAfterResponse(String feature, String state, String metadata, boolean cached) {
+    private void updateUiAfterResponse(String feature, String state, String featureMetadata, String ruleMetadata, boolean cached) {
         featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
         featureButton.setEnabled(state == Toggle.ENABLED);
-        metadataTextView.setText("Metadata: " + metadata);
+        featureMetadataTextView.setText("Feature Metadata: " + ruleMetadata);
+        ruleMetadataTextView.setText("Rule Metadata: " + ruleMetadata);
         cachedTextView.setText("Cached: " + cached);
     }
+
 
     /**
      * Simple helper method to show Toasts

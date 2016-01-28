@@ -36,19 +36,34 @@
         android:text="Feature name/state will appear here" />
 
     <TextView
-        android:id="@+id/activity_sample_feature_metadata"
+        android:id="@+id/activity_sample_feature_feature_metadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/activity_sample_feature"
         android:layout_centerInParent="true"
-        android:text="Metadata will appear here" />
+        android:text="Feature Metadata will appear here" />
+
+    <TextView
+        android:id="@+id/activity_sample_feature_rule_metadata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/activity_sample_feature_rule_metadata"
+        android:layout_centerInParent="true"
+        android:text="Rule Metadata will appear here" />
 
     <TextView
         android:id="@+id/activity_sample_feature_cached"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/activity_sample_feature_metadata"
+        android:layout_below="@id/activity_sample_feature_rule_metadata"
         android:layout_centerInParent="true"
         android:text="Cache state will appear here" />
+
+    <ProgressBar
+        android:id="@+id/activity_sample_feature_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>
