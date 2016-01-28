@@ -23,15 +23,15 @@ import cc.soham.toggle.objects.Rule;
  * Created by sohammondal on 14/01/16.
  */
 public class Toggle {
-    // TODO: Remove Reservoir
-    // TODO: fix all the unit tests failing on reservoir
+    // TODO: integration tests for network/retrofit
+    // TODO: integration test support in Travis
+    // TODO: integrate leak cananary in the sample?
     // TODO: unit tests for the new memcache (store config in memcache for all conditions)
-    // TODO: add overall ruleMetadata, return it in the callback
-    // TODO: add okhttp implementation
-    // TODO: test okhttp implementation
+    // TODO: unit tests for file and rule metadata
+    // TODO: unit test okhttp implementation
+    // TODO: instrument test okhttp implementation
     // TODO: improve documentation
     // TODO: create wiki
-    // TODO: check and improve all API calls
 
     public static final String DEFAULT_STATE = "default";
     public static final String ENABLED = "enabled";
