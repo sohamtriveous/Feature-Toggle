@@ -7,28 +7,28 @@ import android.test.suitebuilder.annotation.MediumTest;
 
 import org.junit.After;
 import org.junit.Before;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import cc.soham.toggle.Toggle;
 
-import static android.support.test.espresso.Espresso.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static android.support.test.espresso.matcher.ViewMatchers.*;
-import static android.support.test.espresso.assertion.ViewAssertions.*;
-import static android.support.test.espresso.action.ViewActions.*;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.any;
+import static org.hamcrest.Matchers.anyOf;
 
 /**
- * Checks the Network calls in the sample
+ * Checks the Retrofit calls in the sample
  */
 @RunWith(AndroidJUnit4.class)
-public class ToggleNetworkTests {
+public class ToggleRetrofitTests {
     @Rule
-    public ActivityTestRule<SampleNetworkActivity> activityTestRule = new ActivityTestRule<>(SampleNetworkActivity.class);
+    public ActivityTestRule<SampleRetrofitActivity> activityTestRule = new ActivityTestRule<>(SampleRetrofitActivity.class);
 
     public ProgressBarIdlingResource progressBarIdlingResource;
 
@@ -71,21 +71,5 @@ public class ToggleNetworkTests {
         onView(withId(R.id.activity_sample_feature_feature_metadata)).check(matches(withText(any(String.class))));
         onView(withId(R.id.activity_sample_feature_rule_metadata)).check(matches(withText(any(String.class))));
         onView(withId(R.id.activity_sample_feature_cached)).check(matches(withText("Cached: true")));
-    }
-
-    @Test
-    @MediumTest
-    public void toggle_network_checkLatest() {
-        // make sure the config is not loaded from memory
-        Toggle.storeConfigInMem(null);
-        // perform the button click
-        onView(withId(R.id.activity_sample_check_latest)).perform(click());
-        // register the idling resource so that we can know when the config is done
-        Espresso.registerIdlingResources(progressBarIdlingResource);
-        // check
-        onView(withId(R.id.activity_sample_feature)).check(matches(anyOf(withText(Toggle.ENABLED), withText(Toggle.DISABLED))));
-        onView(withId(R.id.activity_sample_feature_feature_metadata)).check(matches(withText(any(String.class))));
-        onView(withId(R.id.activity_sample_feature_rule_metadata)).check(matches(withText(any(String.class))));
-        onView(withId(R.id.activity_sample_feature_cached)).check(matches(withText("Cached: false")));
     }
 }

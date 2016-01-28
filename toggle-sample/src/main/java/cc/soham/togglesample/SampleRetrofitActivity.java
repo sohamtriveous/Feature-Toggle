@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,7 +30,7 @@ import retrofit2.Response;
  * Note: {@link Toggle#check(String)} can be called before/after {@link Toggle#setConfig(Config)} is called
  * Here {@link Toggle#check(String)} will check for cache and the default value in the Request to check for the feature
  */
-public class SampleRetrofitActivity extends AppCompatActivity {
+public class SampleRetrofitActivity extends AppCompatActivity implements ProgressBarInterface {
     @Bind(R.id.activity_sample_feature)
     Button featureButton;
     @Bind(R.id.activity_sample_feature_rule_metadata)
@@ -40,6 +41,8 @@ public class SampleRetrofitActivity extends AppCompatActivity {
     TextView cachedTextView;
     @Bind(R.id.activity_sample_feature_progress)
     ProgressBar progressBar;
+
+    private String featureToBeChecked = "mixpanel";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_set_config)
     public void setConfigButton_onClick() {
         showMessage("Making a retrofit call to get the config");
+        progressBar.setVisibility(View.VISIBLE);
         Call<Config> configCall = MyApi.getApi().getConfig();
         configCall.enqueue(new Callback<Config>() {
             @Override
@@ -63,6 +67,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
                 Toast.makeText(SampleRetrofitActivity.this, "Retrofit response received, storing in toggle", Toast.LENGTH_SHORT).show();
                 Config config = response.body();
                 Toggle.with(SampleRetrofitActivity.this).setConfig(config);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -78,12 +83,14 @@ public class SampleRetrofitActivity extends AppCompatActivity {
      */
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
-        showMessage("Checking for the feature");
-        Toggle.with(SampleRetrofitActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        showMessage("Checking for the feature "+ featureToBeChecked);
+        progressBar.setVisibility(View.VISIBLE);
+        Toggle.with(SampleRetrofitActivity.this).check(featureToBeChecked).defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
             public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Feature checked");
                 updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetadata, checkResponse.ruleMetadata, checkResponse.cached);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -98,7 +105,7 @@ public class SampleRetrofitActivity extends AppCompatActivity {
      * @param cached   Shows whether this is a cached response or not
      */
     private void updateUiAfterResponse(String feature, String state, String featureMetadata, String ruleMetadata, boolean cached) {
-        featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
+        featureButton.setText(state == Toggle.ENABLED ? Toggle.ENABLED : Toggle.DISABLED);
         featureButton.setEnabled(state == Toggle.ENABLED);
         featureMetadataTextView.setText("Feature Metadata: " + ruleMetadata);
         ruleMetadataTextView.setText("Rule Metadata: " + ruleMetadata);
@@ -123,5 +130,10 @@ public class SampleRetrofitActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ProgressBar getProgressBar() {
+        return progressBar;
     }
 }
