@@ -1,20 +1,17 @@
 package cc.soham.togglesample;
 
-import android.provider.Settings;
 import android.support.test.espresso.IdlingResource;
 import android.view.View;
 
-import cc.soham.toggle.objects.Config;
-
 /**
- * Created by sohammondal on 27/01/16.
+ * A simple {@link IdlingResource} that can be used across the toggle samples
  */
-public class SetConfigIdlingResource implements IdlingResource {
+public class ProgressBarIdlingResource implements IdlingResource {
     ResourceCallback resourceCallback;
-    SampleNetworkActivity sampleNetworkActivity;
+    ProgressBarInterface progressBarInterface;
 
-    public SetConfigIdlingResource(SampleNetworkActivity sampleNetworkActivity) {
-        this.sampleNetworkActivity = sampleNetworkActivity;
+    public ProgressBarIdlingResource(ProgressBarInterface progressBarInterface) {
+        this.progressBarInterface = progressBarInterface;
     }
 
     @Override
@@ -22,9 +19,12 @@ public class SetConfigIdlingResource implements IdlingResource {
         return "setConfig";
     }
 
+    /**
+     * Return idle when the {@link android.widget.ProgressBar} is not visible anymore
+     */
     @Override
     public boolean isIdleNow() {
-        if(sampleNetworkActivity.progressBar.getVisibility() != View.VISIBLE) {
+        if(progressBarInterface.getProgressBar().getVisibility() != View.VISIBLE) {
             resourceCallback.onTransitionToIdle();
             return true;
         }

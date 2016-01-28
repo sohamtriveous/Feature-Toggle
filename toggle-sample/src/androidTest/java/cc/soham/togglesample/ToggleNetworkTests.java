@@ -19,12 +19,9 @@ import static android.support.test.espresso.Espresso.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.*;
 import static android.support.test.espresso.action.ViewActions.*;
-import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 
 /**
  * Created by sohammondal on 27/01/16.
@@ -36,25 +33,28 @@ public class ToggleNetworkTests {
     @Rule
     public ActivityTestRule<SampleNetworkActivity> sampleNetworkActivityActivityTestRule = new ActivityTestRule<>(SampleNetworkActivity.class);
 
-    public SetConfigIdlingResource setConfigIdlingResource;
+    public ProgressBarIdlingResource progressBarIdlingResource;
 
     @Before
     public void setup() {
         SampleNetworkActivity sampleNetworkActivity = sampleNetworkActivityActivityTestRule.getActivity();
-        setConfigIdlingResource = new SetConfigIdlingResource(sampleNetworkActivity);
+        progressBarIdlingResource = new ProgressBarIdlingResource(sampleNetworkActivity);
     }
 
     @After
     public void tearDown() {
-        Espresso.unregisterIdlingResources(setConfigIdlingResource);
+        Espresso.unregisterIdlingResources(progressBarIdlingResource);
     }
 
     @Test
     @MediumTest
     public void toggle_network_setConfig() {
+        // make sure the config is not loaded from memory
         Toggle.storeConfigInMem(null);
+        // perform the button click
         onView(withId(R.id.activity_sample_set_config)).perform(click());
-        Espresso.registerIdlingResources(setConfigIdlingResource);
+        // register the idling resource so that we can know when the config is done
+        Espresso.registerIdlingResources(progressBarIdlingResource);
         assertThat(Toggle.getConfig()).isNotNull();
         assertThat(Toggle.getConfig().name).isNotNull();
         assertThat(Toggle.getConfig().features).isNotNull();

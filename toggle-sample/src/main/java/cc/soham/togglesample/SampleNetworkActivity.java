@@ -27,8 +27,11 @@ import cc.soham.toggle.objects.Config;
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link CheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
+ *
+ * We implement {@link ProgressBarInterface} to enable easy Espresso integration tests via
+ * {@link ProgressBarInterface}
  */
-public class SampleNetworkActivity extends AppCompatActivity {
+public class SampleNetworkActivity extends AppCompatActivity implements ProgressBarInterface {
     @Bind(R.id.activity_sample_feature)
     Button featureButton;
     @Bind(R.id.activity_sample_feature_rule_metadata)
@@ -137,5 +140,10 @@ public class SampleNetworkActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ProgressBar getProgressBar() {
+        return progressBar;
     }
 }
