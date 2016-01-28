@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,11 +56,13 @@ public class SampleNetworkActivity extends AppCompatActivity {
     @OnClick(R.id.activity_sample_set_config)
     public void setConfigButton_onClick() {
         Toast.makeText(SampleNetworkActivity.this, "Making a network call to get the config", Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.VISIBLE);
         try {
             Toggle.with(this).setConfig(new URL(Constants.URL_CONFIG), new SetConfigCallback() {
                 @Override
                 public void onConfigReceived(Config config, boolean cached) {
-                    Toast.makeText(SampleNetworkActivity.this, "Response received, storing in toggle", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SampleNetworkActivity.this, "Response received, storing in toggle", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             });
         } catch (Exception e) {

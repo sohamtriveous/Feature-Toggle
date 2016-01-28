@@ -59,6 +59,13 @@ public class Toggle {
         }
     }
 
+    public static Config getConfig() {
+        if(singleton!=null) {
+            return singleton.config;
+        }
+        return null;
+    }
+
     public Toggle(Context context) {
         if (context == null) {
             throw new IllegalArgumentException("Context must not be null.");

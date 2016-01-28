@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,9 +32,13 @@ public class SampleConfigActivity extends AppCompatActivity {
     @Bind(R.id.activity_sample_feature)
     Button featureButton;
     @Bind(R.id.activity_sample_feature_rule_metadata)
-    TextView metadataTextView;
+    TextView ruleMetadataTextView;
+    @Bind(R.id.activity_sample_feature_feature_metadata)
+    TextView featureMetadataTextView;
     @Bind(R.id.activity_sample_feature_cached)
     TextView cachedTextView;
+    @Bind(R.id.activity_sample_feature_progress)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
