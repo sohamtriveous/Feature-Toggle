@@ -27,7 +27,7 @@ import cc.soham.toggle.objects.Config;
  * - To check for the feature, use {@link Toggle#check(String)} to check for the status of the feature
  * - To check for the feature with the latest config, use {@link Toggle#check(String)} with the {@link CheckRequest.Builder#getLatest()} flag to check for the
  * latest status of the feature
- *
+ * <p/>
  * We implement {@link ProgressBarInterface} to enable easy Espresso integration tests via
  * {@link ProgressBarInterface}
  */
@@ -42,6 +42,8 @@ public class SampleNetworkActivity extends AppCompatActivity implements Progress
     TextView cachedTextView;
     @Bind(R.id.activity_sample_feature_progress)
     ProgressBar progressBar;
+
+    private String featureToBeChecked = "mixpanel";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,12 +81,14 @@ public class SampleNetworkActivity extends AppCompatActivity implements Progress
      */
     @OnClick(R.id.activity_sample_check)
     public void checkButton_onClick() {
-        showMessage("Checking for the feature");
-        Toggle.with(SampleNetworkActivity.this).check("mixpanel").defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        showMessage("Checking for the feature " + featureToBeChecked);
+        progressBar.setVisibility(View.VISIBLE);
+        Toggle.with(SampleNetworkActivity.this).check(featureToBeChecked).defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
             public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Feature checked");
                 updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetadata, checkResponse.ruleMetadata, checkResponse.cached);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -95,12 +99,14 @@ public class SampleNetworkActivity extends AppCompatActivity implements Progress
      */
     @OnClick(R.id.activity_sample_check_latest)
     public void checkLatestButton_onClick() {
-        showMessage("Checking for the latest feature");
-        Toggle.with(SampleNetworkActivity.this).check("mixpanel").getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
+        showMessage("Checking for the feature " + featureToBeChecked);
+        progressBar.setVisibility(View.VISIBLE);
+        Toggle.with(SampleNetworkActivity.this).check(featureToBeChecked).getLatest().defaultState(Toggle.ENABLED).start(new cc.soham.toggle.callbacks.Callback() {
             @Override
             public void onStatusChecked(CheckResponse checkResponse) {
                 showMessage("Latest feature checked");
                 updateUiAfterResponse(checkResponse.featureName, checkResponse.state, checkResponse.featureMetadata, checkResponse.ruleMetadata, checkResponse.cached);
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -108,16 +114,16 @@ public class SampleNetworkActivity extends AppCompatActivity implements Progress
     /**
      * Update the UI as per the feature state
      *
-     * @param feature  Name of the feature
-     * @param state    The feature-toggle state of the feature: state/disabled
+     * @param feature         Name of the feature
+     * @param state           The feature-toggle state of the feature: state/disabled
      * @param featureMetadata Feature Metadata attached to the feature
-     * @param ruleMetadata Rule Metadata attached to the feature
-     * @param cached   Shows whether this is a cached response or not
+     * @param ruleMetadata    Rule Metadata attached to the feature
+     * @param cached          Shows whether this is a cached response or not
      */
     private void updateUiAfterResponse(String feature, String state, String featureMetadata, String ruleMetadata, boolean cached) {
-        featureButton.setText(feature + " is " + (state == Toggle.ENABLED ? "enabled" : "disabled"));
+        featureButton.setText(state == Toggle.ENABLED ? Toggle.ENABLED : Toggle.DISABLED);
         featureButton.setEnabled(state == Toggle.ENABLED);
-        featureMetadataTextView.setText("Feature Metadata: " + ruleMetadata);
+        featureMetadataTextView.setText("Feature Metadata: " + featureMetadata);
         ruleMetadataTextView.setText("Rule Metadata: " + ruleMetadata);
         cachedTextView.setText("Cached: " + cached);
     }
