@@ -68,3 +68,10 @@ Toggle.with(context).check("custom_network_component").getLatest().defaultState(
             }
         });
 ```        
+
+####What's next
+These are the things that are coming up in Toggle
+- custom rule-matchers/checks (beyond the usual api-level/app-version/date etc.) that you can define
+- faster lookups in check (use hashmaps to look up the states)
+- more tests
+- multiple configs?
