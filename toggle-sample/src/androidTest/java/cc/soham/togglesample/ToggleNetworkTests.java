@@ -54,7 +54,6 @@ public class ToggleNetworkTests {
     public void toggle_network_setConfig() {
         Toggle.storeConfigInMem(null);
         onView(withId(R.id.activity_sample_set_config)).perform(click());
-        onView(withText("Making a network call to get the config")).inRoot(withDecorView(not(sampleNetworkActivityActivityTestRule.getActivity().getWindow().getDecorView()))).check(matches(isDisplayed()));
         Espresso.registerIdlingResources(setConfigIdlingResource);
         assertThat(Toggle.getConfig()).isNotNull();
         assertThat(Toggle.getConfig().name).isNotNull();
