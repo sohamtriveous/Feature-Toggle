@@ -43,12 +43,6 @@
             android:label="@string/label_object"
             android:theme="@style/AppTheme" />
 
-        <activity
-            android:name=".SampleTestActivity"
-            android:label="@string/label_object"
-            android:theme="@style/AppTheme" />
-
-
     </application>
 
 </manifest>
