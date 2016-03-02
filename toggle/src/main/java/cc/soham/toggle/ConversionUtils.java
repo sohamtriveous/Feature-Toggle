@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import cc.soham.toggle.objects.Config;
 
 /**
- * Created by sohammondal on 20/01/16.
+ * Various methods assisting conversion from String/JsonElement to {@link Config}
  */
 public class ConversionUtils {
     /**

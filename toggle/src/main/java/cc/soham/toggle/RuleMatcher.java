@@ -9,7 +9,7 @@ import cc.soham.toggle.objects.Rule;
 import cc.soham.toggle.objects.Value;
 
 /**
- * Created by sohammondal on 19/01/16.
+ * A class to handle matching of a {@link Rule}
  */
 public class RuleMatcher {
     /**

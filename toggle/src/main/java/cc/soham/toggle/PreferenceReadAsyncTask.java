@@ -9,7 +9,7 @@ import cc.soham.toggle.callbacks.PreferenceReadCallback;
 import cc.soham.toggle.objects.Config;
 
 /**
- * Created by sohammondal on 27/01/16.
+ * An {@link AsyncTask} to read a preference
  */
 public class PreferenceReadAsyncTask extends AsyncTask<Void, Void, Config> {
     private final Context context;

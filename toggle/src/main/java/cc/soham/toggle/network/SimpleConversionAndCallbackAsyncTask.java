@@ -10,7 +10,7 @@ import cc.soham.toggle.callbacks.SetConfigCallback;
 import cc.soham.toggle.objects.Config;
 
 /**
- * Created by sohammondal on 26/01/16.
+ * An {@link AsyncTask} that helps convert a string to config and then store it in mem/disk
  */
 public class SimpleConversionAndCallbackAsyncTask extends AsyncTask<Void, Void, SetConfigResponse> {
     final String configInString;

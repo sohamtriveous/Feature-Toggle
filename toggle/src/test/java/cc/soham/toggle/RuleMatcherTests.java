@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
- * Created by sohammondal on 19/01/16.
+ * Unit tests for the Rules
  */
 @SmallTest
 @RunWith(PowerMockRunner.class)
@@ -203,7 +203,7 @@ public class RuleMatcherTests {
     @Test
     public void matchDateMax_lowerActualVersion_returnsTrue() {
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        initializeCurrentTimeBasic();
         boolean result = RuleMatcher.matchDateMax(1453196880000L);
         assertThat(result).isTrue();
     }
@@ -211,7 +211,7 @@ public class RuleMatcherTests {
     @Test
     public void matchDateMax_sameVersion_returnsTrue() {
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453196880000L);
+        initalizeCurrentTimeLate();
         boolean result = RuleMatcher.matchDateMax(1453196880000L);
         assertThat(result).isTrue();
     }
@@ -239,7 +239,7 @@ public class RuleMatcherTests {
     @Test
     public void matchDatelMin_lowerActualVersion_returnsFalse() {
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
+        initializeCurrentTimeBasic();
         boolean result = RuleMatcher.matchDateMin(1453196880000L);
         assertThat(result).isFalse();
     }
@@ -247,9 +247,13 @@ public class RuleMatcherTests {
     @Test
     public void matchDateMin_sameVersion_returnsFalse() {
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453196880000L);
+        initalizeCurrentTimeLate();
         boolean result = RuleMatcher.matchDateMin(1453196880000L);
         assertThat(result).isTrue();
+    }
+
+    private void initalizeCurrentTimeLate() {
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453196880000L);
     }
 
     @Test
@@ -393,7 +397,7 @@ public class RuleMatcherTests {
     @Test
     public void matchRule_apiLevelMixMaxCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        initializeBuildVersion18();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
@@ -402,7 +406,7 @@ public class RuleMatcherTests {
     @Test
     public void matchRule_apiLevelMixMaxCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
+        initializeBuildVersion18();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 16, null, null, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
@@ -411,8 +415,7 @@ public class RuleMatcherTests {
     @Test
     public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        intializeBuildVersion18AndVersionCode100();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
@@ -421,20 +424,27 @@ public class RuleMatcherTests {
     @Test
     public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        intializeBuildVersion18AndVersionCode100();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 110, 120, null, null, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
+    }
+
+    private void intializeBuildVersion18AndVersionCode100() {
+        initializeBuildVersion18();
+        initializeVersionCode100();
+    }
+
+    private void initializeBuildVersion18() {
+        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
     }
 
     @Test
     public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_dateMixMaxCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        initializeCurrentTimeBasic();
+        intializeBuildVersion18AndVersionCode100();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isTrue();
@@ -444,9 +454,8 @@ public class RuleMatcherTests {
     public void matchRule_apiLevelMixMaxCheck_appversionMixMaxCheck_dateMixMaxCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        initializeCurrentTimeBasic();
+        intializeBuildVersion18AndVersionCode100();
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1453199990000L, 1453199999999L, null, null));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
@@ -456,9 +465,8 @@ public class RuleMatcherTests {
     public void matchRule_allCheck_correct_returnsTrue() {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        initializeCurrentTimeBasic();
+        intializeBuildVersion18AndVersionCode100();
 
         PowerMockito.mockStatic(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
@@ -477,13 +485,16 @@ public class RuleMatcherTests {
         assertThat(result).isTrue();
     }
 
+    private void initializeVersionCode100() {
+        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+    }
+
     @Test
     public void matchRule_allCheck_incorrect_returnsFalse() {
         PowerMockito.spy(RuleMatcher.class);
         PowerMockito.spy(System.class);
-        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
-        Mockito.when(RuleMatcher.getBuildVersion()).thenReturn(18);
-        Mockito.when(RuleMatcher.getVersionCode()).thenReturn(100);
+        initializeCurrentTimeBasic();
+        intializeBuildVersion18AndVersionCode100();
 
         PowerMockito.mockStatic(TextUtils.class);
         Mockito.when(TextUtils.isEmpty(Mockito.anyString())).thenReturn(false);
@@ -499,5 +510,9 @@ public class RuleMatcherTests {
         Rule rule = new Rule(Toggle.DISABLED, null, new Value(14, 22, 90, 110, 1450000000000L, 1459990000000L, "release", deviceList));
         boolean result = RuleMatcher.matchRule(rule);
         assertThat(result).isFalse();
+    }
+
+    private void initializeCurrentTimeBasic() {
+        Mockito.when(System.currentTimeMillis()).thenReturn(1453190000000L);
     }
 }

@@ -12,7 +12,7 @@ import cc.soham.toggle.enums.SourceType;
 import cc.soham.toggle.objects.Config;
 
 /**
- * Created by sohammondal on 20/01/16.
+ * Helps persist {@link Config} on disk in some form
  */
 public class PersistUtils {
     public static final String KEY_SOURCE_TYPE = "toggle_source_type";

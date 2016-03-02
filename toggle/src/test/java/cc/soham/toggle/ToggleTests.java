@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by sohammondal on 21/01/16.
+ * Unit tests for Toggle
  */
 @SmallTest
 @RunWith(PowerMockRunner.class)

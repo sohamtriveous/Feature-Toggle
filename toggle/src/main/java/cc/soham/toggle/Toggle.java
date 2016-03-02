@@ -20,7 +20,7 @@ import cc.soham.toggle.objects.ResponseDecisionMeta;
 import cc.soham.toggle.objects.Rule;
 
 /**
- * Created by sohammondal on 14/01/16.
+ * The core class that handles all Toggle functionality
  */
 public class Toggle {
     // TODO: integrate leak cananary in the sample?

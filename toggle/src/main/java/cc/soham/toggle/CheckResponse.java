@@ -1,7 +1,7 @@
 package cc.soham.toggle;
 
 /**
- * Created by sohammondal on 20/01/16.
+ * Represents a response to a feature check request
  */
 public class CheckResponse {
     public String featureName;
