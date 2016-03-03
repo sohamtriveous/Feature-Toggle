@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Feature-toggle by triveous</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Feature-toggle</h1>
+        <p></p>
+
+        <p class="view"><a href="https://github.com/triveous/Feature-Toggle">View the Project on GitHub <small>triveous/Feature-Toggle</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/triveous/Feature-Toggle/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/triveous/Feature-Toggle/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/triveous/Feature-Toggle">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://travis-ci.org/triveous/Feature-Toggle"><img src="https://travis-ci.org/triveous/Feature-Toggle.svg?branch=master" alt="Build Status"></a></p>
+
+<h2>
+<a id="a-simple-android-library-to-add-feature-toggle-capability-in-your-app" class="anchor" href="#a-simple-android-library-to-add-feature-toggle-capability-in-your-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A simple android library to add Feature-Toggle capability in your app</h2>
+
+<h3>
+<a id="philosophy" class="anchor" href="#philosophy" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Philosophy</h3>
+
+<p>A feature toggle, is a technique in software development that helps alter the state of a feature in an application dynamically. Let us illustrate the problem with an example:</p>
+
+<p>Lets say, you have discovered a bug in a custom network component that only shows up on a certain device, to resolve an issue you'd have to</p>
+
+<ul>
+<li>make the fix (might take a couple of days)</li>
+<li>test it</li>
+<li>launch it on the play store</li>
+<li>hope the user then downloads the update (might take some more days, if it happens at all)</li>
+</ul>
+
+<p>This is often a long process and by that time the user might even uninstall the app. To shorten the turn around time, you can issue an immediate solution: you can dynamically disable the feature for the device using this library. This happens the next time the user opens the app or even over the air (via push messaging).</p>
+
+<p>With this library the following would happen</p>
+
+<ul>
+<li>You would update a configuration file on your server disabling the feature for that device</li>
+<li>The next time the app is opened (or over the air) the app downloads the config again</li>
+<li>It then checks whether the feature is enabled/disabled and disables the feature silently</li>
+</ul>
+
+<p>Other use cases:</p>
+
+<ul>
+<li>You can also use this library to enable features (show messages for example) at certain times or on certain devices etc.</li>
+<li>Test certain features for certain devices/api levels dynamically</li>
+</ul>
+
+<p>In the context of android, it is often important to have the ability to </p>
+
+<ul>
+<li>change the capability/featureset of an app in a live environment</li>
+<li>change the capability/featureset of an app based on api-level/app-version/date/device-model/device-manufacturer and other such parameters</li>
+</ul>
+
+<h3>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h3>
+
+<h4>
+<a id="downloading-a-new-configuration" class="anchor" href="#downloading-a-new-configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Downloading a new configuration</h4>
+
+<p>To download a new configuration please do the following</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Toggle</span><span class="pl-k">.</span>with(context)<span class="pl-k">.</span>setConfig(myUrl);</pre></div>
+
+<p>You can also set the configuration manually by calling setConfig on a String (in the Config JSON format) or from a Config object</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">String</span> configInJson <span class="pl-k">=</span> <span class="pl-c1">...</span> <span class="pl-c">// my custom code for downloading the config from my server and retrieving it as a json</span>
+<span class="pl-smi">Toggle</span><span class="pl-k">.</span>with(context)<span class="pl-k">.</span>setConfig(configInJson);</pre></div>
+
+<p>or as a Config object</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Config</span> config <span class="pl-k">=</span> <span class="pl-c1">...</span> <span class="pl-c">// my custom call (say Retrofit for example) for retrieveing the config from my server</span>
+<span class="pl-smi">Toggle</span><span class="pl-k">.</span>with(context)<span class="pl-k">.</span>setConfig(config);</pre></div>
+
+<p>Once setConfig is called (in any form) the config is then cached locally, so you can always check for a feature later</p>
+
+<h4>
+<a id="checking-for-a-feature" class="anchor" href="#checking-for-a-feature" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Checking for a feature</h4>
+
+<p>You can check for a feature using the check method</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Toggle</span><span class="pl-k">.</span>with(context)<span class="pl-k">.</span>check(<span class="pl-s"><span class="pl-pds">"</span>custom_network_component<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>defaultState(<span class="pl-smi">Toggle</span><span class="pl-c1"><span class="pl-k">.</span>ENABLED</span>)<span class="pl-k">.</span>start(<span class="pl-k">new</span> <span class="pl-smi">cc.soham.toggle.callbacks<span class="pl-k">.</span>Callback</span>() {
+            <span class="pl-k">@Override</span>
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStatusChecked</span>(<span class="pl-smi">CheckResponse</span> <span class="pl-v">checkResponse</span>) {
+                updateUiAfterResponse(checkResponse<span class="pl-k">.</span>featureName, checkResponse<span class="pl-k">.</span>state, checkResponse<span class="pl-k">.</span>featureMetaData, checkResponse<span class="pl-k">.</span>ruleMetadata, checkResponse<span class="pl-k">.</span>cached);
+            }
+        });</pre></div>
+
+<p>In case you are used a URL in setConfig, you can also use the getLatest flag to get the latest config before making the callback</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Toggle</span><span class="pl-k">.</span>with(context)<span class="pl-k">.</span>check(<span class="pl-s"><span class="pl-pds">"</span>custom_network_component<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>getLatest()<span class="pl-k">.</span>defaultState(<span class="pl-smi">Toggle</span><span class="pl-c1"><span class="pl-k">.</span>ENABLED</span>)<span class="pl-k">.</span>start(<span class="pl-k">new</span> <span class="pl-smi">cc.soham.toggle.callbacks<span class="pl-k">.</span>Callback</span>() {
+            <span class="pl-k">@Override</span>
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onStatusChecked</span>(<span class="pl-smi">CheckResponse</span> <span class="pl-v">checkResponse</span>) {
+                updateUiAfterResponse(checkResponse<span class="pl-k">.</span>featureName, checkResponse<span class="pl-k">.</span>state, checkResponse<span class="pl-k">.</span>featureMetaData, checkResponse<span class="pl-k">.</span>ruleMetadata, checkResponse<span class="pl-k">.</span>cached);
+            }
+        });</pre></div>
+
+<h4>
+<a id="whats-next" class="anchor" href="#whats-next" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What's next</h4>
+
+<p>These are the things that are coming up in Toggle</p>
+
+<ul>
+<li>custom rule-matchers/checks (beyond the usual api-level/app-version/date etc.) that you can define</li>
+<li>faster lookups in check (use hashmaps to look up the states)</li>
+<li>more tests</li>
+<li>multiple configs?</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/triveous">triveous</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
