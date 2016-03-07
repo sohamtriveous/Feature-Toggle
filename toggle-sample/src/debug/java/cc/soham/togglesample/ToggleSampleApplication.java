@@ -5,7 +5,7 @@ import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
- * Created by sohammondal on 07/03/16.
+ * Toggle-Debug release Application
  */
 public class ToggleSampleApplication extends Application {
     @Override
