@@ -62,6 +62,7 @@ public class ToggleNetworkTests {
     public void toggle_network_check() {
         // make sure the config is not loaded from memory
         Toggle.storeConfigInMem(null);
+        toggle_network_setConfig();
         // perform the button click
         onView(withId(R.id.activity_sample_check)).perform(click());
         // register the idling resource so that we can know when the config is done
@@ -78,6 +79,7 @@ public class ToggleNetworkTests {
     public void toggle_network_checkLatest() {
         // make sure the config is not loaded from memory
         Toggle.storeConfigInMem(null);
+        toggle_network_setConfig();
         // perform the button click
         onView(withId(R.id.activity_sample_check_latest)).perform(click());
         // register the idling resource so that we can know when the config is done
