@@ -12,6 +12,5 @@ public class ToggleSampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
         LeakCanary.install(this);
-
     }
 }
