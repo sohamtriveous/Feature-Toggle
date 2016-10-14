@@ -7,12 +7,12 @@ android:
     - build-tools-24.0.3
     - extra
 
-sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+sudo: required
+
+jdk:
+  - oraclejdk8
 
 script:
+    - java -version
     - ./gradlew assemble
     - ./gradlew test
