@@ -28,7 +28,6 @@ public class Toggle {
     // TODO: unit tests for file and rule metadata
     // TODO: unit test okhttp implementation
     // TODO: instrument test okhttp implementation
-    // TODO: improve documentation
     // TODO: create wiki
 
     public static final String DEFAULT_STATE = "default";
